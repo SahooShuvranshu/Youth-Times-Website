@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto mt-8 px-4">
+  <div class="vintage-card max-w-md mx-auto text-center newspaper-texture">
+    <div class="mb-4">
+      <div class="text-6xl mb-4">✅</div>
+    </div>
+    <h2 class="headline-font text-2xl font-bold uppercase mb-4 typewriter">Email Confirmed!</h2>
+    <p class="font-bold uppercase tracking-wider mb-6">Your email address has been successfully confirmed. You can now log in to your account.</p>
+    <a href="{{ url_for('auth.login') }}" class="vintage-btn press-effect">
+      GO TO LOGIN
+    </a>
+  </div>
+</div>
+{% endblock %}

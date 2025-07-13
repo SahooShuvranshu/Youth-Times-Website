@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="text-center max-w-4xl mx-auto">
+    <!-- Newspaper Header Style -->
+    <div class="newspaper-header text-center mb-8 newspaper-texture">
+      <div class="text-8xl mb-4">📰</div>
+      <h1 class="headline-font text-6xl md:text-8xl font-bold mb-2">404</h1>
+      <hr class="newspaper-divider mx-auto">
+      <h2 class="headline-font text-2xl md:text-3xl font-bold uppercase mb-4">
+        PAGE NOT FOUND
+      </h2>
+      <p class="text-lg opacity-70 mb-8">
+        This page seems to have been lost in the press room!
+      </p>
+    </div>
+
+    <!-- Error Message in Newspaper Style -->
+    <div class="vintage-card mb-8 newspaper-texture text-center">
+      <div class="border-4 border-black dark:border-white p-6 mx-auto max-w-2xl">
+        <h3 class="headline-font text-xl font-bold uppercase mb-4">
+          🚫 ARTICLE NOT FOUND
+        </h3>
+        <p class="text-base mb-4">
+          The page you're looking for doesn't exist or has been moved to another location.
+        </p>
+        <p class="text-sm opacity-70">
+          Don't worry, our editorial team is always working to bring you the latest content!
+        </p>
+      </div>
+    </div>
+
+    <!-- Navigation Options -->
+    <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+      <a href="{{ url_for('articles.home') }}" class="vintage-btn press-effect">
+        🏠 BACK TO HOMEPAGE
+      </a>
+      <a href="{{ url_for('articles.search') }}" class="vintage-btn press-effect">
+        🔍 SEARCH ARTICLES
+      </a>
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('articles.submit_article') }}" class="vintage-btn press-effect">
+          ✍️ SUBMIT ARTICLE
+        </a>
+      {% endif %}
+    </div>
+
+    <!-- Popular Articles Section -->
+    <div class="vintage-card newspaper-texture text-center">
+      <h3 class="headline-font text-xl font-bold uppercase mb-4 border-b-2 border-black dark:border-white pb-2">
+        📈 POPULAR ARTICLES
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+        {% for article in popular_articles %}
+          <div class="border-2 border-black dark:border-white p-4 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left">
+            <h4 class="font-bold text-sm mb-2">
+              <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" class="hover:underline">
+                {{ article.title }}
+              </a>
+            </h4>
+            <p class="text-xs opacity-70">
+              {{ article.content | excerpt(100) }}
+            </p>
+          </div>
+        {% else %}
+          <div class="col-span-full text-center py-8">
+            <div class="text-4xl mb-2">📰</div>
+            <p class="text-sm opacity-70">No articles available yet.</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Footer Message -->
+    <div class="mt-8 text-center">
+      <p class="text-xs opacity-50 uppercase tracking-wider">
+        Youth Times - Delivering News That Matters
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

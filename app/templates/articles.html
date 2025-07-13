@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="main-content below-header flex flex-col items-center justify-center">
+  <div class="vintage-card p-8 w-full max-w-5xl mb-10 text-center">
+    <div class="newspaper-header text-center mb-8">
+      <h1 class="headline-font text-4xl font-bold typewriter">LATEST NEWS & STORIES</h1>
+      <p class="text-lg font-bold uppercase tracking-wider mt-4">Stay informed with stories from young journalists worldwide</p>
+      <div class="mt-4 text-base opacity-80">
+        <span class="mr-4">📰 {{ articles|length }} ARTICLES</span>
+        <span class="mr-4">🌍 WORLDWIDE COVERAGE</span>
+        <span>✍️ YOUTH VOICES</span>
+      </div>
+      <hr class="newspaper-divider mt-6">
+    </div>
+    {% if articles %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for article in articles %}
+        <div class="vintage-card">
+          {% if article.category %}
+            <span class="vintage-btn text-xs mb-3 inline-block" style="background-color: {{ article.category.color }}; color: white;">
+              {{ article.category.name }}
+            </span>
+          {% endif %}
+          <h3 class="headline-font text-xl font-bold mb-3 leading-tight">
+            <a href="{{ url_for('articles.view_article', id=article.id) }}" class="hover:underline transition-all duration-300">
+              {{ article.title|upper }}
+            </a>
+          </h3>
+          <p class="text-sm font-bold mb-3 uppercase tracking-wider opacity-70">
+            By {{ article.author.username if article.author else 'Anonymous' }} • {{ article.created_at.strftime('%B %d, %Y') if article.created_at }}
+          </p>
+          <p class="mb-4 leading-relaxed">{{ article.content|excerpt(150) }}</p>
+          <div class="flex items-center justify-between">
+            <a href="{{ url_for('articles.view_article', id=article.id) }}" class="vintage-btn text-sm">
+              READ MORE
+            </a>
+            <span class="text-xs opacity-60">{{ article.views or 0 }} views</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="vintage-card text-center">
+        <h3 class="headline-font text-2xl font-bold uppercase mb-4">No Articles Found</h3>
+        <p class="text-lg mb-6">There are currently no articles to display.</p>
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('articles.submit_article') }}" class="vintage-btn">
+            SUBMIT YOUR ARTICLE
+          </a>
+        {% else %}
+          <a href="{{ url_for('auth.register') }}" class="vintage-btn">
+            JOIN TO SUBMIT ARTICLES
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

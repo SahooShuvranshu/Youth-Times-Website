@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="text-center max-w-4xl mx-auto">
+    <!-- Newspaper Header Style -->
+    <div class="newspaper-header text-center mb-8 newspaper-texture">
+      <div class="text-8xl mb-4">⚠️</div>
+      <h1 class="headline-font text-6xl md:text-8xl font-bold mb-2">500</h1>
+      <hr class="newspaper-divider mx-auto">
+      <h2 class="headline-font text-2xl md:text-3xl font-bold uppercase mb-4">
+        INTERNAL SERVER ERROR
+      </h2>
+      <p class="text-lg opacity-70 mb-8">
+        Something went wrong on our end. The printing press has jammed!
+      </p>
+    </div>
+
+    <!-- Error Message in Newspaper Style -->
+    <div class="vintage-card mb-8 newspaper-texture text-center">
+      <div class="border-4 border-black dark:border-white p-6 mx-auto max-w-2xl">
+        <h3 class="headline-font text-xl font-bold uppercase mb-4">
+          🔧 TECHNICAL DIFFICULTIES
+        </h3>
+        <p class="text-base mb-4">
+          We're experiencing some technical issues right now. Our tech team has been notified and is working to fix this.
+        </p>
+        <p class="text-sm opacity-70">
+          Please try again in a few minutes. We apologize for the inconvenience!
+        </p>
+      </div>
+    </div>
+
+    <!-- Navigation Options -->
+    <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+      <a href="{{ url_for('articles.home') }}" class="vintage-btn press-effect">
+        🏠 BACK TO HOMEPAGE
+      </a>
+      <button onclick="window.location.reload()" class="vintage-btn press-effect">
+        🔄 TRY AGAIN
+      </button>
+      <a href="javascript:history.back()" class="vintage-btn press-effect">
+        ← GO BACK
+      </a>
+    </div>
+
+    <!-- What to do next -->
+    <div class="vintage-card newspaper-texture text-center">
+      <h3 class="headline-font text-xl font-bold uppercase mb-4 border-b-2 border-black dark:border-white pb-2">
+        🛠️ WHAT TO DO NEXT
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-4xl mx-auto">
+        <div class="border-2 border-black dark:border-white p-4">
+          <h4 class="font-bold text-sm mb-2">1. REFRESH THE PAGE</h4>
+          <p class="text-xs opacity-70">
+            Sometimes a simple refresh can solve the issue. Try pressing F5 or clicking the refresh button.
+          </p>
+        </div>
+        <div class="border-2 border-black dark:border-white p-4">
+          <h4 class="font-bold text-sm mb-2">2. CHECK BACK LATER</h4>
+          <p class="text-xs opacity-70">
+            If the problem persists, please check back in a few minutes. We're working on it!
+          </p>
+        </div>
+        <div class="border-2 border-black dark:border-white p-4">
+          <h4 class="font-bold text-sm mb-2">3. BROWSE OTHER CONTENT</h4>
+          <p class="text-xs opacity-70">
+            While we fix this, you can browse other articles on our homepage or search for specific content.
+          </p>
+        </div>
+        <div class="border-2 border-black dark:border-white p-4">
+          <h4 class="font-bold text-sm mb-2">4. CONTACT US</h4>
+          <p class="text-xs opacity-70">
+            If you continue to experience issues, please let us know so we can help resolve them.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Message -->
+    <div class="mt-8 text-center">
+      <p class="text-xs opacity-50 uppercase tracking-wider">
+        Youth Times - We'll Be Right Back!
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

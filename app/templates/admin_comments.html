@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+  <div class="vintage-card mb-8">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="headline-font text-4xl font-bold">MANAGE COMMENTS</h1>
+      <a href="{{ url_for('admin.index') }}" class="vintage-btn">
+        ← BACK TO ADMIN
+      </a>
+    </div>
+    
+    <!-- Pending Comments -->
+    <div class="mb-8">
+      <h2 class="headline-font text-2xl font-bold mb-4">PENDING APPROVAL ({{ pending_comments|length }})</h2>
+      
+      {% if pending_comments %}
+        <div class="space-y-4">
+          {% for comment in pending_comments %}
+          <div class="border-3 border-black p-4 bg-yellow-50 dark:bg-yellow-900">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center space-x-3">
+                <span class="font-bold">{{ comment.user.name or comment.user.username }}</span>
+                <span class="text-sm text-gray-600">{{ comment.created_at.strftime('%B %d, %Y at %I:%M %p') }}</span>
+              </div>
+              <div class="flex space-x-2">
+                <form method="post" action="{{ url_for('admin.approve_comment', comment_id=comment.id) }}" class="inline-block">
+                  <button type="submit" class="vintage-btn bg-green-500 border-green-500 text-white text-sm">
+                    ✓ APPROVE
+                  </button>
+                </form>
+                <form method="post" action="{{ url_for('admin.reject_comment', comment_id=comment.id) }}" class="inline-block"
+                      onsubmit="return confirm('Are you sure you want to reject this comment?')">
+                  <button type="submit" class="vintage-btn bg-red-500 border-red-500 text-white text-sm">
+                    ✗ REJECT
+                  </button>
+                </form>
+              </div>
+            </div>
+            <p class="mb-2"><strong>Article:</strong> <a href="{{ url_for('articles.view_article', hash_id=comment.article.hash_id) }}" class="hover:underline">{{ comment.article.title }}</a></p>
+            <p class="leading-relaxed">{{ comment.content }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-8">
+          <p class="headline-font text-xl">NO PENDING COMMENTS</p>
+          <p class="text-gray-600">All comments have been reviewed</p>
+        </div>
+      {% endif %}
+    </div>
+    
+    <!-- Approved Comments -->
+    <div>
+      <h2 class="headline-font text-2xl font-bold mb-4">RECENTLY APPROVED ({{ approved_comments|length }})</h2>
+      
+      {% if approved_comments %}
+        <div class="space-y-4">
+          {% for comment in approved_comments %}
+          <div class="border-3 border-black p-4 bg-green-50 dark:bg-green-900">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center space-x-3">
+                <span class="font-bold">{{ comment.user.name or comment.user.username }}</span>
+                <span class="text-sm text-gray-600">{{ comment.created_at.strftime('%B %d, %Y at %I:%M %p') }}</span>
+              </div>
+              <span class="text-sm text-green-600 font-bold">✓ APPROVED</span>
+            </div>
+            <p class="mb-2"><strong>Article:</strong> <a href="{{ url_for('articles.view_article', hash_id=comment.article.hash_id) }}" class="hover:underline">{{ comment.article.title }}</a></p>
+            <p class="leading-relaxed">{{ comment.content }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-8">
+          <p class="headline-font text-xl">NO APPROVED COMMENTS</p>
+          <p class="text-gray-600">No comments have been approved yet</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

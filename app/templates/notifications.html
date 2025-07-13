@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto mt-8">
+  <div class="newspaper-header text-center mb-8">
+    <h1 class="headline-font text-3xl md:text-4xl font-bold typewriter">NEWSROOM ALERTS</h1>
+    <p class="text-sm opacity-70 mt-2 tracking-wider uppercase">YOUR NOTIFICATIONS CENTER</p>
+    <hr class="newspaper-divider">
+  </div>
+
+  <div class="vintage-card newspaper-texture">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="headline-font text-xl font-bold uppercase border-b-2 border-black dark:border-white pb-2">
+        🔔 RECENT NOTIFICATIONS
+      </h2>
+      {% if notifications %}
+        <span class="vintage-btn text-xs">
+          TOTAL: {{ notifications|length }}
+        </span>
+      {% endif %}
+    </div>
+
+    {% if notifications %}
+      <div class="space-y-4">
+        {% for note in notifications %}
+        <div class="border-b border-black dark:border-white pb-4 last:border-b-0 
+                    {% if not note.is_read %}bg-yellow-50 dark:bg-yellow-900{% endif %} 
+                    p-4 -mx-4 rounded-none">
+          <div class="flex items-start gap-4">
+            <!-- Notification Icon -->
+            <div class="flex-shrink-0 mt-1">
+              {% if not note.is_read %}
+                <span class="inline-block w-3 h-3 bg-red-600 rounded-full animate-pulse"></span>
+              {% else %}
+                <span class="inline-block w-3 h-3 bg-gray-400 rounded-full"></span>
+              {% endif %}
+            </div>
+            
+            <!-- Notification Content -->
+            <div class="flex-1">
+              <p class="font-bold text-sm {% if not note.is_read %}font-black{% endif %}">
+                {{ note.message }}
+              </p>
+              <div class="flex justify-between items-center mt-2">
+                <span class="text-xs font-bold uppercase tracking-wider opacity-70">
+                  {{ note.timestamp.strftime('%B %d, %Y at %I:%M %p') }}
+                </span>
+                {% if not note.is_read %}
+                  <span class="vintage-btn text-xs breaking-flash">NEW</span>
+                {% else %}
+                  <span class="vintage-btn text-xs opacity-50">READ</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Notification Actions -->
+      <div class="mt-8 pt-6 border-t-2 border-black dark:border-white">
+        <div class="flex flex-wrap gap-4 justify-center">
+          <button class="vintage-btn text-sm press-effect" onclick="markAllAsRead()">
+            ✅ MARK ALL AS READ
+          </button>
+          <button class="vintage-btn text-sm press-effect" onclick="clearNotifications()">
+            🗑️ CLEAR ALL
+          </button>
+          <a href="{{ url_for('articles.home') }}" class="vintage-btn text-sm press-effect">
+            🏠 BACK TO HOME
+          </a>
+        </div>
+      </div>
+    {% else %}
+      <div class="text-center py-12">
+        <div class="text-6xl mb-4">📫</div>
+        <p class="headline-font text-xl uppercase mb-4">INBOX EMPTY</p>
+        <p class="text-sm opacity-70 mb-6">No notifications at this time. You're all caught up!</p>
+        <a href="{{ url_for('articles.home') }}" class="vintage-btn press-effect">
+          📰 BACK TO NEWSROOM
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+function markAllAsRead() {
+  // Add animation effect
+  document.querySelectorAll('.animate-pulse').forEach(el => {
+    el.classList.remove('animate-pulse', 'bg-red-600');
+    el.classList.add('bg-gray-400');
+  });
+  
+  // Remove highlighting from unread notifications
+  document.querySelectorAll('.bg-yellow-50, .bg-yellow-900').forEach(el => {
+    el.classList.remove('bg-yellow-50', 'bg-yellow-900');
+  });
+  
+  // Update badges
+  document.querySelectorAll('.breaking-flash').forEach(el => {
+    el.textContent = 'READ';
+    el.classList.remove('breaking-flash');
+    el.classList.add('opacity-50');
+  });
+  
+  // Show success message
+  alert('All notifications marked as read!');
+}
+
+function clearNotifications() {
+  if (confirm('Are you sure you want to clear all notifications?')) {
+    // Animation before clearing
+    document.querySelector('.vintage-card').style.opacity = '0.5';
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+  }
+}
+
+// Add entrance animations
+document.addEventListener('DOMContentLoaded', function() {
+  const notifications = document.querySelectorAll('.space-y-4 > div');
+  notifications.forEach((notif, index) => {
+    notif.style.opacity = '0';
+    notif.style.transform = 'translateX(-20px)';
+    setTimeout(() => {
+      notif.style.transition = 'all 0.3s ease-out';
+      notif.style.opacity = '1';
+      notif.style.transform = 'translateX(0)';
+    }, index * 100);
+  });
+});
+</script>
+{% endblock %}

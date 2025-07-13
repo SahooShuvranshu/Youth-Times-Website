@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Youth Times - Vintage News</title>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+    <meta name="description" content="Youth Times - A vintage-style newspaper for the modern era" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='YothTimesFavicon.png') }}" />
+    <link rel="icon" href="{{ url_for('static', filename='YothTimesFavicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+    <!-- Enhanced Theme Toggle Button -->
+    <!-- Removed the standalone theme toggle button, now inside the nav bar -->
+
+    <!-- Fixed Header -->
+    <header class="vintage-header">
+        <div class="header-top">
+            <div class="header-content">
+                <div class="main-header-section">
+                    <h1 class="main-title">YOUTH TIMES</h1>
+                    <p class="subtitle">ESTABLISHED 2025 • EMPOWERING YOUNG VOICES</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compact Navigation -->
+        <nav class="header-nav compact-nav">
+            <div class="nav-container compact-nav-container">
+                <div class="nav-links compact-nav-links">
+                    <a href="{{ url_for('articles.home') }}" class="nav-link">HOME</a>
+                    <span class="nav-divider">|</span>
+                    <a href="{{ url_for('articles.articles_list') }}" class="nav-link">ARTICLES</a>
+                    <span class="nav-divider">|</span>
+                    <a href="{{ url_for('articles.about_us') }}" class="nav-link">ABOUT</a>
+                    <span class="nav-divider">|</span>
+                    <a href="{{ url_for('articles.contact') }}" class="nav-link">CONTACT</a>
+                    {% if current_user.is_authenticated %}
+                        <span class="nav-divider">|</span>
+                        <a href="{{ url_for('auth.profile') }}" class="nav-link">PROFILE</a>
+                        <span class="nav-divider">|</span>
+                        <a href="{{ url_for('articles.notifications') }}" class="nav-link">NOTIFICATION</a>
+                        <span class="nav-divider">|</span>
+                        <a href="{{ url_for('articles.submit_article') }}" class="nav-link">SUBMIT</a>
+                        {% if current_user.is_admin %}
+                        <span class="nav-divider">|</span>
+                        <a href="{{ url_for('admin.admin_panel') }}" class="nav-link">ADMIN</a>
+                        {% endif %}
+                        <span class="nav-divider">|</span>
+                        <a href="{{ url_for('auth.logout') }}" class="nav-link">LOGOUT</a>
+                    {% else %}
+                        <span class="nav-divider">|</span>
+                        <a href="{{ url_for('auth.login') }}" class="nav-link">LOGIN</a>
+                        <span class="nav-divider">|</span>
+                        <a href="{{ url_for('auth.register') }}" class="nav-link">REGISTER</a>
+                    {% endif %}
+                    <span class="nav-divider">|</span>
+                    <!-- Theme toggle button inside nav -->
+                    <button class="theme-toggle nav-theme-toggle" id="themeToggle" aria-label="Switch to light mode" title="Toggle theme (press T)">
+                        <svg class="theme-toggle-icon sun-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"></path>
+                        </svg>
+                        <svg class="theme-toggle-icon moon-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"/>
+                        </svg>
+                        <span class="sr-only">Press T to toggle theme</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stats-content">
+                <div class="stat-item">
+                    <span class="stat-text">{{ current_date }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-text" id="currentTemperature">--°C</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-text">READERS: {{ visitors_count or 0 }}</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breaking News Ticker -->
+    {% if ticker_messages %}
+    <div class="ticker-container">
+        <span class="ticker-label">BREAKING NEWS</span>
+        <div class="ticker-content">
+            {% for message in ticker_messages %}
+                <span class="ticker-item">{{ message.content }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="content-wrapper">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages-container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="vintage-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">About Us</h3>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="{{ url_for('articles.about_us') }}">About Youth Times</a></li>
+                    <li class="footer-link"><a href="{{ url_for('articles.contact') }}">Contact Us</a></li>
+                    <li class="footer-link"><a href="{{ url_for('articles.editorial_guidelines') }}">Editorial Guidelines</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">Legal</h3>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="{{ url_for('articles.terms_of_service') }}">Terms of Service</a></li>
+                    <li class="footer-link"><a href="{{ url_for('articles.privacy_policy') }}">Privacy Policy</a></li>
+                    <li class="footer-link"><a href="{{ url_for('articles.dmca_policy') }}">DMCA Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">Follow Us</h3>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="#">Twitter</a></li>
+                    <li class="footer-link"><a href="#">Facebook</a></li>
+                    <li class="footer-link"><a href="#">RSS Feed</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {{ current_year }} Youth Times. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Enhanced Theme Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const html = document.documentElement;
+            const themeToggle = document.getElementById('themeToggle');
+            const sunIcon = themeToggle.querySelector('.sun-icon');
+            const moonIcon = themeToggle.querySelector('.moon-icon');
+            // Remove text update logic, only show/hide icons
+            // Check system preference
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const savedTheme = localStorage.getItem('theme');
+            const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+            function setTheme(theme, animate = true) {
+                if (animate) {
+                    document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+                } else {
+                    document.body.style.transition = 'none';
+                }
+                html.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+                if (theme === 'dark') {
+                    sunIcon.style.display = 'none';
+                    moonIcon.style.display = 'block';
+                    themeToggle.setAttribute('aria-label', 'Switch to light mode');
+                } else {
+                    sunIcon.style.display = 'block';
+                    moonIcon.style.display = 'none';
+                    themeToggle.setAttribute('aria-label', 'Switch to dark mode');
+                }
+                void document.body.offsetHeight;
+                if (!animate) {
+                    setTimeout(() => {
+                        document.body.style.transition = '';
+                    }, 0);
+                }
+            }
+            setTheme(initialTheme, false);
+            function toggleTheme() {
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                setTheme(newTheme, true);
+            }
+            themeToggle.addEventListener('click', toggleTheme);
+            document.addEventListener('keydown', function(e) {
+                if (e.key.toLowerCase() === 't' && !e.ctrlKey && !e.altKey && !e.metaKey) {
+                    toggleTheme();
+                }
+            });
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+                if (!localStorage.getItem('theme')) {
+                    setTheme(e.matches ? 'dark' : 'light', true);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto mt-8 px-4">
+  <div class="newspaper-header text-center mb-8">
+    <h1 class="headline-font text-3xl md:text-4xl font-bold typewriter">NEWSROOM ANALYTICS</h1>
+    <p class="text-sm opacity-70 mt-2 tracking-wider uppercase">EDITORIAL PERFORMANCE DASHBOARD</p>
+    <hr class="newspaper-divider">
+  </div>
+
+  <!-- Navigation -->
+  <div class="mb-8 text-center">
+    <a href="{{ url_for('admin.admin_panel') }}" class="vintage-btn press-effect">
+      ← BACK TO ADMIN PANEL
+    </a>
+  </div>
+  
+  <!-- Key Metrics Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+    <div class="vintage-card text-center newspaper-texture">
+      <div class="text-3xl mb-2">📰</div>
+      <p class="headline-font text-sm font-bold uppercase tracking-wider mb-2">Total Articles</p>
+      <p class="text-2xl font-black">{{ total_articles }}</p>
+    </div>
+    
+    <div class="vintage-card text-center newspaper-texture">
+      <div class="text-3xl mb-2">👥</div>
+      <p class="headline-font text-sm font-bold uppercase tracking-wider mb-2">Total Users</p>
+      <p class="text-2xl font-black">{{ total_users }}</p>
+    </div>
+    
+    <div class="vintage-card text-center newspaper-texture">
+      <div class="text-3xl mb-2">👁️</div>
+      <p class="headline-font text-sm font-bold uppercase tracking-wider mb-2">Total Views</p>
+      <p class="text-2xl font-black">{{ total_views }}</p>
+    </div>
+    
+    <div class="vintage-card text-center newspaper-texture">
+      <div class="text-3xl mb-2">💬</div>
+      <p class="headline-font text-sm font-bold uppercase tracking-wider mb-2">Comments</p>
+      <p class="text-2xl font-black">{{ total_comments }}</p>
+    </div>
+    
+    <div class="vintage-card text-center newspaper-texture">
+      <div class="text-3xl mb-2">📧</div>
+      <p class="headline-font text-sm font-bold uppercase tracking-wider mb-2">Newsletter</p>
+      <p class="text-2xl font-black">{{ newsletter_subscribers }}</p>
+    </div>
+  </div>
+  
+  <!-- Charts Row -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Most Viewed Articles -->
+    <div class="vintage-card newspaper-texture">
+      <h2 class="headline-font text-xl font-bold uppercase mb-4 border-b-2 border-black dark:border-white pb-2">Most Viewed Articles</h2>
+      {% if most_viewed %}
+      <div class="space-y-3">
+        {% for article_id, title, views in most_viewed %}
+        <div class="flex justify-between items-center p-3 border-2 border-black dark:border-white">
+          <div class="flex-1">
+            <p class="font-bold uppercase truncate">{{ title }}</p>
+          </div>
+          <span class="vintage-btn text-xs">
+            {{ views }} VIEWS
+          </span>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-center opacity-70 font-bold uppercase">No view data available yet.</p>
+      {% endif %}
+    </div>
+    
+    <!-- Category Breakdown -->
+    <div class="vintage-card newspaper-texture">
+      <h2 class="headline-font text-xl font-bold uppercase mb-4 border-b-2 border-black dark:border-white pb-2">Articles by Category</h2>
+      {% if category_stats %}
+      <div class="space-y-3">
+        {% for category_name, count in category_stats %}
+        <div class="flex justify-between items-center p-3 border-2 border-black dark:border-white">
+          <span class="font-bold uppercase">{{ category_name }}</span>
+          <span class="vintage-btn text-xs">
+            {{ count }} ARTICLES
+          </span>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-center opacity-70 font-bold uppercase">No category data available.</p>
+      {% endif %}
+    </div>
+  </div>
+  
+  <!-- Recent Activity -->
+  <div class="vintage-card newspaper-texture">
+    <h2 class="headline-font text-xl font-bold uppercase mb-4 border-b-2 border-black dark:border-white pb-2">Recent Activity (Last 30 Days)</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="text-center p-4 border-2 border-black dark:border-white">
+        <p class="text-3xl font-bold">{{ recent_views }}</p>
+        <p class="text-sm font-bold uppercase tracking-wider">Page Views</p>
+      </div>
+      <div class="text-center p-4 border-2 border-black dark:border-white">
+        <p class="text-3xl font-bold">{{ (recent_views / 30)|round|int }}</p>
+        <p class="text-sm font-bold uppercase tracking-wider">Avg. Daily Views</p>
+      </div>
+      <div class="text-center p-4 border-2 border-black dark:border-white">
+        <p class="text-3xl font-bold">{{ ((recent_views / total_views) * 100)|round|int if total_views > 0 else 0 }}%</p>
+        <p class="text-sm font-bold uppercase tracking-wider">of Total Views</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

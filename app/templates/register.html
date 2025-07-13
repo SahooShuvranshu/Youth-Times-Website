@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="main-content below-header flex flex-col items-center justify-center">
+  <div class="vintage-card newspaper-texture p-8 w-full max-w-md mb-10 text-center">
+    <div class="text-center mb-6">
+      <h2 class="headline-font text-3xl font-bold uppercase typewriter">JOIN YOUTH TIMES</h2>
+      <p class="text-sm opacity-70 mt-2 tracking-wider">BECOME A CONTRIBUTOR</p>
+      <hr class="newspaper-divider">
+    </div>
+    
+    <form method="post" class="space-y-6">
+      <div>
+        <label class="block headline-font text-sm font-bold uppercase tracking-wider mb-2">USERNAME</label>
+        <input type="text" name="username" placeholder="CHOOSE USERNAME" required 
+               class="vintage-input w-full" />
+      </div>
+      
+      <div>
+        <label class="block headline-font text-sm font-bold uppercase tracking-wider mb-2">EMAIL ADDRESS</label>
+        <input type="email" name="email" placeholder="YOUR EMAIL" required 
+               class="vintage-input w-full" />
+      </div>
+      
+      <div>
+        <label class="block headline-font text-sm font-bold uppercase tracking-wider mb-2">PASSWORD</label>
+        <input type="password" name="password" placeholder="CREATE PASSWORD" required 
+               class="vintage-input w-full" />
+      </div>
+      
+      <button type="submit" class="vintage-btn w-full press-effect">
+        ✏️ CREATE ACCOUNT
+      </button>
+    </form>
+    
+    <!-- Google Registration Button -->
+    <div class="mt-6">
+      <hr class="newspaper-divider">
+      <a href="{{ url_for('auth.google_login') }}" class="vintage-btn w-full press-effect flex items-center justify-center">
+        <span class="mr-2">🌐</span>
+        SIGN UP WITH GOOGLE
+      </a>
+    </div>
+    
+    <div class="mt-6 text-center border-t-2 border-black dark:border-white pt-4">
+      <p class="font-bold uppercase tracking-wider text-sm">
+        ALREADY HAVE AN ACCOUNT? 
+        <a href="{{ url_for('auth.login') }}" class="vintage-btn text-xs ml-2">LOGIN HERE</a>
+      </p>
+    </div>
+    
+    <!-- Registration benefits -->
+    <div class="mt-6 border-t-2 border-black dark:border-white pt-4">
+      <h3 class="headline-font text-sm font-bold uppercase mb-3">MEMBER BENEFITS:</h3>
+      <ul class="text-xs space-y-1 opacity-80">
+        <li>• SUBMIT YOUR ARTICLES</li>
+        <li>• JOIN THE COMMUNITY</li>
+        <li>• GET NOTIFICATIONS</li>
+        <li>• BUILD YOUR PROFILE</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

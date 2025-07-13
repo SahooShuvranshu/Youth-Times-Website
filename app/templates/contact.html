@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="main-content below-header">
+
+<!-- Contact Us Header -->
+<div class="vintage-card text-center mb-8">
+  <h1 class="headline-font text-4xl font-bold uppercase mb-4">Contact Youth Times</h1>
+  <p class="text-lg">Get in touch with our editorial team</p>
+</div>
+
+<!-- Contact Information -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+  <!-- Contact Form -->
+  <div class="vintage-card">
+    <h2 class="headline-font text-2xl font-bold uppercase mb-6">Send us a Message</h2>
+    
+    <form method="POST" class="space-y-6">
+      <div>
+        <label for="name" class="block font-bold uppercase tracking-wider mb-2">Name</label>
+        <input type="text" id="name" name="name" required class="vintage-input w-full" placeholder="Your full name">
+      </div>
+      
+      <div>
+        <label for="email" class="block font-bold uppercase tracking-wider mb-2">Email</label>
+        <input type="email" id="email" name="email" required class="vintage-input w-full" placeholder="your.email@example.com">
+      </div>
+      
+      <div>
+        <label for="subject" class="block font-bold uppercase tracking-wider mb-2">Subject</label>
+        <input type="text" id="subject" name="subject" required class="vintage-input w-full" placeholder="What is this about?">
+      </div>
+      
+      <div>
+        <label for="message" class="block font-bold uppercase tracking-wider mb-2">Message</label>
+        <textarea id="message" name="message" required class="vintage-input w-full" rows="6" placeholder="Tell us what's on your mind..."></textarea>
+      </div>
+      
+      <button type="submit" class="vintage-btn w-full">
+        SEND MESSAGE
+      </button>
+    </form>
+  </div>
+  
+  <!-- Contact Information -->
+  <div class="space-y-6">
+    <!-- Editorial Office -->
+    <div class="vintage-card">
+      <h3 class="headline-font text-xl font-bold uppercase mb-4">Editorial Office</h3>
+      <div class="space-y-3">
+        <p class="flex items-center">
+          <span class="mr-3">📧</span>
+          <span>editor@youthtimes.org</span>
+        </p>
+        <p class="flex items-center">
+          <span class="mr-3">📞</span>
+          <span>+1 (555) 123-4567</span>
+        </p>
+        <p class="flex items-center">
+          <span class="mr-3">📍</span>
+          <span>123 Campus Drive<br>University City, UC 12345</span>
+        </p>
+      </div>
+    </div>
+    
+    <!-- Submissions -->
+    <div class="vintage-card">
+      <h3 class="headline-font text-xl font-bold uppercase mb-4">Article Submissions</h3>
+      <p class="mb-4">Want to write for Youth Times? We welcome contributions from students and young writers.</p>
+      <a href="{{ url_for('articles.submit_article') }}" class="vintage-btn">
+        SUBMIT AN ARTICLE
+      </a>
+    </div>
+    
+    <!-- Business Inquiries -->
+    <div class="vintage-card">
+      <h3 class="headline-font text-xl font-bold uppercase mb-4">Business Inquiries</h3>
+      <div class="space-y-3">
+        <p class="flex items-center">
+          <span class="mr-3">💼</span>
+          <span>business@youthtimes.org</span>
+        </p>
+        <p class="text-sm opacity-70">
+          For advertising, partnerships, and other business-related inquiries.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ Section -->
+<div class="vintage-card">
+  <h2 class="headline-font text-2xl font-bold uppercase mb-6 text-center">Frequently Asked Questions</h2>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <h4 class="font-bold uppercase mb-2">How do I submit an article?</h4>
+      <p class="text-sm">Register for an account and use our submission form. All articles go through our editorial review process.</p>
+    </div>
+    
+    <div>
+      <h4 class="font-bold uppercase mb-2">How long does review take?</h4>
+      <p class="text-sm">We typically review submissions within 3-5 business days. You'll receive a notification once reviewed.</p>
+    </div>
+    
+    <div>
+      <h4 class="font-bold uppercase mb-2">Can I edit published articles?</h4>
+      <p class="text-sm">Minor edits can be requested through the editorial team. Major changes require resubmission.</p>
+    </div>
+    
+    <div>
+      <h4 class="font-bold uppercase mb-2">Do you pay for articles?</h4>
+      <p class="text-sm">Youth Times is a student publication. We provide recognition and portfolio building opportunities.</p>
+    </div>
+  </div>
+</div>
+
+</div>
+{% endblock %}

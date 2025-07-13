@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="main-content below-header flex flex-col items-center justify-center">
+  <div class="vintage-card p-8 w-full max-w-4xl mb-10 text-center">
+    <!-- Article Header -->
+    <article class="mb-8">
+      {% if article.image_url %}
+      <div class="w-full h-64 md:h-96 overflow-hidden mb-6">
+        <img src="{{ article.image_url }}" alt="{{ article.title }}" class="w-full h-full object-cover border-3 border-black">
+      </div>
+      {% endif %}
+      <div>
+        {% if article.category %}
+        <div class="mb-4">
+          <span class="vintage-btn text-xs">
+            {{ article.category.name|upper }}
+          </span>
+        </div>
+        {% endif %}
+        <h1 class="headline-font text-4xl md:text-5xl font-bold mb-6">{{ article.title|upper }}</h1>
+        <div class="flex flex-wrap items-center text-sm mb-6 space-x-4 font-bold uppercase tracking-wider">
+          <span>By {{ article.author.name or article.author.username }}</span>
+          {% if article.created_at %}
+          <span>{{ article.created_at.strftime('%B %d, %Y') }}</span>
+          {% endif %}
+          <span>Views: {{ article.analytics|selectattr('event_type', 'equalto', 'view')|list|length }}</span>
+        </div>
+        {% if article.tags %}
+        <div class="mb-6">
+          {% for tag in article.tags.split(',') %}
+          <span class="inline-block vintage-btn text-xs mr-2 mb-2">
+            #{{ tag.strip()|upper }}
+          </span>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <hr class="newspaper-divider">
+        <div class="prose prose-lg max-w-none leading-relaxed">
+          {{ article.content|safe|nl2br }}
+        </div>
+        <hr class="newspaper-divider">
+        <div class="mt-8">
+          <h3 class="headline-font text-xl font-bold mb-4 uppercase">Share This Article</h3>
+          <div class="flex flex-wrap gap-4">
+            <a href="{{ url_for('articles.share_article', id=article.id, platform='twitter') }}" class="vintage-btn">TWITTER</a>
+            <a href="{{ url_for('articles.share_article', id=article.id, platform='facebook') }}" class="vintage-btn">FACEBOOK</a>
+            <a href="{{ url_for('articles.share_article', id=article.id, platform='linkedin') }}" class="vintage-btn">LINKEDIN</a>
+            <a href="{{ url_for('articles.share_article', id=article.id, platform='whatsapp') }}" class="vintage-btn">WHATSAPP</a>
+          </div>
+        </div>
+      </div>
+    </article>
+    <!-- Comments Section -->
+    <div class="vintage-card mt-8">
+      <h2 class="headline-font text-3xl font-bold mb-6 uppercase">Comments ({{ comments|length }})</h2>
+      {% if current_user.is_authenticated %}
+      <form method="post" action="{{ url_for('articles.add_comment', id=article.id) }}" class="mb-8">
+        <div class="mb-4">
+          <textarea name="content" rows="4" placeholder="SHARE YOUR THOUGHTS..." required class="vintage-input w-full"></textarea>
+        </div>
+        <button type="submit" class="vintage-btn">POST COMMENT</button>
+      </form>
+      {% else %}
+      <div class="vintage-card text-center mb-8">
+        <p class="font-bold uppercase">
+          <a href="{{ url_for('auth.login') }}" class="hover:underline">LOGIN</a> TO LEAVE A COMMENT
+        </p>
+      </div>
+      {% endif %}
+      {% if comments %}
+      <div class="space-y-6">
+        {% for comment in comments %}
+        <div class="border-b-3 border-black pb-6 dark:border-white">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center space-x-3">
+              {% if comment.user.profile_image %}
+              <img src="{{ comment.user.profile_image }}" alt="{{ comment.user.username }}" class="w-8 h-8 border-2 border-black">
+              {% else %}
+              <div class="w-8 h-8 bg-black text-white flex items-center justify-center border-2 border-black">
+                <span class="text-sm font-bold">{{ comment.user.username[0].upper() }}</span>
+              </div>
+              {% endif %}
+              <span class="font-bold uppercase tracking-wider">{{ comment.user.name or comment.user.username }}</span>
+            </div>
+            <span class="text-sm font-bold uppercase tracking-wider">{{ comment.created_at.strftime('%B %d, %Y at %I:%M %p') }}</span>
+          </div>
+          <p class="ml-11 leading-relaxed">{{ comment.content }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-8">
+        <p class="headline-font text-xl uppercase">No Comments Yet</p>
+        <p class="mt-2">Be the first to share your thoughts!</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="main-content below-header">
+
+<!-- Breaking News Ticker - Exact Match to Image -->
+<div class="breaking-news-ticker">
+  <div class="breaking-news-inner">
+    <div class="breaking-news-label">
+      BREAKING NEWS
+    </div>
+    <div class="breaking-news-messages">
+      <div class="breaking-news-scroll">
+        {% if ticker_messages %}
+          {{ ticker_messages|map(attribute='message')|join(' • ') }}
+        {% else %}
+          YOUTH VOICES MAKING HEADLINES WORLDWIDE • LATEST STORIES FROM YOUNG JOURNALISTS • STAY INFORMED WITH YOUTH TIMES • EMPOWERING THE NEXT GENERATION OF JOURNALISTS
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Emergency Weather Alert (shows only during severe weather) -->
+<div id="weather-alert" class="hidden vintage-card mb-6 bg-red-600 text-white dark:bg-red-400 dark:text-black">
+  <div class="flex items-center">
+    <span class="headline-font text-lg font-bold px-3 py-1 bg-yellow-400 text-black mr-4">
+      ⚠️ WEATHER ALERT
+    </span>
+    <div id="weather-alert-text" class="font-bold tracking-wider">
+      <!-- Weather alert content will be inserted here -->
+    </div>
+  </div>
+</div>
+
+<!-- Main Headline Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+  <!-- Featured Story -->
+  <div class="lg:col-span-2">
+    {% if articles and articles[0] %}
+    <div class="vintage-card">
+      <span class="vintage-btn text-xs mb-4 inline-block">FEATURED STORY</span>
+      <h1 class="headline-font text-4xl md:text-6xl font-bold leading-tight mb-4">
+        <a href="{{ url_for('articles.view_article', id=articles[0].id) }}" class="hover:underline">
+          {{ articles[0].title|upper }}
+        </a>
+      </h1>
+      <p class="text-lg mb-4 font-bold uppercase tracking-wider">
+        By {{ articles[0].author.username if articles[0].author else 'Anonymous' }} • {{ articles[0].created_at.strftime('%B %d, %Y') if articles[0].created_at }}
+      </p>
+      <p class="text-lg leading-relaxed mb-6">{{ articles[0].content|excerpt(300) }}</p>
+      <a href="{{ url_for('articles.view_article', id=articles[0].id) }}" class="vintage-btn text-lg">
+        READ FULL STORY
+      </a>
+    </div>
+    {% else %}
+    <div class="vintage-card text-center">
+      <h1 class="headline-font text-4xl font-bold mb-4">YOUTH TIMES</h1>
+      <p class="text-lg">No featured stories available. Check back soon for the latest news!</p>
+    </div>
+    {% endif %}
+  </div>
+  
+  <!-- Side Panel with Quick News -->
+  <div class="space-y-6">
+    <!-- Today's Headlines -->
+    <div class="vintage-card">
+      <h3 class="headline-font text-xl font-bold uppercase mb-4 border-b-2 border-black dark:border-white pb-2">
+        Today's Headlines
+      </h3>
+      {% if articles|length > 1 %}
+        {% for article in articles[1:4] %}
+        <div class="mb-4 pb-4 {% if not loop.last %}border-b border-black dark:border-white{% endif %}">
+          <h4 class="font-bold text-sm uppercase leading-tight mb-2">
+            <a href="{{ url_for('articles.view_article', id=article.id) }}" class="hover:underline">
+              {{ article.title }}
+            </a>
+          </h4>
+          <p class="text-xs font-bold uppercase tracking-wider opacity-70">
+            {{ article.author.username if article.author else 'Anonymous' }}
+          </p>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-sm">More headlines coming soon...</p>
+      {% endif %}
+    </div>
+    
+    <!-- Weather Widget -->
+    <div class="vintage-card text-center newspaper-texture">
+      <h3 class="headline-font text-xl font-bold uppercase mb-4">Weather Report</h3>
+      <div class="text-4xl mb-2" id="weather-widget-icon">🌤️</div>
+      <div class="text-2xl font-bold mb-2" id="weather-widget-temp">22°C</div>
+      <div class="text-sm font-bold uppercase tracking-wider" id="weather-widget-desc">PARTLY CLOUDY</div>
+      <div class="text-xs font-bold uppercase tracking-wider opacity-70 mt-2">
+        NEW YORK CITY
+      </div>
+      <div class="text-xs mt-2 opacity-60" id="weather-widget-updated">
+        Updated: <span id="weather-last-update">--:--</span>
+      </div>
+      <button onclick="refreshWeather()" class="vintage-btn text-xs mt-2 press-effect">
+        REFRESH
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Browse Articles Call-to-Action -->
+<div class="cta-section">
+  <div class="cta-inner">
+    <h2 class="headline-font cta-title">READ THE LATEST</h2>
+    <p class="cta-desc">Discover stories from young journalists around the world. Get informed, stay connected.</p>
+    <a href="{{ url_for('articles.articles_list') }}" class="cta-btn">VIEW ALL ARTICLES</a>
+  </div>
+</div>
+
+<hr class="newspaper-divider">
+
+<!-- Newspaper Sections -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <div class="vintage-card text-center press-effect newspaper-texture">
+    <h4 class="headline-font text-lg font-bold uppercase mb-3">Sports</h4>
+    <div class="text-3xl mb-2">⚽</div>
+    <p class="text-sm">Latest updates from the world of sports</p>
+    <div class="vintage-quote text-xs mt-2 opacity-70">
+      "Excellence in athletics starts with youth"
+    </div>
+  </div>
+  
+  <div class="vintage-card text-center press-effect newspaper-texture">
+    <h4 class="headline-font text-lg font-bold uppercase mb-3">Technology</h4>
+    <div class="text-3xl mb-2">💻</div>
+    <p class="text-sm">Innovation and tech trends for youth</p>
+    <div class="vintage-quote text-xs mt-2 opacity-70">
+      "The future is coded by the young"
+    </div>
+  </div>
+  
+  <div class="vintage-card text-center press-effect newspaper-texture">
+    <h4 class="headline-font text-lg font-bold uppercase mb-3">Culture</h4>
+    <div class="text-3xl mb-2">🎭</div>
+    <p class="text-sm">Arts, music, and cultural happenings</p>
+    <div class="vintage-quote text-xs mt-2 opacity-70">
+      "Culture shapes tomorrow's world"
+    </div>
+  </div>
+  
+  <div class="vintage-card text-center press-effect newspaper-texture">
+    <h4 class="headline-font text-lg font-bold uppercase mb-3">Opinion</h4>
+    <div class="text-3xl mb-2">💭</div>
+    <p class="text-sm">Voices and perspectives from youth</p>
+    <div class="vintage-quote text-xs mt-2 opacity-70">
+      "Every voice matters in democracy"
+    </div>
+  </div>
+</div>
+
+<!-- Call to Action -->
+<div class="vintage-card text-center newspaper-texture">
+  <h3 class="headline-font text-2xl font-bold uppercase mb-4">Join the Youth Times Community</h3>
+  <p class="text-lg mb-6">Be part of the new generation of journalists and storytellers</p>
+  <div class="flex flex-wrap justify-center gap-4">
+    {% if not current_user.is_authenticated %}
+      <a href="{{ url_for('auth.register') }}" class="vintage-btn press-effect">REGISTER TODAY</a>
+      <a href="{{ url_for('auth.login') }}" class="vintage-btn press-effect">LOGIN</a>
+    {% else %}
+      <a href="{{ url_for('articles.submit_article') }}" class="vintage-btn press-effect">SUBMIT ARTICLE</a>
+      <a href="{{ url_for('auth.profile') }}" class="vintage-btn press-effect">YOUR PROFILE</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Publication Status -->
+<div class="vintage-card text-center mt-8">
+  <h4 class="headline-font text-lg font-bold uppercase mb-3">Publication Status</h4>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+    <div class="border-r-2 border-black dark:border-white pr-4 md:border-r md:border-r-2">
+      <span class="font-bold">ARTICLES:</span> {{ articles|length }}
+    </div>
+    <div class="border-r-2 border-black dark:border-white pr-4 md:border-r md:border-r-2">
+      <span class="font-bold">WRITERS:</span> {{ articles|map(attribute='author')|unique|list|length }}
+    </div>
+    <div>
+      <span class="font-bold">STATUS:</span> ACTIVE
+    </div>
+  </div>
+  <div class="mt-3 text-xs opacity-70">
+    Updated: <span id="publicationStatusUpdate"></span>
+  </div>
+</div>
+
+<script>
+// Enhanced weather functions
+function refreshWeather() {
+  document.getElementById('weather-widget-desc').innerHTML = '<span class="vintage-loading"></span>';
+  
+  // Simulate weather refresh (you can replace this with actual API call)
+  setTimeout(() => {
+    syncWeatherWidget();
+    updateWeatherTimestamp();
+  }, 1000);
+}
+
+function updateWeatherTimestamp() {
+  const now = new Date();
+  const timeString = now.toLocaleTimeString('en-US', { 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
+  document.getElementById('weather-last-update').innerText = timeString;
+}
+
+// Check for severe weather and show alerts
+function checkWeatherAlerts(weatherData) {
+  const alertDiv = document.getElementById('weather-alert');
+  const alertText = document.getElementById('weather-alert-text');
+  
+  // Mock severe weather conditions for demo
+  const severeConditions = ['Thunderstorm', 'Snow', 'Extreme'];
+  const currentCondition = weatherData ? weatherData.main : 'Clear';
+  
+  if (severeConditions.some(condition => currentCondition.includes(condition))) {
+    alertText.innerText = `SEVERE WEATHER WARNING: ${currentCondition.toUpperCase()} CONDITIONS EXPECTED`;
+    alertDiv.classList.remove('hidden');
+  } else {
+    alertDiv.classList.add('hidden');
+  }
+}
+
+// Sync weather widget with main weather
+function syncWeatherWidget() {
+  const mainWeatherText = document.getElementById('weatherText');
+  const mainTemp = document.getElementById('currentTemperature');
+  
+  if (mainWeatherText && mainTemp) {
+    const icon = mainWeatherText.innerHTML.split(' ')[0];
+    const desc = mainWeatherText.innerHTML.split(' ').slice(1).join(' ');
+    const temp = mainTemp.innerText;
+    
+    document.getElementById('weather-widget-icon').innerText = icon;
+    document.getElementById('weather-widget-temp').innerText = temp;
+    document.getElementById('weather-widget-desc').innerText = desc;
+    
+    // Check for weather alerts
+    checkWeatherAlerts({ main: desc });
+  }
+}
+
+// Enhanced page interactions
+document.addEventListener('DOMContentLoaded', function() {
+  // Add press effects to buttons
+  document.querySelectorAll('.press-effect').forEach(element => {
+    element.addEventListener('click', function() {
+      this.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        this.style.transform = '';
+      }, 100);
+    });
+  });
+  
+  // Initialize weather timestamp
+  updateWeatherTimestamp();
+  
+  // Update weather timestamp every minute
+  setInterval(updateWeatherTimestamp, 60000);
+  
+  // Initialize publication status update
+  const now = new Date();
+  const pubStatusElement = document.getElementById('publicationStatusUpdate');
+  if (pubStatusElement) {
+    pubStatusElement.innerText = now.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+  
+  // Add vintage hover effects (without transform)
+  document.querySelectorAll('.vintage-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      // Only change box-shadow, no transforms that create stacking contexts
+      this.style.boxShadow = '16px 16px 0px var(--primary-black)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.boxShadow = '';
+    });
+  });
+});
+
+// Sync weather every few seconds
+setInterval(syncWeatherWidget, 2000);
+setTimeout(syncWeatherWidget, 1000);
+
+// Keyboard shortcuts for weather
+document.addEventListener('keydown', function(e) {
+  if (e.key.toLowerCase() === 'r' && !e.ctrlKey && !e.metaKey) {
+    const activeElement = document.activeElement;
+    if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      refreshWeather();
+    }
+  }
+});
+</script>
+
+</div>
+{% endblock %}

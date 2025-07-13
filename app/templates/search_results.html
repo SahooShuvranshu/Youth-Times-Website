@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="main-content below-header flex flex-col items-center justify-center">
+  <div class="vintage-card p-8 w-full max-w-5xl mb-10 text-center">
+    <div class="newspaper-header text-center mb-8">
+      <h1 class="headline-font text-4xl font-bold typewriter">SEARCH RESULTS</h1>
+      <p class="text-lg font-bold uppercase tracking-wider mt-4">
+        {{ results|length }} Results Found for "{{ query|upper }}"
+      </p>
+      <hr class="newspaper-divider">
+    </div>
+    {% if results %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for art in results %}
+        <div class="vintage-card">
+          <h2 class="headline-font text-xl font-bold mb-3 leading-tight">
+            <a href="{{ url_for('articles.view_article', hash_id=art.hash_id) }}" class="hover:underline transition-all duration-300">
+              {{ art.title|upper }}
+            </a>
+          </h2>
+          <p class="text-sm font-bold mb-3 uppercase tracking-wider opacity-70">
+            By {{ art.author.username }}
+          </p>
+          <p class="mb-4 leading-relaxed">{{ art.content|excerpt(150) }}</p>
+          <a href="{{ url_for('articles.view_article', hash_id=art.hash_id) }}" class="vintage-btn text-sm">
+            READ ARTICLE
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="vintage-card text-center">
+        <h2 class="headline-font text-2xl font-bold uppercase mb-4">No Articles Found</h2>
+        <p class="text-lg mb-6">No articles match your search query "{{ query }}"</p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="{{ url_for('articles.home') }}" class="vintage-btn">BROWSE ALL ARTICLES</a>
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('articles.submit_article') }}" class="vintage-btn">SUBMIT NEW ARTICLE</a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+    <!-- Search suggestions -->
+    <div class="vintage-card mt-8 text-center">
+      <h3 class="headline-font text-xl font-bold uppercase mb-4">Search Tips</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <div>
+          <strong class="uppercase">Try Different Keywords:</strong>
+          <p>Use synonyms or related terms</p>
+        </div>
+        <div>
+          <strong class="uppercase">Check Spelling:</strong>
+          <p>Make sure all words are spelled correctly</p>
+        </div>
+        <div>
+          <strong class="uppercase">Be Specific:</strong>
+          <p>Use more specific search terms</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

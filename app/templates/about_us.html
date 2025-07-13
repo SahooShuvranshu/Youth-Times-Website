@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - Youth Times{% endblock %}
+
+{% block content %}
+<div class="main-content below-header flex flex-col items-center justify-center">
+  <div class="vintage-card p-8 w-full max-w-5xl mb-10 text-center">
+    <h1 class="headline-font text-4xl font-bold mb-4">ABOUT YOUTH TIMES</h1>
+    <div class="vintage-divider mb-6 mx-auto"></div>
+    <p class="text-lg leading-relaxed max-w-3xl mx-auto mb-4">
+      Youth Times is a modern news platform developed as part of a comprehensive Python internship program. Our mission is to deliver credible, timely news with innovative features and a user-focused experience.
+    </p>
+  </div>
+
+  <div class="vintage-card p-8 w-full max-w-5xl mb-10 text-center">
+    <h2 class="headline-font text-3xl font-bold mb-6">OUR DEVELOPMENT TEAM</h2>
+    <div class="vintage-divider mb-8 mx-auto"></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for member in team_members %}
+      <div class="vintage-card p-6 text-center always-visible">
+        <div class="w-32 h-32 mx-auto rounded-full mb-4 overflow-hidden border-4 border-gray-300">
+          <img src="https://via.placeholder.com/150x150/cccccc/666666?text={{ member.name.split()[0][0] }}{{ member.name.split()[1][0] }}" alt="{{ member.name }}" class="w-full h-full object-cover">
+        </div>
+        <h3 class="headline-font text-xl font-bold mb-2">{{ member.name }}</h3>
+        <p class="text-sm font-semibold text-gray-600 mb-3">{{ member.role }}</p>
+        <p class="text-sm mb-4 leading-relaxed">{{ member.bio }}</p>
+        <div class="skills-list">
+          <p class="text-xs font-semibold mb-2">Key Skills:</p>
+          <div class="flex flex-wrap gap-1 justify-center">
+            {% for skill in member.skills %}
+            <span class="inline-block bg-gray-200 text-gray-800 px-2 py-1 text-xs rounded-sm">{{ skill }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="vintage-card p-8 w-full max-w-5xl mb-10 text-center">
+    <h2 class="headline-font text-3xl font-bold mb-6">OUR INSTITUTION</h2>
+    <div class="vintage-divider mb-8 mx-auto"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+      <div class="text-center">
+        <div class="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-gray-300 bg-white p-4">
+          <img src="https://nilachalpolytechnic.ac.in/images/logo.png" alt="Nilachal Polytechnic Logo" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/300x300/0066cc/ffffff?text=NILACHAL+POLYTECHNIC'">
+        </div>
+      </div>
+      <div class="text-center lg:text-left">
+        <h3 class="headline-font text-2xl font-bold mb-4">{{ college_info.name }}</h3>
+        <p class="text-gray-600 mb-2"><strong>Location:</strong> {{ college_info.location }}</p>
+        <p class="text-gray-600 mb-2"><strong>Established:</strong> {{ college_info.established }}</p>
+        <p class="mb-4 leading-relaxed">{{ college_info.description }}</p>
+        <div class="mb-4">
+          <h4 class="font-bold mb-2">Specialties:</h4>
+          <div class="flex flex-wrap gap-2 justify-center lg:justify-start">
+            {% for specialty in college_info.specialties %}
+            <span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 text-sm rounded-sm">{{ specialty }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <a href="{{ college_info.website }}" target="_blank" class="vintage-btn inline-block">Visit College Website</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="vintage-card p-8 w-full max-w-5xl mb-10 text-center">
+    <h2 class="headline-font text-3xl font-bold mb-6">INTERNSHIP PROGRAM</h2>
+    <div class="vintage-divider mb-8 mx-auto"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+      <div class="text-center lg:order-2">
+        <div class="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-gray-300 bg-white p-4">
+          <img src="https://okcl.org/wp-content/uploads/2021/03/okcl-logo.png" alt="OKCL Logo" class="w-full h-full object-contain" onerror="this.src='https://via.placeholder.com/300x300/00a651/ffffff?text=OKCL'">
+        </div>
+      </div>
+      <div class="text-center lg:text-left lg:order-1">
+        <h3 class="headline-font text-2xl font-bold mb-4">{{ internship_info.company }}</h3>
+        <p class="text-gray-600 mb-2"><strong>Program:</strong> {{ internship_info.program }}</p>
+        <p class="text-gray-600 mb-2"><strong>Duration:</strong> {{ internship_info.duration }}</p>
+        <p class="mb-4 leading-relaxed">{{ internship_info.description }}</p>
+        <div class="mb-4">
+          <h4 class="font-bold mb-2">Skills & Technologies Learned:</h4>
+          <div class="grid grid-cols-2 gap-2">
+            {% for skill in internship_info.skills_learned %}
+            <span class="inline-block bg-green-100 text-green-800 px-3 py-1 text-sm rounded-sm">{{ skill }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <a href="{{ internship_info.website }}" target="_blank" class="vintage-btn inline-block">Learn About OKCL</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="vintage-card p-8 w-full max-w-5xl mb-10 text-center">
+    <h2 class="headline-font text-3xl font-bold mb-6">PROJECT OVERVIEW</h2>
+    <div class="vintage-divider mb-8 mx-auto"></div>
+    <div class="max-w-4xl mx-auto">
+      <p class="text-lg leading-relaxed mb-6 text-center">{{ internship_info.project_goal }}</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="vintage-card p-4 text-center">
+          <div class="text-3xl mb-3">📰</div>
+          <h4 class="font-bold mb-2">Modern News Platform</h4>
+          <p class="text-sm">Responsive design with mobile and desktop optimization</p>
+        </div>
+        <div class="vintage-card p-4 text-center">
+          <div class="text-3xl mb-3">🔍</div>
+          <h4 class="font-bold mb-2">Credibility Scoring</h4>
+          <p class="text-sm">Advanced algorithm to assess article credibility</p>
+        </div>
+        <div class="vintage-card p-4 text-center">
+          <div class="text-3xl mb-3">🌤️</div>
+          <h4 class="font-bold mb-2">Weather Integration</h4>
+          <p class="text-sm">Real-time weather updates and alerts</p>
+        </div>
+        <div class="vintage-card p-4 text-center">
+          <div class="text-3xl mb-3">👥</div>
+          <h4 class="font-bold mb-2">User Management</h4>
+          <p class="text-sm">Robust authentication and role-based access</p>
+        </div>
+        <div class="vintage-card p-4 text-center">
+          <div class="text-3xl mb-3">📱</div>
+          <h4 class="font-bold mb-2">PWA Support</h4>
+          <p class="text-sm">Progressive Web App with offline capabilities</p>
+        </div>
+        <div class="vintage-card p-4 text-center">
+          <div class="text-3xl mb-3">📊</div>
+          <h4 class="font-bold mb-2">Analytics Dashboard</h4>
+          <p class="text-sm">Comprehensive analytics and user insights</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vintage-card p-8 w-full max-w-5xl mb-10 text-center">
+    <h2 class="headline-font text-3xl font-bold mb-8">TEAM COLLABORATION</h2>
+    <div class="vintage-divider mb-8 mx-auto"></div>
+    <div class="w-full max-w-3xl mx-auto h-80 mb-6 overflow-hidden rounded-lg border-4 border-gray-300">
+      <img src="https://via.placeholder.com/800x400/8b5cf6/ffffff?text=YOUTH+TIMES+DEVELOPMENT+TEAM" alt="Youth Times Development Team" class="w-full h-full object-cover">
+    </div>
+    <p class="text-lg leading-relaxed max-w-4xl mx-auto">
+      Our diverse team of six talented interns collaborated to bring Youth Times to life, combining technical expertise with creative design and strategic thinking. This internship project represents months of dedication, learning, and innovation in modern web development at OKCL under the guidance of industry professionals.
+    </p>
+  </div>
+</div>
+{% endblock %}

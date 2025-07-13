@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="main-content below-header flex flex-col items-center justify-center">
+  <div class="vintage-card newspaper-texture p-8 w-full max-w-md mb-10 text-center">
+    <div class="text-center">
+      <h2 class="article-title">USER LOGIN</h2>
+      <p class="article-meta">ACCESS YOUR ACCOUNT</p>
+    </div>
+    
+    <form method="post" class="space-y-6">
+      <div class="form-group">
+        <label class="form-label">USERNAME</label>
+        <input type="text" name="username" placeholder="Enter Username" required class="form-input" />
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">PASSWORD</label>
+        <input type="password" name="password" placeholder="Enter Password" required class="form-input" />
+               
+      </div>
+      
+      <button type="submit" class="vintage-btn w-full press-effect">
+        🔐 LOGIN TO ACCOUNT
+      </button>
+    </form>
+    
+    <!-- Google Login Button -->
+    <div class="mt-6">
+      <hr class="newspaper-divider">
+      <a href="{{ url_for('auth.google_login') }}" class="vintage-btn w-full press-effect flex items-center justify-center">
+        <span class="mr-2">🌐</span>
+        CONTINUE WITH GOOGLE
+      </a>
+    </div>
+    
+    <div class="mt-6 text-center text-sm space-y-3 border-t-2 border-black dark:border-white pt-4">
+      <p class="font-bold uppercase tracking-wider">
+        NEW TO YOUTH TIMES? 
+        <a href="{{ url_for('auth.register') }}" class="vintage-btn text-xs ml-2">REGISTER HERE</a>
+      </p>
+      <p class="font-bold uppercase tracking-wider">
+        NEED EMAIL CONFIRMATION? 
+        <button onclick="showResendForm()" class="vintage-btn text-xs ml-2">RESEND EMAIL</button>
+      </p>
+    </div>
+    
+    <!-- Resend Confirmation Form (Hidden by default) -->
+    <div id="resend-form" class="mt-4 hidden border-t-2 border-black dark:border-white pt-4">
+      <form action="{{ url_for('auth.resend_confirmation') }}" method="get" class="space-y-3">
+        <input type="text" name="username" placeholder="ENTER YOUR USERNAME" required 
+               class="vintage-input w-full text-sm" />
+        <button type="submit" class="vintage-btn w-full text-sm press-effect">
+          📧 RESEND CONFIRMATION EMAIL
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function showResendForm() {
+  const form = document.getElementById('resend-form');
+  form.classList.toggle('hidden');
+  
+  // Add animation
+  if (!form.classList.contains('hidden')) {
+    form.style.opacity = '0';
+    form.style.transform = 'translateY(-10px)';
+    setTimeout(() => {
+      form.style.transition = 'all 0.3s ease-out';
+      form.style.opacity = '1';
+      form.style.transform = 'translateY(0)';
+    }, 10);
+  }
+}
+</script>
+{% endblock %}

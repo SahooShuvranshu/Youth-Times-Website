@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="newspaper-header text-center mb-8 newspaper-texture">
+  <h1 class="headline-font text-3xl md:text-4xl font-bold typewriter">ADMIN CONTROL PANEL</h1>
+  <p class="text-sm opacity-70 mt-2 tracking-wider uppercase">EDITORIAL OVERSIGHT & MANAGEMENT</p>
+  <hr class="newspaper-divider">
+</div>
+
+<div class="vintage-card mb-8 newspaper-texture">
+  <!-- Control Buttons -->
+  <div class="mb-6 flex flex-wrap justify-center gap-4">
+    <a href="{{ url_for('auth.test_email') }}" class="vintage-btn press-effect">
+      📧 TEST EMAIL CONFIG
+    </a>
+    <a href="{{ url_for('admin.analytics_dashboard') }}" class="vintage-btn press-effect">
+      📊 ANALYTICS DASHBOARD
+    </a>
+    <a href="{{ url_for('admin.manage_ticker') }}" class="vintage-btn press-effect">
+      📢 MANAGE TICKER
+    </a>
+  </div>
+  
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+    <h2 class="headline-font text-xl md:text-2xl font-bold uppercase border-b-2 border-black dark:border-white pb-2 mb-4 md:mb-0">
+      📰 Pending Articles
+    </h2>
+    <form method="get" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+      <input type="text" name="article_search" value="{{ article_search }}" 
+             placeholder="SEARCH ARTICLES..." class="vintage-input text-sm" />
+      <button type="submit" class="vintage-btn text-sm press-effect">🔍 SEARCH</button>
+    </form>
+  </div>
+  
+  {% if articles %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full border-3 border-black">
+        <thead class="bg-black text-white dark:bg-white dark:text-black">
+          <tr>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Title</th>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Submitted By</th>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Trust Score</th>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Content</th>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for article in articles %}
+          <tr class="hover:bg-gray-100 dark:hover:bg-gray-800">
+            <td class="py-3 px-4 border-2 border-black dark:border-white font-bold">{{ article.title }}</td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.author.username }}</td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">
+              {% set score = article.trust_score or 0 %}
+              <span class="vintage-btn text-xs {% if score >= 50 %}bg-green-100{% else %}bg-red-100{% endif %}">{{ score }}%</span>
+            </td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.content[:200] }}{% if article.content|length > 200 %}...{% endif %}</td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">
+              <div class="flex flex-wrap gap-1">
+                <a href="{{ url_for('articles.view_article', id=article.id) }}" class="vintage-btn text-xs">VIEW</a>
+                <a href="{{ url_for('admin.edit_article', id=article.id) }}" class="vintage-btn text-xs">EDIT</a>
+                <a href="{{ url_for('admin.delete_article', id=article.id) }}" class="vintage-btn text-xs">DELETE</a>
+                <a href="{{ url_for('admin.approve_article', id=article.id) }}" class="vintage-btn text-xs">APPROVE</a>
+                <a href="{{ url_for('admin.reject_article', id=article.id) }}" class="vintage-btn text-xs">REJECT</a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- Pagination controls -->
+    <nav class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+      {% if pag.has_prev %}
+        <a href="{{ url_for('admin.admin_panel', page=pag.prev_num) }}" class="vintage-btn press-effect">
+          ← PREVIOUS PAGE
+        </a>
+      {% else %}
+        <span class="vintage-btn opacity-50">← PREVIOUS PAGE</span>
+      {% endif %}
+      
+      <span class="text-sm font-bold">
+        PAGE {{ pag.page }} OF {{ pag.pages }}
+      </span>
+      
+      {% if pag.has_next %}
+        <a href="{{ url_for('admin.admin_panel', page=pag.next_num) }}" class="vintage-btn press-effect">
+          NEXT PAGE →
+        </a>
+      {% else %}
+        <span class="vintage-btn opacity-50">NEXT PAGE →</span>
+      {% endif %}
+    </nav>
+  {% else %}
+    <div class="text-center py-12 newspaper-texture">
+      <div class="text-6xl mb-4">📰</div>
+      <p class="headline-font text-xl uppercase mb-2">No Pending Articles</p>
+      <p class="text-sm opacity-70">All caught up! No articles awaiting review.</p>
+      <div class="mt-4">
+        <span class="vintage-btn text-xs">✅ INBOX CLEAR</span>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<!-- User management table -->
+<div class="vintage-card mb-8 newspaper-texture">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+    <h2 class="headline-font text-xl md:text-2xl font-bold uppercase border-b-2 border-black dark:border-white pb-2 mb-4 md:mb-0">
+      👥 Registered Users
+    </h2>
+    <form method="get" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+      <input type="text" name="user_search" value="{{ user_search }}" 
+             placeholder="SEARCH USERS..." class="vintage-input text-sm" />
+      <button type="submit" class="vintage-btn text-sm press-effect">🔍 SEARCH</button>
+    </form>
+  </div>
+  
+  {% if users %}
+  <div class="overflow-x-auto">
+    <table class="min-w-full border-3 border-black">
+      <thead class="bg-black text-white dark:bg-white dark:text-black">
+        <tr>
+          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">ID</th>
+          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Username</th>
+          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Role</th>
+          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr class="hover:bg-gray-100 dark:hover:bg-gray-800">
+          <td class="py-3 px-4 border-2 border-black dark:border-white font-bold">{{ user.id }}</td>
+          <td class="py-3 px-4 border-2 border-black dark:border-white font-bold">{{ user.username }}</td>
+          <td class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">{{ user.role }}</td>
+          <td class="py-3 px-4 border-2 border-black dark:border-white">
+            {% if user.id != current_user.id %}
+              {% if user.role != 'admin' %}
+                <div class="flex flex-wrap gap-1">
+                  <a href="{{ url_for('admin.promote_user', id=user.id) }}" class="vintage-btn text-xs">PROMOTE</a>
+                  <a href="{{ url_for('admin.delete_user', id=user.id) }}" class="vintage-btn text-xs">DELETE</a>
+                  <a href="{{ url_for('admin.reset_password', id=user.id) }}" class="vintage-btn text-xs">RESET PW</a>
+                </div>
+              {% else %}
+                <!-- Admin users cannot be demoted -->
+                <div class="flex flex-wrap gap-1">
+                  <span class="vintage-btn text-xs">
+                    {% if user.is_super_admin %}
+                      SUPER ADMIN
+                    {% else %}
+                      ADMIN
+                    {% endif %}
+                  </span>
+                  <!-- Only super admins can reset super admin passwords -->
+                  {% if not user.is_super_admin or current_user.is_super_admin %}
+                    <a href="{{ url_for('admin.reset_password', id=user.id) }}" class="vintage-btn text-xs">RESET PW</a>
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% else %}
+              <span class="vintage-btn text-xs">CURRENT USER</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <!-- Pagination for users -->
+  <nav class="mt-6 flex justify-between">
+    {% if users_pag.has_prev %}
+      <a href="{{ url_for('admin.admin_panel', user_page=users_pag.prev_num, user_search=user_search) }}" class="vintage-btn">&larr; PREVIOUS USERS</a>
+    {% else %}
+      <span></span>
+    {% endif %}
+    {% if users_pag.has_next %}
+      <a href="{{ url_for('admin.admin_panel', user_page=users_pag.next_num, user_search=user_search) }}" class="vintage-btn">NEXT USERS &rarr;</a>
+    {% endif %}
+  </nav>
+  {% else %}
+  <div class="text-center py-12 newspaper-texture">
+      <div class="text-6xl mb-4">👥</div>
+      <p class="headline-font text-xl uppercase mb-2">No Registered Users</p>
+      <p class="text-sm opacity-70">No users match your search criteria.</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- All Articles Management -->
+<div class="vintage-card mb-8">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+    <h2 class="headline-font text-2xl font-bold uppercase">All Articles</h2>
+    <form method="get" class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mt-4 md:mt-0">
+      <input type="text" name="all_search" value="{{ all_search }}" placeholder="SEARCH ALL ARTICLES..." class="vintage-input" />
+      <button type="submit" class="vintage-btn">SEARCH</button>
+    </form>
+  </div>
+  
+  <div class="overflow-x-auto">
+    <table class="min-w-full border-3 border-black">
+      <thead class="bg-black text-white dark:bg-white dark:text-black">
+        <tr>
+          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">ID</th>
+          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Title</th>
+          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Author</th>
+          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Status</th>
+          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Trust Score</th>
+          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for art in all_articles %}
+        <tr class="hover:bg-gray-100 dark:hover:bg-gray-800">
+          <td class="py-3 px-4 border-2 border-black dark:border-white font-bold">{{ art.id }}</td>
+          <td class="py-3 px-4 border-2 border-black dark:border-white font-bold">{{ art.title }}</td>
+          <td class="py-3 px-4 border-2 border-black dark:border-white">{{ art.author.username }}</td>
+          <td class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">{{ art.status }}</td>
+          <td class="py-3 px-4 border-2 border-black dark:border-white">
+            {% set score = art.trust_score or 0 %}
+            <span class="vintage-btn text-xs {% if score >= 50 %}bg-green-100{% else %}bg-red-100{% endif %}">{{ score }}%</span>
+          </td>
+          <td class="py-3 px-4 border-2 border-black dark:border-white">
+            <div class="flex flex-wrap gap-1">
+              <a href="{{ url_for('admin.edit_article', id=art.id) }}" class="vintage-btn text-xs">EDIT</a>
+              <a href="{{ url_for('admin.delete_article', id=art.id) }}" class="vintage-btn text-xs">DELETE</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <!-- Pagination for all articles -->
+  <nav class="mt-6 flex justify-between">
+    {% if all_pag.has_prev %}
+      <a href="{{ url_for('admin.admin_panel', all_page=all_pag.prev_num, all_search=all_search) }}" class="vintage-btn">&larr; PREVIOUS ARTICLES</a>
+    {% else %}
+      <span></span>
+    {% endif %}
+    {% if all_pag.has_next %}
+      <a href="{{ url_for('admin.admin_panel', all_page=all_pag.next_num, all_search=all_search) }}" class="vintage-btn">NEXT ARTICLES &rarr;</a>
+    {% endif %}
+  </nav>
+</div>
+
+<!-- Action Logs -->
+<div class="vintage-card mb-8">
+  <h2 class="headline-font text-2xl font-bold uppercase mb-6">Action Logs</h2>
+  <form method="get" action="{{ url_for('admin.admin_panel') }}" class="flex flex-col md:flex-row md:items-center mb-6 space-y-2 md:space-y-0 md:space-x-2">
+    <!-- Preserve other filters -->
+    <input type="hidden" name="article_search" value="{{ article_search }}" />
+    <input type="hidden" name="user_search" value="{{ user_search }}" />
+    <input type="hidden" name="all_search" value="{{ all_search }}" />
+    <input type="hidden" name="page" value="{{ pag.page }}" />
+    <input type="hidden" name="log_page" value="{{ log_page }}" />
+    <input type="text" name="log_search" placeholder="FILTER LOGS..." value="{{ log_search }}" class="vintage-input" />
+    <button type="submit" class="vintage-btn">FILTER</button>
+  </form>
+  
+  {% if logs %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full border-3 border-black">
+        <thead class="bg-black text-white dark:bg-white dark:text-black">
+          <tr>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Time</th>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in logs %}
+          <tr class="hover:bg-gray-100 dark:hover:bg-gray-800">
+            <td class="py-3 px-4 border-2 border-black dark:border-white font-mono font-bold">{{ entry.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">{{ entry.action }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- Console Logs pagination -->
+    <nav class="mt-6 flex justify-between">
+      {% if logs_pag.has_prev %}
+        <a href="{{ url_for('admin.admin_panel', log_page=logs_pag.prev_num, log_search=log_search) }}" class="vintage-btn">&larr; PREV CONSOLE LOGS</a>
+      {% else %}
+        <span></span>
+      {% endif %}
+      {% if logs_pag.has_next %}
+        <a href="{{ url_for('admin.admin_panel', log_page=logs_pag.next_num, log_search=log_search) }}" class="vintage-btn">NEXT CONSOLE LOGS &rarr;</a>
+      {% endif %}
+    </nav>
+  {% else %}
+    <div class="text-center py-8">
+      <p class="headline-font text-xl uppercase">No Console Logs</p>
+      <p class="mt-2">System activity will appear here.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

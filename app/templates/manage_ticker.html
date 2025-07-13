@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Manage Ticker Messages</h1>
+
+    <!-- Add New Message Form -->
+    <div class="vintage-card mb-8">
+        <h2 class="text-2xl font-bold mb-4">Add New Announcement</h2>
+        <form method="POST" action="{{ url_for('admin.manage_ticker') }}">
+            <div class="mb-4">
+                <label for="message" class="block text-lg font-bold mb-2">Message:</label>
+                <input type="text" id="message" name="message" class="vintage-input w-full" required>
+            </div>
+            <button type="submit" class="vintage-btn">Add Message</button>
+        </form>
+    </div>
+
+    <!-- Existing Messages -->
+    <div class="vintage-card">
+        <h2 class="text-2xl font-bold mb-4">Current Ticker Messages</h2>
+        {% if messages %}
+            <ul>{% for message in messages %}<li class="flex justify-between items-center mb-2 pb-2 border-b border-gray-300 dark:border-gray-600">
+                        <span>{{ message.message }}</span>
+                        <a href="{{ url_for('admin.delete_ticker_message', id=message.id) }}" class="vintage-btn bg-red-600 hover:bg-red-700">Delete</a>
+                    </li>{% endfor %}</ul>
+        {% else %}
+            <p>No ticker messages found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
