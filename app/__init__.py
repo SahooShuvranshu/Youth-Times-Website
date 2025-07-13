@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import generate_password_hash
 from config import Config
 from sqlalchemy import inspect, text, event
@@ -26,6 +27,10 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    # Force HTTPS for url_for(_external=True)
+    app.config['PREFERRED_URL_SCHEME'] = 'https'
+    # Ensure Flask recognizes HTTPS when behind a proxy (Render)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
     
     # Validate production configuration
     Config.validate_production_config()
