@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: youth-times
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python run.py"
+    envVars:
+      - key: SECRET_KEY
+        value: your-secret-key
+      - key: FLASK_ENV
+        value: production
+      # Render auto-provides DATABASE_URL for PostgreSQL
+      # Add other keys below as needed
+      - key: MAIL_SERVER
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: 587
+      - key: MAIL_USERNAME
+        value: your-email@gmail.com
+      - key: MAIL_PASSWORD
+        value: your-email-password
+      - key: MAIL_USE_TLS
+        value: True
+      - key: WEATHER_API_KEY
+        value: 
+      - key: CLOUDINARY_URL
+        value: your-cloudinary-url
+      - key: GOOGLE_CLIENT_ID
+        value: your-google-client-id
+      - key: GOOGLE_CLIENT_SECRET
+        value: your-google-client-secret
+      - key: SECURITY_PASSWORD_SALT
+        value: your-security-salt
