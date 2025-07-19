@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="max-w-7xl mx-auto admin-panel">
+
 <div class="newspaper-header text-center mb-8 newspaper-texture">
   <h1 class="headline-font text-3xl md:text-4xl font-bold typewriter">ADMIN CONTROL PANEL</h1>
   <p class="text-sm opacity-70 mt-2 tracking-wider uppercase">EDITORIAL OVERSIGHT & MANAGEMENT</p>
@@ -20,46 +22,41 @@
     </a>
   </div>
   
-  <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-    <h2 class="headline-font text-xl md:text-2xl font-bold uppercase border-b-2 border-black dark:border-white pb-2 mb-4 md:mb-0">
+  <div class="vintage-card mb-8 newspaper-texture">
+  <div class="vintage-card-header flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-6">
+    <span class="headline-font text-xl md:text-2xl font-bold uppercase flex items-center gap-2">
       📰 Pending Articles
-    </h2>
-    <form method="get" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-      <input type="text" name="article_search" value="{{ article_search }}" 
-             placeholder="SEARCH ARTICLES..." class="vintage-input text-sm" />
-      <button type="submit" class="vintage-btn text-sm press-effect">🔍 SEARCH</button>
+    </span>
+    <form method="get" class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto max-w-xs md:max-w-sm">
+      <input type="text" name="article_search" value="{{ article_search or '' }}" placeholder="Search articles..." class="vintage-input flex-1" />
+      <button type="submit" class="vintage-btn px-4 py-2">Search</button>
     </form>
   </div>
-  
-  {% if articles %}
-    <div class="overflow-x-auto">
-      <table class="min-w-full border-3 border-black">
+  <div class="vintage-card-content">
+    {% if articles %}
+    <div class="table-responsive">
+      <table class="min-w-full">
         <thead class="bg-black text-white dark:bg-white dark:text-black">
           <tr>
             <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Title</th>
-            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Submitted By</th>
-            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Trust Score</th>
-            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Content</th>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Author</th>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Submitted</th>
             <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Actions</th>
           </tr>
         </thead>
         <tbody>
           {% for article in articles %}
-          <tr class="hover:bg-gray-100 dark:hover:bg-gray-800">
-            <td class="py-3 px-4 border-2 border-black dark:border-white font-bold">{{ article.title }}</td>
-            <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.author.username }}</td>
+          <tr>
+            <td class="py-3 px-4 border-2 border-black dark:border-white max-w-xs overflow-x-auto">{{ article.title }}</td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.author_name or 'Unknown' }}</td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.submitted_at.strftime('%Y-%m-%d %H:%M') if article.submitted_at else '' }}</td>
             <td class="py-3 px-4 border-2 border-black dark:border-white">
-              {% set score = article.trust_score or 0 %}
-              <span class="vintage-btn text-xs {% if score >= 50 %}bg-green-100{% else %}bg-red-100{% endif %}">{{ score }}%</span>
-            </td>
-            <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.content[:200] }}{% if article.content|length > 200 %}...{% endif %}</td>
-            <td class="py-3 px-4 border-2 border-black dark:border-white">
-              <div class="flex flex-wrap gap-1">
-                <a href="{{ url_for('articles.view_article', id=article.id) }}" class="vintage-btn text-xs">VIEW</a>
-                <a href="{{ url_for('admin.edit_article', id=article.id) }}" class="vintage-btn text-xs">EDIT</a>
-                <a href="{{ url_for('admin.delete_article', id=article.id) }}" class="vintage-btn text-xs">DELETE</a>
-                <a href="{{ url_for('admin.approve_article', id=article.id) }}" class="vintage-btn text-xs">APPROVE</a>
-                <a href="{{ url_for('admin.reject_article', id=article.id) }}" class="vintage-btn text-xs">REJECT</a>
+              <div class="flex flex-wrap gap-2 justify-center">
+                <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" class="vintage-btn text-xs px-2 py-1">VIEW</a>
+                <a href="{{ url_for('admin.edit_article', hash_id=article.hash_id) }}" class="vintage-btn text-xs px-2 py-1">EDIT</a>
+                <a href="{{ url_for('admin.delete_article', hash_id=article.hash_id) }}" class="vintage-btn text-xs px-2 py-1">DELETE</a>
+                <a href="{{ url_for('admin.approve_article', hash_id=article.hash_id) }}" class="vintage-btn text-xs px-2 py-1 bg-green-600 text-white border-green-700 hover:bg-green-700">APPROVE</a>
+                <a href="{{ url_for('admin.reject_article', hash_id=article.hash_id) }}" class="vintage-btn text-xs px-2 py-1 bg-red-600 text-white border-red-700 hover:bg-red-700">REJECT</a>
               </div>
             </td>
           </tr>
@@ -67,38 +64,31 @@
         </tbody>
       </table>
     </div>
-    <!-- Pagination controls -->
-    <nav class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-      {% if pag.has_prev %}
-        <a href="{{ url_for('admin.admin_panel', page=pag.prev_num) }}" class="vintage-btn press-effect">
-          ← PREVIOUS PAGE
-        </a>
-      {% else %}
-        <span class="vintage-btn opacity-50">← PREVIOUS PAGE</span>
+    {% else %}
+      <div class="text-center text-gray-500 py-8">No pending articles found.</div>
+    {% endif %}
+    {% if pagination %}
+    <div class="pagination mt-4">
+      {% if pagination.has_prev %}
+        <a href="{{ url_for('admin.admin_panel', page=pagination.prev_num) }}" class="vintage-btn">&laquo; Prev</a>
       {% endif %}
-      
-      <span class="text-sm font-bold">
-        PAGE {{ pag.page }} OF {{ pag.pages }}
-      </span>
-      
-      {% if pag.has_next %}
-        <a href="{{ url_for('admin.admin_panel', page=pag.next_num) }}" class="vintage-btn press-effect">
-          NEXT PAGE →
-        </a>
-      {% else %}
-        <span class="vintage-btn opacity-50">NEXT PAGE →</span>
+      {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+        {% if page_num %}
+          {% if page_num == pagination.page %}
+            <span class="vintage-btn active">{{ page_num }}</span>
+          {% else %}
+            <a href="{{ url_for('admin.admin_panel', page=page_num) }}" class="vintage-btn">{{ page_num }}</a>
+          {% endif %}
+        {% else %}
+          <span class="px-2">…</span>
+        {% endif %}
+      {% endfor %}
+      {% if pagination.has_next %}
+        <a href="{{ url_for('admin.admin_panel', page=pagination.next_num) }}" class="vintage-btn">Next &raquo;</a>
       {% endif %}
-    </nav>
-  {% else %}
-    <div class="text-center py-12 newspaper-texture">
-      <div class="text-6xl mb-4">📰</div>
-      <p class="headline-font text-xl uppercase mb-2">No Pending Articles</p>
-      <p class="text-sm opacity-70">All caught up! No articles awaiting review.</p>
-      <div class="mt-4">
-        <span class="vintage-btn text-xs">✅ INBOX CLEAR</span>
-      </div>
     </div>
-  {% endif %}
+    {% endif %}
+  </div>
 </div>
 
 <!-- User management table -->
@@ -140,7 +130,7 @@
                   <a href="{{ url_for('admin.reset_password', id=user.id) }}" class="vintage-btn text-xs">RESET PW</a>
                 </div>
               {% else %}
-                <!-- Admin users cannot be demoted -->
+                <!-- Admin users: super admins can demote regular admins -->
                 <div class="flex flex-wrap gap-1">
                   <span class="vintage-btn text-xs">
                     {% if user.is_super_admin %}
@@ -149,6 +139,10 @@
                       ADMIN
                     {% endif %}
                   </span>
+                  <!-- Super admins can demote regular admins -->
+                  {% if not user.is_super_admin and current_user.is_super_admin %}
+                    <a href="{{ url_for('admin.demote_user', id=user.id) }}" class="vintage-btn text-xs">DEMOTE</a>
+                  {% endif %}
                   <!-- Only super admins can reset super admin passwords -->
                   {% if not user.is_super_admin or current_user.is_super_admin %}
                     <a href="{{ url_for('admin.reset_password', id=user.id) }}" class="vintage-btn text-xs">RESET PW</a>
@@ -185,60 +179,74 @@
 </div>
 
 <!-- All Articles Management -->
-<div class="vintage-card mb-8">
-  <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-    <h2 class="headline-font text-2xl font-bold uppercase">All Articles</h2>
-    <form method="get" class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mt-4 md:mt-0">
-      <input type="text" name="all_search" value="{{ all_search }}" placeholder="SEARCH ALL ARTICLES..." class="vintage-input" />
-      <button type="submit" class="vintage-btn">SEARCH</button>
+<div class="vintage-card mb-8 newspaper-texture">
+  <div class="vintage-card-header flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-6">
+    <span class="headline-font text-xl md:text-2xl font-bold uppercase flex items-center gap-2">
+      📚 All Articles
+    </span>
+    <form method="get" class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto max-w-xs md:max-w-sm">
+      <input type="text" name="all_article_search" value="{{ all_article_search or '' }}" placeholder="Search all articles..." class="vintage-input flex-1" />
+      <button type="submit" class="vintage-btn px-4 py-2">Search</button>
     </form>
   </div>
-  
-  <div class="overflow-x-auto">
-    <table class="min-w-full border-3 border-black">
-      <thead class="bg-black text-white dark:bg-white dark:text-black">
-        <tr>
-          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">ID</th>
-          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Title</th>
-          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Author</th>
-          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Status</th>
-          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Trust Score</th>
-          <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for art in all_articles %}
-        <tr class="hover:bg-gray-100 dark:hover:bg-gray-800">
-          <td class="py-3 px-4 border-2 border-black dark:border-white font-bold">{{ art.id }}</td>
-          <td class="py-3 px-4 border-2 border-black dark:border-white font-bold">{{ art.title }}</td>
-          <td class="py-3 px-4 border-2 border-black dark:border-white">{{ art.author.username }}</td>
-          <td class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">{{ art.status }}</td>
-          <td class="py-3 px-4 border-2 border-black dark:border-white">
-            {% set score = art.trust_score or 0 %}
-            <span class="vintage-btn text-xs {% if score >= 50 %}bg-green-100{% else %}bg-red-100{% endif %}">{{ score }}%</span>
-          </td>
-          <td class="py-3 px-4 border-2 border-black dark:border-white">
-            <div class="flex flex-wrap gap-1">
-              <a href="{{ url_for('admin.edit_article', id=art.id) }}" class="vintage-btn text-xs">EDIT</a>
-              <a href="{{ url_for('admin.delete_article', id=art.id) }}" class="vintage-btn text-xs">DELETE</a>
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <!-- Pagination for all articles -->
-  <nav class="mt-6 flex justify-between">
-    {% if all_pag.has_prev %}
-      <a href="{{ url_for('admin.admin_panel', all_page=all_pag.prev_num, all_search=all_search) }}" class="vintage-btn">&larr; PREVIOUS ARTICLES</a>
+  <div class="vintage-card-content">
+    {% if all_articles %}
+    <div class="table-responsive">
+      <table class="min-w-full table-auto">
+        <thead class="bg-black text-white dark:bg-white dark:text-black">
+          <tr>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">ID</th>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Title</th>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Author</th>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Status</th>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Credibility</th>
+            <th class="py-3 px-4 border-2 border-black dark:border-white font-bold uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for article in all_articles %}
+          <tr>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.id }}</td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white max-w-xs overflow-x-auto">{{ article.title }}</td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.author_name or 'Unknown' }}</td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.status|capitalize }}</td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.credibility_score|round(1) }}%</td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">
+              <div class="flex flex-wrap gap-2 justify-center">
+                <a href="{{ url_for('admin.edit_article', hash_id=article.hash_id) }}" class="vintage-btn text-xs px-2 py-1">EDIT</a>
+                <a href="{{ url_for('admin.delete_article', hash_id=article.hash_id) }}" class="vintage-btn text-xs px-2 py-1">DELETE</a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
     {% else %}
-      <span></span>
+      <div class="text-center text-gray-500 py-8">No articles found.</div>
     {% endif %}
-    {% if all_pag.has_next %}
-      <a href="{{ url_for('admin.admin_panel', all_page=all_pag.next_num, all_search=all_search) }}" class="vintage-btn">NEXT ARTICLES &rarr;</a>
+    {% if all_articles_pagination %}
+    <div class="pagination mt-4">
+      {% if all_articles_pagination.has_prev %}
+        <a href="{{ url_for('admin.admin_panel', all_articles_page=all_articles_pagination.prev_num) }}" class="vintage-btn">&laquo; Prev</a>
+      {% endif %}
+      {% for page_num in all_articles_pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+        {% if page_num %}
+          {% if page_num == all_articles_pagination.page %}
+            <span class="vintage-btn active">{{ page_num }}</span>
+          {% else %}
+            <a href="{{ url_for('admin.admin_panel', all_articles_page=page_num) }}" class="vintage-btn">{{ page_num }}</a>
+          {% endif %}
+        {% else %}
+          <span class="px-2">…</span>
+        {% endif %}
+      {% endfor %}
+      {% if all_articles_pagination.has_next %}
+        <a href="{{ url_for('admin.admin_panel', all_articles_page=all_articles_pagination.next_num) }}" class="vintage-btn">Next &raquo;</a>
+      {% endif %}
+    </div>
     {% endif %}
-  </nav>
+  </div>
 </div>
 
 <!-- Action Logs -->
@@ -274,22 +282,97 @@
         </tbody>
       </table>
     </div>
-    <!-- Console Logs pagination -->
+    <!-- Logs pagination -->
     <nav class="mt-6 flex justify-between">
       {% if logs_pag.has_prev %}
-        <a href="{{ url_for('admin.admin_panel', log_page=logs_pag.prev_num, log_search=log_search) }}" class="vintage-btn">&larr; PREV CONSOLE LOGS</a>
+        <a href="{{ url_for('admin.admin_panel', log_page=logs_pag.prev_num, log_search=log_search) }}" class="vintage-btn">&larr; PREV LOGS</a>
       {% else %}
         <span></span>
       {% endif %}
       {% if logs_pag.has_next %}
-        <a href="{{ url_for('admin.admin_panel', log_page=logs_pag.next_num, log_search=log_search) }}" class="vintage-btn">NEXT CONSOLE LOGS &rarr;</a>
+        <a href="{{ url_for('admin.admin_panel', log_page=logs_pag.next_num, log_search=log_search) }}" class="vintage-btn">NEXT LOGS &rarr;</a>
       {% endif %}
     </nav>
   {% else %}
     <div class="text-center py-8">
-      <p class="headline-font text-xl uppercase">No Console Logs</p>
+      <p class="headline-font text-xl uppercase">No Actions Logged</p>
       <p class="mt-2">System activity will appear here.</p>
     </div>
   {% endif %}
 </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Force CSS cache refresh and apply immediate styling fixes
+document.addEventListener('DOMContentLoaded', function() {
+    // Add CSS to fix any remaining layout issues
+    const style = document.createElement('style');
+    style.textContent = `
+        .admin-panel table {
+            table-layout: fixed !important;
+            width: 100% !important;
+        }
+        
+        .admin-panel .credibility-score,
+        .admin-panel .trust-score {
+            background-color: #ef4444 !important;
+            color: white !important;
+            padding: 4px 8px !important;
+            border-radius: 4px !important;
+            font-weight: bold !important;
+            font-size: 0.75rem !important;
+            display: inline-block !important;
+            min-width: 50px !important;
+            text-align: center !important;
+        }
+        
+        .admin-panel .credibility-score.high,
+        .admin-panel .trust-score.high {
+            background-color: #10b981 !important;
+        }
+        
+        .admin-panel .credibility-score.good,
+        .admin-panel .trust-score.good {
+            background-color: #f59e0b !important;
+            color: black !important;
+        }
+        
+        .admin-panel td,
+        .admin-panel th {
+            vertical-align: middle !important;
+            text-align: center !important;
+        }
+        
+        .admin-panel td:first-child,
+        .admin-panel td:nth-child(2) {
+            text-align: left !important;
+        }
+        
+        .admin-panel .vintage-btn {
+            margin: 2px !important;
+            font-size: 0.7rem !important;
+            padding: 4px 8px !important;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Apply color coding to credibility scores
+    document.querySelectorAll('.admin-panel span[class*="credibility"]').forEach(function(element) {
+        const scoreText = element.textContent.trim();
+        const score = parseFloat(scoreText);
+        
+        if (score >= 75) {
+            element.className = element.className.replace(/bg-\w+-\d+/g, '') + ' bg-green-500 text-white';
+        } else if (score >= 50) {
+            element.className = element.className.replace(/bg-\w+-\d+/g, '') + ' bg-yellow-500 text-black';
+        } else {
+            element.className = element.className.replace(/bg-\w+-\d+/g, '') + ' bg-red-500 text-white';
+        }
+    });
+    
+    console.log('Admin panel styling fixes applied');
+});
+</script>
 {% endblock %}

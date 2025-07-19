@@ -1,22 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="main-content below-header flex flex-col items-center justify-center">
-  <div class="vintage-card newspaper-texture p-8 w-full max-w-md mb-10 text-center">
-    <div class="text-center">
-      <h2 class="article-title">USER LOGIN</h2>
-      <p class="article-meta">ACCESS YOUR ACCOUNT</p>
+<div class="max-w-md mx-auto mt-8">
+  <div class="vintage-card newspaper-texture">
+    <div class="text-center mb-6">
+      <h2 class="headline-font text-3xl font-bold uppercase typewriter">USER LOGIN</h2>
+      <p class="text-sm opacity-70 mt-2 tracking-wider">ACCESS YOUR ACCOUNT</p>
+      <hr class="newspaper-divider">
     </div>
     
     <form method="post" class="space-y-6">
-      <div class="form-group">
-        <label class="form-label">USERNAME</label>
-        <input type="text" name="username" placeholder="Enter Username" required class="form-input" />
+      <div>
+        <label class="block headline-font text-sm font-bold uppercase tracking-wider mb-2">USERNAME</label>
+        <input type="text" name="username" placeholder="ENTER USERNAME" required 
+               class="vintage-input w-full" />
       </div>
       
-      <div class="form-group">
-        <label class="form-label">PASSWORD</label>
-        <input type="password" name="password" placeholder="Enter Password" required class="form-input" />
-               
+      <div>
+        <label class="block headline-font text-sm font-bold uppercase tracking-wider mb-2">PASSWORD</label>
+        <input type="password" name="password" placeholder="ENTER PASSWORD" required 
+               class="vintage-input w-full" />
       </div>
       
       <button type="submit" class="vintage-btn w-full press-effect">

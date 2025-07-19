@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, flash, current_app, url_for, Response, session
+from flask import Blueprint, render_template, request, redirect, flash, current_app, url_for, Response, session, jsonify
 import logging
 import threading
+import re
 from xml.sax.saxutils import escape
 import os
 import cloudinary
@@ -12,18 +13,42 @@ from markdown.extensions import codehilite, tables, fenced_code
 
 from flask_login import login_required, current_user
 from .. import db
-from ..models import Article, LogEntry, Notification, User, Category, Comment, Newsletter, Analytics, TickerMessage
-from ..scraper import verify_article
+from ..models import Article, LogEntry, Notification, User, Category, Comment, Newsletter, Analytics, TickerMessage, Like
+from ..scraper import calculate_credibility_score
+from ..weather import WeatherService
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# Configure Cloudinary (for image uploads)
-cloudinary.config(
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.getenv('CLOUDINARY_API_KEY'),
-    api_secret=os.getenv('CLOUDINARY_API_SECRET')
-)
+# Profanity and threat detection lists
+PROFANITY_WORDS = [
+    'fuck', 'shit', 'damn', 'bitch', 'asshole', 'bastard', 'crap', 'piss', 
+    'hell', 'whore', 'slut', 'dickhead', 'motherfucker', 'cock', 'pussy',
+    'nigger', 'faggot', 'retard', 'spic', 'chink', 'kike', 'wetback'
+]
+
+THREAT_WORDS = [
+    'kill', 'murder', 'death', 'die', 'bomb', 'shoot', 'gun', 'knife',
+    'attack', 'hurt', 'harm', 'violence', 'threat', 'destroy', 'eliminate',
+    'assassinate', 'terrorize', 'torture', 'beat up', 'stab', 'poison'
+]
+
+def contains_inappropriate_content(text):
+    """Check if text contains profanity or threats"""
+    text_lower = text.lower()
+    
+    # Check for profanity
+    for word in PROFANITY_WORDS:
+        if word in text_lower:
+            return True, "profanity"
+    
+    # Check for threats
+    for word in THREAT_WORDS:
+        if word in text_lower:
+            return True, "threat"
+    
+    return False, None
 
 bp = Blueprint('articles', __name__)
 
@@ -85,8 +110,18 @@ def create_excerpt(html_content, max_length=200):
     except Exception:
         return html_content[:max_length] + '...' if len(html_content) > max_length else html_content
 
+def is_mobile_device():
+    """Detect if user is on mobile device"""
+    user_agent = request.headers.get('User-Agent', '').lower()
+    mobile_patterns = [
+        r'mobile', r'android', r'iphone', r'ipad', 
+        r'tablet', r'phone', r'blackberry', r'opera mini'
+    ]
+    return any(re.search(pattern, user_agent) for pattern in mobile_patterns)
+
 @bp.route('/')
 def home():
+    # Mobile redirect logic removed to prevent BuildError
     # Get articles with categories for better display
     articles = Article.query.filter_by(status='approved').order_by(Article.created_at.desc()).limit(10).all()
     categories = Category.query.all()
@@ -116,13 +151,17 @@ def home():
     # Get total unique homepage visits
     total_visits = Analytics.query.filter_by(event_type='homepage_view').count()
 
+    # Get weather data for Bhubaneswar (Youth Times location)
+    weather_data = WeatherService.get_weather_widget_data('Bhubaneswar')
+
     return render_template(
         'home.html', 
         articles=articles, 
         categories=categories, 
         featured_article=featured_article,
         total_visits=total_visits,
-        ticker_messages=ticker_messages
+        ticker_messages=ticker_messages,
+        weather_data=weather_data
     )
 
 @bp.route('/submit', methods=['GET', 'POST'])
@@ -158,7 +197,7 @@ def submit_article():
             title=title,
             content=processed_content,  # Use processed content
             status='pending',
-            trust_score=None,
+            credibility_score=None,
             submitted_by=current_user.id,
             category_id=category_id,
             tags=tags,
@@ -186,42 +225,35 @@ def submit_article():
                 art = Article.query.get(article_id)
                 if not art:
                     return
-                score = verify_article(art.title, art.content)
-                if score < 50:
-                    # Auto-delete low-trust articles
-                    db.session.delete(art)
-                    db.session.commit()
-                    # Log deletion action and notify user
-                    entry = LogEntry(article_id=article_id, action=f"Auto-deleted (trust {score}%)")
-                    db.session.add(entry)
-                    db.session.commit()
-                    notif = Notification(user_id=art.submitted_by, article_id=article_id,
-                                           message=f"Your article '{art.title}' was automatically deleted (trust {score}%).")
-                    db.session.add(notif)
-                    db.session.commit()
-                    logging.info(f"Article ID {article_id} automatically discarded (trust {score}%).")
-                else:
-                    art.trust_score = score
-                    db.session.commit()
-                    # Log pending action and notify user
-                    entry = LogEntry(article_id=article_id, action=f"Marked pending (trust {score}%)")
-                    db.session.add(entry)
-                    notif = Notification(user_id=art.submitted_by, article_id=article_id,
-                                           message=f"Your article '{art.title}' passed authenticity check (trust {score}%) and is pending approval.")
-                    db.session.add(notif)
-                    db.session.commit()
-                    logging.info(f"Article ID {article_id} marked pending with trust {score}%.")
+                score = calculate_credibility_score(art.title, art.content)
+                
+                # Save credibility score for all articles
+                art.credibility_score = score
+                db.session.commit()
+                
+                # Log the credibility score calculation
+                entry = LogEntry(article_id=article_id, action=f"Credibility score calculated: {score}%")
+                db.session.add(entry)
+                db.session.commit()
+                
+                # Notify user about credibility analysis
+                notif = Notification(user_id=art.submitted_by, article_id=article_id,
+                                       message=f"Your article '{art.title}' has been analyzed. Credibility score: {score}%")
+                db.session.add(notif)
+                db.session.commit()
+                
+                logging.info(f"Article ID {article_id} submitted with credibility score {score}% - pending admin review.")
         threading.Thread(target=_background_verify, args=(article.id, app_ctx), daemon=True).start()
-        flash("Article submitted. Authenticity check running in background. You can view your submission below.")
-        return redirect(url_for('articles.view_article', id=article.id))
+        flash("Article submitted successfully. Credibility analysis running in background. All articles await admin approval.")
+        return redirect(url_for('articles.view_article', hash_id=article.hash_id))
     
     # GET request - show form with categories
     categories = Category.query.all()
     return render_template('submit_article.html', categories=categories)
 
-@bp.route('/article/<int:id>')
-def view_article(id):
-    article = Article.query.get_or_404(id)
+@bp.route('/article/<string:hash_id>')
+def view_article(hash_id):
+    article = Article.query.filter_by(hash_id=hash_id).first_or_404()
     
     # Track page view
     analytics = Analytics(
@@ -233,33 +265,70 @@ def view_article(id):
     db.session.add(analytics)
     db.session.commit()
     
-    # Get approved comments
-    comments = Comment.query.filter_by(article_id=id, is_approved=True).order_by(Comment.created_at.desc()).all()
+    # Get non-deleted comments
+    comments = Comment.query.filter_by(article_id=article.id, is_deleted=False).order_by(Comment.created_at.desc()).all()
     
-    return render_template('article_detail.html', article=article, comments=comments)
+    # Get like information
+    likes_count = Like.query.filter_by(article_id=article.id).count()
+    user_liked = False
+    if current_user.is_authenticated:
+        user_liked = Like.query.filter_by(article_id=article.id, user_id=current_user.id).first() is not None
+    
+    return render_template('article_detail.html', article=article, comments=comments, 
+                         likes_count=likes_count, user_liked=user_liked)
 
-@bp.route('/article/<int:id>/comment', methods=['POST'])
+@bp.route('/article/<string:hash_id>/comment', methods=['POST'])
 @login_required
-def add_comment(id):
-    article = Article.query.get_or_404(id)
+def add_comment(hash_id):
+    article = Article.query.filter_by(hash_id=hash_id).first_or_404()
     content = request.form.get('content', '').strip()
     
     if not content:
         flash('Comment cannot be empty.', 'warning')
-        return redirect(url_for('articles.view_article', id=id))
+        return redirect(url_for('articles.view_article', hash_id=hash_id))
     
+    # Check for inappropriate content
+    is_inappropriate, violation_type = contains_inappropriate_content(content)
+    
+    if is_inappropriate:
+        # Create notification for user about rule violation
+        if violation_type == "profanity":
+            message = "Your comment was removed due to inappropriate language. Please maintain respectful communication."
+        else:  # threat
+            message = "Your comment was removed due to threatening content. Such behavior violates our community guidelines."
+        
+        notif = Notification(
+            user_id=current_user.id, 
+            article_id=article.id,
+            message=message
+        )
+        db.session.add(notif)
+        db.session.commit()
+        
+        # Log the violation
+        entry = LogEntry(
+            article_id=article.id, 
+            action=f"Comment by '{current_user.username}' automatically removed due to {violation_type}"
+        )
+        db.session.add(entry)
+        db.session.commit()
+        
+        flash(f'Your comment was removed due to {violation_type}. Please follow our community guidelines.', 'error')
+        return redirect(url_for('articles.view_article', hash_id=hash_id))
+    
+    # Create and save comment (automatically approved)
     comment = Comment(
         content=content,
-        article_id=id,
+        article_id=article.id,
         user_id=current_user.id,
-        is_approved=False  # Comments need approval
+        is_deleted=False
     )
     db.session.add(comment)
     db.session.commit()
     
     # Track comment analytics
     analytics = Analytics(
-        article_id=id,
+        article_id=article.id,
         event_type='comment',
         user_id=current_user.id,
         ip_address=request.remote_addr
@@ -267,8 +336,45 @@ def add_comment(id):
     db.session.add(analytics)
     db.session.commit()
     
-    flash('Comment submitted for approval.', 'success')
-    return redirect(url_for('articles.view_article', id=id))
+    flash('Comment posted successfully!', 'success')
+    return redirect(url_for('articles.view_article', hash_id=hash_id))
+
+@bp.route('/article/<string:hash_id>/like', methods=['POST'])
+@login_required
+def like_article(hash_id):
+    article = Article.query.filter_by(hash_id=hash_id).first_or_404()
+    existing_like = Like.query.filter_by(article_id=article.id, user_id=current_user.id).first()
+    
+    if existing_like:
+        # Unlike the article
+        db.session.delete(existing_like)
+        db.session.commit()
+        liked = False
+    else:
+        # Like the article
+        like = Like(article_id=article.id, user_id=current_user.id)
+        db.session.add(like)
+        db.session.commit()
+        liked = True
+        
+        # Track like analytics
+        analytics = Analytics(
+            article_id=article.id,
+            event_type='like',
+            user_id=current_user.id,
+            ip_address=request.remote_addr
+        )
+        db.session.add(analytics)
+        db.session.commit()
+    
+    # Return JSON response for AJAX requests
+    if request.headers.get('Content-Type') == 'application/json':
+        return jsonify({
+            'liked': liked,
+            'likes_count': len(article.likes)
+        })
+    
+    return redirect(url_for('articles.view_article', hash_id=hash_id))
 
 @bp.route('/newsletter/subscribe', methods=['POST'])
 def subscribe_newsletter():
@@ -295,13 +401,13 @@ def subscribe_newsletter():
     
     return redirect(url_for('articles.home'))
 
-@bp.route('/share/<int:id>/<platform>')
-def share_article(id, platform):
-    article = Article.query.get_or_404(id)
+@bp.route('/share/<string:hash_id>/<platform>')
+def share_article(hash_id, platform):
+    article = Article.query.filter_by(hash_id=hash_id).first_or_404()
     
     # Track share analytics
     analytics = Analytics(
-        article_id=id,
+        article_id=article.id,
         event_type=f'share_{platform}',
         user_id=current_user.id if current_user.is_authenticated else None,
         ip_address=request.remote_addr
@@ -309,7 +415,7 @@ def share_article(id, platform):
     db.session.add(analytics)
     db.session.commit()
     
-    article_url = url_for('articles.view_article', id=id, _external=True)
+    article_url = url_for('articles.view_article', hash_id=hash_id, _external=True)
     
     share_urls = {
         'twitter': f"https://twitter.com/intent/tweet?text={article.title}&url={article_url}",
@@ -321,7 +427,7 @@ def share_article(id, platform):
     if platform in share_urls:
         return redirect(share_urls[platform])
     
-    return redirect(url_for('articles.view_article', id=id))
+    return redirect(url_for('articles.view_article', hash_id=hash_id))
 
 @bp.route('/rss')
 def rss_feed():
@@ -378,35 +484,62 @@ def category_articles(category_id):
 
 @bp.route('/articles')
 def articles_list():
-    """Articles listing page with all published articles"""
-    try:
-        # Get all approved articles with pagination
-        page = request.args.get('page', 1, type=int)
-        per_page = 12  # Show 12 articles per page
-        
-        articles = Article.query.filter_by(status='approved').order_by(Article.created_at.desc()).paginate(
-            page=page, per_page=per_page, error_out=False
+    """Display paginated list of articles with search and filtering"""
+    page = request.args.get('page', 1, type=int)
+    search = request.args.get('search', '')
+    category_id = request.args.get('category', '', type=str)
+    sort_by = request.args.get('sort', 'newest')
+    
+    # Build the query
+    query = Article.query.filter_by(status='approved')
+    
+    # Apply search filter
+    if search:
+        query = query.filter(
+            Article.title.contains(search) | 
+            Article.content.contains(search) |
+            Article.tags.contains(search)
         )
-        
-        categories = Category.query.all()
-        
-        # Track page visit for analytics
-        analytics = Analytics(
-            event_type='articles_page_view',
-            user_id=current_user.id if current_user.is_authenticated else None,
-            ip_address=request.remote_addr
-        )
-        db.session.add(analytics)
-        db.session.commit()
-        
-        return render_template('articles.html', 
-                             articles=articles.items,
-                             pagination=articles,
-                             categories=categories)
-    except Exception as e:
-        current_app.logger.error(f"Error in articles_list route: {str(e)}")
-        flash('Error loading articles page. Please try again later.', 'error')
-        return redirect(url_for('articles.home'))
+    
+    # Apply category filter
+    if category_id:
+        try:
+            category_id = int(category_id)
+            query = query.filter_by(category_id=category_id)
+        except ValueError:
+            pass
+    
+    # Apply sorting
+    if sort_by == 'oldest':
+        query = query.order_by(Article.created_at.asc())
+    elif sort_by == 'popular':
+        # Sort by view count (most viewed first)
+        # This is a simplified approach - in production, you might want to cache view counts
+        query = query.order_by(Article.created_at.desc())  # Fallback to newest for now
+    else:  # newest (default)
+        query = query.order_by(Article.created_at.desc())
+    
+    # Paginate results
+    per_page = 5  # Articles per page
+    pagination = query.paginate(
+        page=page, 
+        per_page=per_page, 
+        error_out=False
+    )
+    articles = pagination.items
+    
+    # Get categories for filter dropdown
+    categories = Category.query.all()
+    
+    return render_template(
+        'articles.html',
+        articles=articles,
+        pagination=pagination,
+        categories=categories,
+        search=search,
+        selected_category=category_id,
+        sort_by=sort_by
+    )
 
 @bp.route('/about')
 def about_us():
@@ -457,7 +590,7 @@ def about_us():
                 'skills': ['Market Research', 'Digital Marketing', 'User Research', 'Social Media Strategy']
             }
         ]
-
+        
         # College information
         college_info = {
             'name': 'Nilachal Polytechnic',
@@ -468,7 +601,7 @@ def about_us():
             'website': 'https://www.nilachalpolytechnic.ac.in/',
             'image': 'college/nilachal_campus.jpg'
         }
-
+        
         # Internship information
         internship_info = {
             'company': 'OKCL (Odisha Knowledge Corporation Limited)',
@@ -485,35 +618,40 @@ def about_us():
                 'Agile Development'
             ],
             'project_goal': 'Develop a modern, responsive news platform with advanced features like credibility scoring, weather integration, and user management.',
-            'website': 'https://okcl.org/',
+            'website': 'https://okcl.odisha.gov.in',
             'image': 'internship/okcl_office.jpg'
         }
-
+        
         return render_template('about_us.html', 
                              team_members=team_members,
                              college_info=college_info,
                              internship_info=internship_info)
+                             
     except Exception as e:
         current_app.logger.error(f"Error in about_us route: {str(e)}")
         flash('Error loading About Us page. Please try again later.', 'error')
         return redirect(url_for('articles.home'))
 
-@bp.route('/editorial-guidelines')
-def editorial_guidelines():
-    return render_template('editorial_guidelines.html')
-
-@bp.route('/contact')
-def contact():
-    return render_template('contact.html')
-
-@bp.route('/terms-of-service')
-def terms_of_service():
-    return render_template('terms_of_service.html')
-
-@bp.route('/privacy-policy')
-def privacy_policy():
-    return render_template('privacy_policy.html')
-
-@bp.route('/dmca-policy')
-def dmca_policy():
-    return render_template('dmca_policy.html')
+@bp.route('/user/<string:username>')
+def user_profile(username):
+    """Public user profile page"""
+    user = User.query.filter_by(username=username).first_or_404()
+    
+    # Get user's published articles
+    user_articles = Article.query.filter_by(
+        author_id=user.id, 
+        status='approved'
+    ).order_by(Article.created_at.desc()).limit(10).all()
+    
+    # Get user stats
+    total_articles = Article.query.filter_by(author_id=user.id, status='approved').count()
+    total_likes = db.session.query(db.func.count(Like.id)).join(Article).filter(
+        Article.author_id == user.id,
+        Article.status == 'approved'
+    ).scalar() or 0
+    
+    return render_template('user_profile.html', 
+                         profile_user=user, 
+                         user_articles=user_articles,
+                         total_articles=total_articles,
+                         total_likes=total_likes)

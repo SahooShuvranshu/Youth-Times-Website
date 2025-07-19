@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="main-content below-header flex flex-col items-center justify-center">
-  <div class="vintage-card p-8 w-full max-w-4xl mb-10 text-center">
-    <div class="newspaper-header text-center mb-8">
-      <h1 class="headline-font text-3xl md:text-4xl font-bold typewriter">WRITER PROFILE</h1>
-      <p class="text-sm opacity-70 mt-2 tracking-wider uppercase">MANAGE YOUR ACCOUNT</p>
-      <hr class="newspaper-divider">
-    </div>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- Profile Information -->
-      <div class="vintage-card newspaper-texture">
+<div class="max-w-4xl mx-auto mt-8 px-4">
+  <div class="newspaper-header text-center mb-8">
+    <h1 class="headline-font text-3xl md:text-4xl font-bold typewriter">WRITER PROFILE</h1>
+    <p class="text-sm opacity-70 mt-2 tracking-wider uppercase">MANAGE YOUR ACCOUNT</p>
+    <hr class="newspaper-divider">
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Profile Information -->
+    <div class="vintage-card newspaper-texture">
       <h2 class="headline-font text-xl font-bold uppercase mb-6 border-b-2 border-black dark:border-white pb-2">
         👤 PROFILE INFORMATION
       </h2>
@@ -53,16 +53,14 @@
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label for="date_of_birth" class="block headline-font text-sm font-bold uppercase tracking-wider mb-2">DATE OF BIRTH</label>
-            <input type="date" id="date_of_birth" name="date_of_birth" 
-                   value="{{ user.date_of_birth.strftime('%Y-%m-%d') if user.date_of_birth else '' }}" 
-                   title="Select your date of birth"
+            <label class="block headline-font text-sm font-bold uppercase tracking-wider mb-2">DATE OF BIRTH</label>
+            <input type="date" name="date_of_birth" value="{{ user.date_of_birth.strftime('%Y-%m-%d') if user.date_of_birth else '' }}" 
                    class="vintage-input w-full" />
           </div>
           
           <div>
-            <label for="gender" class="block headline-font text-sm font-bold uppercase tracking-wider mb-2">GENDER</label>
-            <select id="gender" name="gender" title="Select your gender" class="vintage-input w-full">
+            <label class="block headline-font text-sm font-bold uppercase tracking-wider mb-2">GENDER</label>
+            <select name="gender" class="vintage-input w-full">
               <option value="">Select Gender</option>
               <option value="male" {{ 'selected' if user.gender == 'male' else '' }}>Male</option>
               <option value="female" {{ 'selected' if user.gender == 'female' else '' }}>Female</option>
@@ -85,15 +83,10 @@
         </div>
         
         <div>
-          <label for="profile_photo" class="block headline-font text-sm font-bold uppercase tracking-wider mb-2">PROFILE PHOTO</label>
-          <input type="file" id="profile_photo" name="profile_photo" accept="image/*" 
-                 title="Upload a profile photo" 
-                 class="vintage-input w-full mb-2" />
-          <input type="text" id="profile_image" name="profile_image" 
-                 value="{{ user.profile_image or '' }}" 
-                 placeholder="OR PASTE IMAGE URL" 
-                 title="Enter a profile image URL"
-                 class="vintage-input w-full" />
+          <label class="block headline-font text-sm font-bold uppercase tracking-wider mb-2">PROFILE PHOTO</label>
+          <input type="file" name="profile_photo" accept="image/*" class="vintage-input w-full mb-2" />
+          <input type="text" name="profile_image" value="{{ user.profile_image or '' }}" 
+                 placeholder="OR PASTE IMAGE URL" class="vintage-input w-full" />
           <p class="text-xs opacity-70 mt-1">Upload a photo or paste an image URL</p>
         </div>
         

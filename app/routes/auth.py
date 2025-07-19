@@ -247,18 +247,9 @@ def login():
             if next_page and next_page.startswith('/'):
                 return redirect(next_page)
             
-            # Check if request came from mobile
-            referrer = request.referrer
-            is_mobile_request = (referrer and '/m/' in referrer) or request.path.startswith('/m/')
-            
-            # Default redirects based on role and mobile
+            # Default redirects based on role
             if user.role == 'admin':
-                if is_mobile_request:
-                    return redirect(url_for('mobile.admin_panel'))
                 return redirect(url_for('admin.admin_panel'))
-            
-            if is_mobile_request:
-                return redirect(url_for('mobile.home'))
             return redirect(url_for('articles.home'))
         else:
             flash("Invalid username or password.", 'danger')

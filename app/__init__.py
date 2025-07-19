@@ -1,39 +1,21 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import generate_password_hash
 from config import Config
-from sqlalchemy import inspect, text, event
-from sqlalchemy.engine import Engine
+from sqlalchemy import inspect, text
 import click
 from flask import url_for
 from authlib.integrations.flask_client import OAuth
-from datetime import datetime
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 oauth = OAuth()
 
-# Enable foreign key support for SQLite
-@event.listens_for(Engine, "connect")
-def set_sqlite_pragma(dbapi_connection, connection_record):
-    if 'sqlite' in str(dbapi_connection):
-        cursor = dbapi_connection.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON")
-        cursor.close()
-
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-    # Force HTTPS for url_for(_external=True)
-    app.config['PREFERRED_URL_SCHEME'] = 'https'
-    # Ensure Flask recognizes HTTPS when behind a proxy (Render)
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
-    
-    # Validate production configuration
-    Config.validate_production_config()
 
     # Initialize Authlib OAuth
     oauth.init_app(app)
@@ -86,8 +68,6 @@ def create_app():
     
     from .routes.admin import bp as admin_bp
     app.register_blueprint(admin_bp)
-     
-    # Removed mobile blueprint registration
     
     from .routes.weather import bp as weather_bp
     app.register_blueprint(weather_bp)
@@ -99,29 +79,6 @@ def create_app():
 
     with app.app_context():
         db.create_all()  # For both SQLite and Supabase
-        
-        # Ensure notification table has correct schema
-        try:
-            inspector = inspect(db.engine)
-            if 'notification' in inspector.get_table_names():
-                cols = [col['name'] for col in inspector.get_columns('notification')]
-                
-                # Fix notification table schema if needed
-                if 'read' in cols and 'is_read' not in cols:
-                    # Rename 'read' column to 'is_read'
-                    db.session.execute(text('ALTER TABLE notification RENAME COLUMN read TO is_read'))
-                    db.session.commit()
-                    print("✅ Fixed notification.read -> notification.is_read")
-                
-                # Ensure timestamp column exists
-                if 'timestamp' not in cols and 'created_at' in cols:
-                    db.session.execute(text('ALTER TABLE notification RENAME COLUMN created_at TO timestamp'))
-                    db.session.commit()
-                    print("✅ Fixed notification.created_at -> notification.timestamp")
-                    
-        except Exception as e:
-            print(f"⚠️ Database migration note: {e}")
-        
         # Ensure trust_score column exists (SQLite won't auto-migrate)
         inspector = inspect(db.engine)
         cols = [col['name'] for col in inspector.get_columns('article')]
@@ -131,8 +88,6 @@ def create_app():
                 text('ALTER TABLE article ADD COLUMN trust_score FLOAT')
             )
             db.session.commit()
-            print("✅ Added trust_score column to articles")
-
         # Ensure new User profile columns exist
         user_cols = [col['name'] for col in inspector.get_columns('user')]
         if 'name' not in user_cols:
@@ -183,29 +138,25 @@ def create_app():
         db.session.commit()
 
         # Optionally: Seed or update default admin user from environment variables (for public repos, do not hardcode)
-        from .models import User
-        admin_username = 'admin@dev'
-        admin_password = 'admin@dev'
-        admin_email = 'admin@dev'
-        existing_admin = User.query.filter_by(username=admin_username).first()
-        if existing_admin:
-            existing_admin.role = 'admin'
-            existing_admin.password = generate_password_hash(admin_password)
-            existing_admin.is_confirmed = True
-            existing_admin.email = admin_email
-            existing_admin.is_super_admin = True
-            # Prevent deletion by setting a flag or logic in model (see models.py)
-        else:
-            admin = User(
-                username=admin_username,
-                password=generate_password_hash(admin_password),
-                role='admin',
-                is_confirmed=True,
-                email=admin_email,
-                is_super_admin=True
-            )
-            db.session.add(admin)
-        db.session.commit()
+        # from .models import User
+        # import os
+        # admin_username = os.getenv('ADMIN_USERNAME')
+        # admin_password = os.getenv('ADMIN_PASSWORD')
+        # if admin_username and admin_password:
+        #     existing_admin = User.query.filter_by(username=admin_username).first()
+        #     if existing_admin:
+        #         existing_admin.role = 'admin'
+        #         existing_admin.password = generate_password_hash(admin_password)
+        #         existing_admin.is_confirmed = True
+        #     else:
+        #         admin = User(
+        #             username=admin_username,
+        #             password=generate_password_hash(admin_password),
+        #             role='admin',
+        #             is_confirmed=True
+        #         )
+        #         db.session.add(admin)
+        #     db.session.commit()
 
     # CLI command: create admin user
     @app.cli.command('create-admin')
@@ -258,8 +209,7 @@ def create_app():
         db.session.add(analytics)
         db.session.commit()
         
-        template = '404.html'
-        return render_template(template, articles=popular_articles), 404
+        return render_template('404.html', articles=popular_articles), 404
 
     @app.errorhandler(500)
     def internal_error(error):
@@ -276,8 +226,7 @@ def create_app():
         db.session.add(analytics)
         db.session.commit()
         
-        template = '500.html'
-        return render_template(template, articles=popular_articles), 500
+        return render_template('500.html', articles=popular_articles), 500
 
     # CLI command: send digest of approved articles
     @app.cli.command('send-digest')
@@ -311,28 +260,5 @@ def create_app():
                 'total_articles': 0,
                 'total_users': 0
             }
-
-    def get_visitor_count():
-        """Get total unique visitors count from VisitorStats and Analytics"""
-        try:
-            from .models import VisitorStats, Analytics
-            from sqlalchemy import func
-            # Get total unique daily visitors
-            unique_visitors = VisitorStats.query.with_entities(func.count(func.distinct(VisitorStats.ip_address))).scalar()
-            # Add visit events from Analytics as a fallback
-            analytics_visits = Analytics.query.filter_by(event_type='visit').with_entities(func.count(func.distinct(Analytics.ip_address))).scalar()
-            
-            # Combine both counts, but ensure we don't double count
-            total_visitors = unique_visitors + (analytics_visits or 0)
-            return total_visitors
-        except Exception:
-            return 0
-
-    @app.context_processor
-    def utility_processor():
-        return {
-            'current_year': datetime.now().year,
-            'visitors_count': get_visitor_count()
-        }
 
     return app

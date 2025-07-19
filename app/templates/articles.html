@@ -1,59 +1,408 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="main-content below-header flex flex-col items-center justify-center">
-  <div class="vintage-card p-8 w-full max-w-5xl mb-10 text-center">
-    <div class="newspaper-header text-center mb-8">
-      <h1 class="headline-font text-4xl font-bold typewriter">LATEST NEWS & STORIES</h1>
-      <p class="text-lg font-bold uppercase tracking-wider mt-4">Stay informed with stories from young journalists worldwide</p>
-      <div class="mt-4 text-base opacity-80">
-        <span class="mr-4">📰 {{ articles|length }} ARTICLES</span>
-        <span class="mr-4">🌍 WORLDWIDE COVERAGE</span>
-        <span>✍️ YOUTH VOICES</span>
-      </div>
-      <hr class="newspaper-divider mt-6">
+
+<!-- Articles Page Header -->
+<div class="vintage-card text-center mb-8">
+  <h1 class="headline-font text-4xl md:text-6xl font-bold mb-4">LATEST NEWS & STORIES</h1>
+  <p class="text-lg font-bold uppercase tracking-wider mb-2">
+    Stay informed with the latest stories from our young journalists
+  </p>
+  <p class="text-sm opacity-70 font-bold uppercase">
+    📰 Showing 5 articles per page for better reading experience
+  </p>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="vintage-card mb-8">
+  <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+    <div class="flex-1">
+      <form action="{{ url_for('articles.articles_list') }}" method="GET" class="flex gap-2">
+        <input type="text" name="search" value="{{ request.args.get('search', '') }}" 
+               placeholder="Search articles..." 
+               class="vintage-input flex-1">
+        <button type="submit" class="vintage-btn">SEARCH</button>
+      </form>
     </div>
-    {% if articles %}
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {% for article in articles %}
-        <div class="vintage-card">
-          {% if article.category %}
-            <span class="vintage-btn text-xs mb-3 inline-block" style="background-color: {{ article.category.color }}; color: white;">
-              {{ article.category.name }}
-            </span>
-          {% endif %}
-          <h3 class="headline-font text-xl font-bold mb-3 leading-tight">
-            <a href="{{ url_for('articles.view_article', id=article.id) }}" class="hover:underline transition-all duration-300">
-              {{ article.title|upper }}
-            </a>
-          </h3>
-          <p class="text-sm font-bold mb-3 uppercase tracking-wider opacity-70">
-            By {{ article.author.username if article.author else 'Anonymous' }} • {{ article.created_at.strftime('%B %d, %Y') if article.created_at }}
-          </p>
-          <p class="mb-4 leading-relaxed">{{ article.content|excerpt(150) }}</p>
-          <div class="flex items-center justify-between">
-            <a href="{{ url_for('articles.view_article', id=article.id) }}" class="vintage-btn text-sm">
-              READ MORE
-            </a>
-            <span class="text-xs opacity-60">{{ article.views or 0 }} views</span>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <div class="vintage-card text-center">
-        <h3 class="headline-font text-2xl font-bold uppercase mb-4">No Articles Found</h3>
-        <p class="text-lg mb-6">There are currently no articles to display.</p>
-        {% if current_user.is_authenticated %}
-          <a href="{{ url_for('articles.submit_article') }}" class="vintage-btn">
-            SUBMIT YOUR ARTICLE
-          </a>
-        {% else %}
-          <a href="{{ url_for('auth.register') }}" class="vintage-btn">
-            JOIN TO SUBMIT ARTICLES
-          </a>
-        {% endif %}
-      </div>
-    {% endif %}
+    
+    <div class="flex gap-2">
+      {% if categories %}
+        <label for="category-filter" class="sr-only">Filter by category</label>
+        <select name="category" id="category-filter" onchange="filterByCategory(this.value)" class="vintage-input" title="Filter by category">
+          <option value="">All Categories</option>
+          {% for category in categories %}
+            <option value="{{ category.id }}" 
+                    {% if request.args.get('category') == category.id|string %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
+      {% endif %}
+      
+      <label for="sort-filter" class="sr-only">Sort articles</label>
+      <select name="sort" id="sort-filter" onchange="sortArticles(this.value)" class="vintage-input" title="Sort articles">
+        <option value="newest" {% if request.args.get('sort') == 'newest' %}selected{% endif %}>Newest First</option>
+        <option value="oldest" {% if request.args.get('sort') == 'oldest' %}selected{% endif %}>Oldest First</option>
+        <option value="popular" {% if request.args.get('sort') == 'popular' %}selected{% endif %}>Most Popular</option>
+      </select>
+    </div>
   </div>
 </div>
+
+<!-- Articles Grid -->
+{% if articles %}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+    {% for article in articles %}
+    <div class="vintage-card article-card">{%- set loop_index = loop.index -%}
+      <!-- Category Badge -->
+      {% if article.category %}
+      <span class="vintage-category-badge category-{{ article.category.name|lower }}">
+        {{ article.category.name }}
+      </span>
+      {% endif %}
+      
+      <!-- Article Image -->
+      {% if article.image_url %}
+      <div class="mb-4">
+        <img src="{{ article.image_url }}" alt="{{ article.title }}" 
+             class="w-full h-48 object-cover border-2 border-black dark:border-white">
+      </div>
+      {% endif %}
+      
+      <!-- Article Title -->
+      <h3 class="headline-font text-xl font-bold mb-3 leading-tight">
+        <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" 
+           class="hover:underline transition-all duration-300">
+          {{ article.title|upper }}
+        </a>
+      </h3>
+      
+      <!-- Article Meta -->
+      <p class="text-sm font-bold mb-3 uppercase tracking-wider opacity-70">
+        By {{ article.author.username }} • 
+        {{ article.created_at.strftime('%B %d, %Y') if article.created_at }}
+        {% if article.credibility_score %}
+          <br>
+          <span class="credibility-badge score-{{ (article.credibility_score / 10) | int }}">
+            Credibility: {{ "%.0f" | format(article.credibility_score) }}%
+          </span>
+        {% endif %}
+      </p>
+      
+      <!-- Article Excerpt -->
+      <p class="mb-4 leading-relaxed">{{ article.content|excerpt(200) }}</p>
+      
+      <!-- Tags -->
+      {% if article.tags %}
+      <div class="mb-4">
+        {% for tag in article.tags.split(',') %}
+          <span class="inline-block bg-gray-200 dark:bg-gray-700 px-2 py-1 text-xs font-bold mr-2 mb-2">
+            #{{ tag.strip() }}
+          </span>
+        {% endfor %}
+      </div>
+      {% endif %}
+      
+      <!-- Read More Button -->
+      <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" class="vintage-btn text-sm">
+        READ MORE
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  
+  <!-- Enhanced Pagination -->
+  {% if pagination and pagination.pages > 1 %}
+  <div class="vintage-card text-center">
+    <div class="pagination-wrapper">
+      <!-- Previous Button -->
+      {% if pagination.has_prev %}
+        <a href="{{ url_for('articles.articles_list', page=pagination.prev_num, search=request.args.get('search'), category=request.args.get('category'), sort=request.args.get('sort')) }}" 
+           class="vintage-btn pagination-btn">
+          ← PREVIOUS PAGE
+        </a>
+      {% else %}
+        <span class="vintage-btn pagination-btn disabled">← PREVIOUS PAGE</span>
+      {% endif %}
+      
+      <!-- Page Info -->
+      <div class="pagination-info">
+        <span class="current-page">Page {{ pagination.page }}</span>
+        <span class="page-divider">of</span>
+        <span class="total-pages">{{ pagination.pages }}</span>
+      </div>
+      
+      <!-- Next Button -->
+      {% if pagination.has_next %}
+        <a href="{{ url_for('articles.articles_list', page=pagination.next_num, search=request.args.get('search'), category=request.args.get('category'), sort=request.args.get('sort')) }}" 
+           class="vintage-btn pagination-btn">
+          NEXT PAGE →
+        </a>
+      {% else %}
+        <span class="vintage-btn pagination-btn disabled">NEXT PAGE →</span>
+      {% endif %}
+    </div>
+    
+    <!-- Page Numbers (for desktop) -->
+    <div class="page-numbers hidden md:flex justify-center items-center space-x-2 mt-4">
+      {% set start_page = [1, pagination.page - 2]|max %}
+      {% set end_page = [pagination.pages, pagination.page + 2]|min %}
+      
+      {% if start_page > 1 %}
+        <a href="{{ url_for('articles.articles_list', page=1, search=request.args.get('search'), category=request.args.get('category'), sort=request.args.get('sort')) }}" 
+           class="page-number">1</a>
+        {% if start_page > 2 %}
+          <span class="page-ellipsis">...</span>
+        {% endif %}
+      {% endif %}
+      
+      {% for page_num in range(start_page, end_page + 1) %}
+        {% if page_num == pagination.page %}
+          <span class="page-number active">{{ page_num }}</span>
+        {% else %}
+          <a href="{{ url_for('articles.articles_list', page=page_num, search=request.args.get('search'), category=request.args.get('category'), sort=request.args.get('sort')) }}" 
+             class="page-number">{{ page_num }}</a>
+        {% endif %}
+      {% endfor %}
+      
+      {% if end_page < pagination.pages %}
+        {% if end_page < pagination.pages - 1 %}
+          <span class="page-ellipsis">...</span>
+        {% endif %}
+        <a href="{{ url_for('articles.articles_list', page=pagination.pages, search=request.args.get('search'), category=request.args.get('category'), sort=request.args.get('sort')) }}" 
+           class="page-number">{{ pagination.pages }}</a>
+      {% endif %}
+    </div>
+    
+    <!-- Articles Count Info -->
+    <p class="pagination-stats">
+      Showing {{ pagination.per_page * (pagination.page - 1) + 1 }} - 
+      {{ pagination.per_page * pagination.page if pagination.page < pagination.pages else pagination.total }} 
+      of {{ pagination.total }} articles
+    </p>
+  </div>
+  {% endif %}
+  
+{% else %}
+  <!-- No Articles Found -->
+  <div class="vintage-card text-center">
+    <h3 class="headline-font text-2xl font-bold uppercase mb-4">No Articles Found</h3>
+    {% if request.args.get('search') %}
+      <p class="text-lg mb-6">No articles found for "{{ request.args.get('search') }}". Try different keywords.</p>
+      <a href="{{ url_for('articles.articles_list') }}" class="vintage-btn">VIEW ALL ARTICLES</a>
+    {% else %}
+      <p class="text-lg mb-6">No articles have been published yet. Check back soon for the latest stories!</p>
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('articles.submit_article') }}" class="vintage-btn">SUBMIT YOUR STORY</a>
+      {% else %}
+        <a href="{{ url_for('auth.register') }}" class="vintage-btn">JOIN OUR TEAM</a>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endif %}
+
+<!-- Back to Home -->
+<div class="text-center mt-8">
+  <a href="{{ url_for('articles.home') }}" class="vintage-btn">← BACK TO HOME</a>
+</div>
+
+<script>
+// Filter and sort functions
+function filterByCategory(categoryId) {
+  const url = new URL(window.location);
+  if (categoryId) {
+    url.searchParams.set('category', categoryId);
+  } else {
+    url.searchParams.delete('category');
+  }
+  url.searchParams.delete('page'); // Reset to first page
+  window.location.href = url.toString();
+}
+
+function sortArticles(sortBy) {
+  const url = new URL(window.location);
+  url.searchParams.set('sort', sortBy);
+  url.searchParams.delete('page'); // Reset to first page
+  window.location.href = url.toString();
+}
+
+// Add press effects to buttons
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.press-effect').forEach(element => {
+    element.addEventListener('click', function() {
+      this.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        this.style.transform = '';
+      }, 100);
+    });
+  });
+});
+</script>
+
+<style>
+/* Article Cards */
+.article-card {
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.article-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 8px 8px 0px var(--primary-black);
+}
+
+.article-card .vintage-btn {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+/* Enhanced Pagination Styles */
+.pagination-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.pagination-btn {
+  min-width: 150px;
+  padding: 12px 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.pagination-btn:hover:not(.disabled) {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px var(--primary-black);
+}
+
+.pagination-info {
+  text-align: center;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: 2px solid var(--primary-black);
+  background: var(--bg-primary);
+}
+
+.current-page {
+  font-size: 18px;
+  color: var(--primary-red);
+}
+
+.page-divider {
+  margin: 0 8px;
+  opacity: 0.7;
+}
+
+.total-pages {
+  font-size: 16px;
+}
+
+.page-numbers {
+  border-top: 2px solid var(--primary-black);
+  padding-top: 15px;
+}
+
+.page-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--primary-black);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.page-number:hover {
+  background: var(--primary-black);
+  color: var(--bg-primary);
+  transform: scale(1.1);
+}
+
+.page-number.active {
+  background: var(--primary-black);
+  color: var(--bg-primary);
+  cursor: default;
+}
+
+.page-ellipsis {
+  padding: 0 8px;
+  font-weight: bold;
+  opacity: 0.7;
+}
+
+.pagination-stats {
+  font-size: 14px;
+  margin-top: 15px;
+  padding: 10px;
+  border-top: 1px solid var(--primary-black);
+  opacity: 0.8;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .pagination-wrapper {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .pagination-btn {
+    min-width: 120px;
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+  
+  .pagination-info {
+    order: -1;
+    margin-bottom: 15px;
+  }
+  
+  .page-numbers {
+    display: none !important;
+  }
+}
+
+/* Dark mode adjustments */
+.dark .pagination-info {
+  border-color: var(--primary-white);
+}
+
+.dark .page-number {
+  border-color: var(--primary-white);
+}
+
+.dark .page-number:hover {
+  background: var(--primary-white);
+  color: var(--bg-primary);
+}
+
+.dark .page-number.active {
+  background: var(--primary-white);
+  color: var(--bg-primary);
+}
+
+.dark .pagination-stats {
+  border-top-color: var(--primary-white);
+}
+</style>
+
 {% endblock %}

@@ -1,204 +1,1547 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" class="transition-colors duration-300">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Youth Times - Vintage News</title>
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
-    <meta name="description" content="Youth Times - A vintage-style newspaper for the modern era" />
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='YothTimesFavicon.png') }}" />
-    <link rel="icon" href="{{ url_for('static', filename='YothTimesFavicon.ico') }}" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Youth Times</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />
+  <!-- Fallback CSS in case Tailwind doesn't load -->
+  <style>
+    /* Fallback styles if Tailwind CSS fails to load */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .space-x-4 > * + * { margin-left: 1rem; }
+    .space-x-8 > * + * { margin-left: 2rem; }
+    .hidden { display: none; }
+    .block { display: block; }
+    .grid { display: grid; }
+    .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    .min-h-screen { min-height: 100vh; }
+    .flex-col { flex-direction: column; }
+    .flex-grow { flex-grow: 1; }
+    .relative { position: relative; }
+    .absolute { position: absolute; }
+    .top-0 { top: 0; }
+    .left-0 { left: 0; }
+    .right-0 { right: 0; }
+    .z-50 { z-index: 50; }
+    .w-full { width: 100%; }
+    .h-16 { height: 4rem; }
+    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+    .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .mt-2 { margin-top: 0.5rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .text-sm { font-size: 0.875rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-2xl { font-size: 1.5rem; }
+    .font-bold { font-weight: bold; }
+    .uppercase { text-transform: uppercase; }
+  </style>
+  <!-- Typewriter fonts from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=American+Typewriter&display=swap" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+  <style>
+    /*
+      IMPORTANT: Do NOT change or remove any desktop styles or animations unless explicitly requested by the user.
+      All style/animation changes should be mobile-only unless you are told to update desktop as well.
+    */
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Vintage Newspaper Theme */
+    :root {
+      --typewriter-font: 'Courier Prime', 'Courier New', monospace;
+      --headline-font: 'Special Elite', 'Courier New', monospace;
+      --primary-black: #1a1a1a;
+      --primary-white: #f8f8f8;
+      --gray-light: #e5e5e5;
+      --gray-medium: #888888;
+      --gray-dark: #333333;
+    }
+    
+    * {
+      font-family: var(--typewriter-font);
+    }
+    
+    .headline-font {
+      font-family: var(--headline-font);
+      letter-spacing: 0.05em;
+    }
+    
+    /* Light mode (default) */
+    body {
+      background-color: var(--primary-white);
+      color: var(--primary-black);
+      font-family: var(--typewriter-font);
+      line-height: 1.6;
+    }
+    
+    /* Dark mode (inverted) */
+    .dark body {
+      background-color: var(--primary-black);
+      color: var(--primary-white);
+    }
+    
+    /* Simple Navigation Styles */
+    .vintage-nav {
+      font-family: 'Courier Prime', monospace;
+    }
+    
+    /* Button styles */
+    .vintage-btn {
+      font-family: 'Courier Prime', monospace;
+    }
+    
+    /* Input styles */
+    .vintage-input {
+      font-family: 'Courier Prime', monospace;
+    }
+    
+    .dark .vintage-btn:focus {
+      background-color: var(--primary-black);
+      color: var(--primary-white);
+      box-shadow: 4px 4px 0px var(--primary-white);
+    }
+    
+    /* Theme toggle switch */
+    .theme-toggle {
+      width: 60px;
+      height: 30px;
+      background-color: var(--primary-white);
+      border: 2px solid var(--primary-black);
+      border-radius: 0;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .theme-toggle-ball {
+      width: 22px;
+      height: 22px;
+      background-color: var(--primary-black);
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: all 0.3s ease;
+      border-radius: 0;
+    }
+    
+    .theme-toggle.dark {
+      background-color: var(--primary-black);
+      border: 2px solid var(--primary-white);
+    }
+    
+    .theme-toggle.dark .theme-toggle-ball {
+      background-color: var(--primary-white);
+      transform: translateX(28px);
+    }
+    
+    /* Vintage form inputs */
+    .vintage-input {
+      background-color: var(--primary-white);
+      color: var(--primary-black);
+      border: 2px solid var(--primary-black);
+      padding: 12px 16px;
+      font-family: var(--typewriter-font);
+      border-radius: 0;
+      transition: all 0.3s ease;
+    }
+    
+    .vintage-input:focus {
+      outline: none;
+      box-shadow: 4px 4px 0px var(--primary-black);
+      /* Removed transform to prevent stacking context issues */
+    }
+    
+    .dark .vintage-input {
+      background-color: var(--primary-black);
+      color: var(--primary-white);
+      border: 2px solid var(--primary-white);
+    }
+    
+    .dark .vintage-input:focus {
+      box-shadow: 4px 4px 0px var(--primary-white);
+    }
+    
+    /* Vintage cards */
+    .vintage-card {
+      background-color: var(--primary-white);
+      border: 3px solid var(--primary-black);
+      box-shadow: 8px 8px 0px var(--primary-black);
+      padding: 24px;
+      margin: 16px auto;
+      transition: all 0.3s ease;
+      width: 100%;
+      max-width: 700px;
+      box-sizing: border-box;
+      display: block;
+    }
+    
+    .vintage-card:hover {
+      box-shadow: 12px 12px 0px var(--primary-black);
+      /* Removed transform to prevent stacking context issues */
+    }
+    
+    .dark .vintage-card {
+      background-color: var(--primary-black);
+      border: 3px solid var(--primary-white);
+      box-shadow: 8px 8px 0px var(--primary-white);
+      width: 100%;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .dark .vintage-card:hover {
+      box-shadow: 12px 12px 0px var(--primary-white);
+    }
+    
+    /* Vintage newspaper header */
+    .newspaper-header {
+      border-top: 4px solid var(--primary-black);
+      border-bottom: 4px solid var(--primary-black);
+      background-color: var(--primary-white);
+      padding: 20px 0;
+    }
+    
+    .dark .newspaper-header {
+      border-top: 4px solid var(--primary-white);
+      border-bottom: 4px solid var(--primary-white);
+      background-color: var(--primary-black);
+    }
+    
+    /* Info bar styling */
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(0,0,0,0.05);
+      border: 1px solid var(--primary-black);
+      margin: 0.25rem;
+    }
+    
+    .dark .info-item {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--primary-white);
+    }
+    
+    /* Weather display improvements */
+    #weatherText {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    /* Single line info display */
+    .info-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      min-height: 2rem;
+      padding: 0.5rem 1rem;
+      border: 2px solid #333333;
+      margin: 0 auto;
+      opacity: 1;
+      transform: translateY(0px);
+      transition: 0.6s ease-out;
+    }
+    
+    /* Info line section wrapper */
+    .info-line-section {
+      position: relative;
+      z-index: 1;
+      margin-top: 0; /* Remove excess space above info bar */
+      padding: 0.25rem 0; /* Minimal padding for compact look */
+    }
+    
+    .info-item-inline {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      font-family: var(--typewriter-font);
+      flex: 1;
+      color: var(--primary-black);
+    }
+    
+    .dark .info-item-inline {
+      color: var(--primary-white);
+    }
+    
+    .info-item-inline:first-child {
+      justify-content: flex-start;
+    }
+    
+    .info-item-inline:nth-child(2) {
+      justify-content: center;
+    }
+    
+    .info-item-inline:last-child {
+      justify-content: flex-end;
+    }
+    
+    /* Temperature display */
+    #currentTemperature {
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    
+    /* Flash messages */
+    .vintage-flash {
+      border: 3px solid var(--primary-black);
+      background-color: var(--primary-white);
+      color: var(--primary-black);
+      padding: 16px;
+      margin: 8px 0;
+      font-family: var(--typewriter-font);
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .vintage-flash.success {
+      background-color: var(--gray-light);
+    }
+    
+    .vintage-flash.error {
+      background-color: var(--primary-black);
+      color: var(--primary-white);
+    }
+    
+    .dark .vintage-flash {
+      border: 3px solid var(--primary-white);
+      background-color: var(--primary-black);
+      color: var(--primary-white);
+    }
+    
+    .dark .vintage-flash.error {
+      background-color: var(--primary-white);
+      color: var(--primary-black);
+    }
+    
+    /* Vintage footer */
+    .vintage-footer {
+      background-color: var(--primary-black);
+      color: var(--primary-white);
+      border-top: 4px solid var(--primary-black);
+      padding: 32px 0;
+      font-family: var(--typewriter-font);
+    }
+    
+    .dark .vintage-footer {
+      background-color: var(--primary-white);
+      color: var(--primary-black);
+      border-top: 4px solid var(--primary-white);
+    }
+    
+    /* Typewriter animation */
+    .typewriter {
+      overflow: hidden;
+      border-right: 2px solid var(--primary-black);
+      white-space: nowrap;
+      margin: 0 auto;
+      letter-spacing: 0.1em;
+      animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+    }
+    
+    .dark .typewriter {
+      border-right: 2px solid var(--primary-white);
+    }
+    
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+    
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: var(--primary-black) }
+    }
+    
+    /* Retro notification badge */
+    .retro-badge {
+      background-color: var(--primary-black);
+      color: var(--primary-white);
+      border: 2px solid var(--primary-black);
+      font-family: var(--typewriter-font);
+      font-size: 10px;
+      font-weight: bold;
+      padding: 2px 6px;
+      position: absolute;
+      top: -8px;
+      right: -8px;
+    }
+    
+    .dark .retro-badge {
+      background-color: var(--primary-white);
+      color: var(--primary-black);
+      border: 2px solid var(--primary-white);
+    }
+    
+    /* Newspaper divider */
+    .newspaper-divider {
+      border: none;
+      height: 3px;
+      background-color: var(--primary-black);
+      margin: 32px 0;
+    }
+    
+    .dark .newspaper-divider {
+      background-color: var(--primary-white);
+    }
+    
+    /* Fix for dropdown menus */
+    .group:hover .group-hover\:opacity-100 {
+      opacity: 1 !important;
+    }
+    
+    .group:hover .group-hover\:visible {
+      visibility: visible !important;
+    }
+    
+    /* Navigation right section styling */
+    .nav-right-section {
+      display: flex !important;
+      align-items: center !important;
+      gap: 1.5rem;
+      flex-shrink: 0 !important;
+      margin-left: auto;
+    }
+    
+    .nav-right-section .nav-links {
+      gap: 0;
+      flex-shrink: 0;
+    }
+    
+
+    
+    .nav-right-section .theme-toggle-container {
+      margin: 0;
+      flex-shrink: 0;
+    }
+    
+    /* Ensure proper spacing between navigation elements */
+    .nav-container {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 2rem;
+      flex-wrap: nowrap !important;
+      width: 100%;
+    }
+    
+    /* Force brand to stay on left */
+    .nav-brand {
+      flex-shrink: 0 !important;
+    }
+    
+    /* Make sure theme toggle is always visible */
+    .theme-toggle-container {
+      min-width: 100px;
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.5rem;
+    }
+    
+    /* Fix nav links container to not squeeze other elements */
+    .nav-links {
+      max-width: none !important;
+      overflow: visible !important;
+    }
+  </style>
 </head>
-<body>
-    <!-- Enhanced Theme Toggle Button -->
-    <!-- Removed the standalone theme toggle button, now inside the nav bar -->
+<body class="min-h-screen flex flex-col transition-all duration-500">
 
-    <!-- Fixed Header -->
-    <header class="vintage-header">
-        <div class="header-top">
-            <div class="header-content">
-                <div class="main-header-section">
-                    <h1 class="main-title">YOUTH TIMES</h1>
-                    <p class="subtitle">ESTABLISHED 2025 • EMPOWERING YOUNG VOICES</p>
-                </div>
-            </div>
+  <!-- Vintage newspaper header -->
+  <div class="newspaper-header w-full">
+    <div class="container mx-auto px-8">
+      <!-- Empty top bar section -->
+      <div class="flex flex-col items-center py-4 border-b-2 border-black dark:border-white mb-6">
+        <!-- This space is intentionally left empty -->
+      </div>
+      
+      <!-- Main newspaper title - CENTERED -->
+      <div class="homepage-header">
+        <div class="text-center py-8 main-header">
+          <h1 class="headline-font text-8xl font-bold tracking-wider mb-3">YOUTH TIMES</h1>
+          <p class="headline-font text-lg tracking-widest opacity-80 mb-6">ESTABLISHED 2024 • EMPOWERING YOUNG VOICES</p>
+          
+          <!-- Stats bar with better spacing -->
+          <div class="bg-black dark:bg-white text-white dark:text-black px-6 py-3 stats-bar">
+          <div class="flex flex-wrap justify-center items-center gap-12 text-sm font-bold tracking-wider">
+            <span class="flex items-center">
+              <span class="opacity-60 mr-2">🌍</span>
+              EDITION: WORLDWIDE
+            </span>
+            <span class="opacity-50">•</span>
+            <span class="flex items-center" id="currentTemperature">
+              <span class="opacity-60 mr-2">🌡️</span>
+              --°C
+            </span>
+            <span class="opacity-50">•</span>
+            <span class="flex items-center" id="readerCount">
+              <span class="opacity-60 mr-2">👥</span>
+              READERS: <span id="readerNumber">{{ visitors_count or 0 }}</span>
+            </span>
+          </div>
         </div>
-
-        <!-- Compact Navigation -->
-        <nav class="header-nav compact-nav">
-            <div class="nav-container compact-nav-container">
-                <div class="nav-links compact-nav-links">
-                    <a href="{{ url_for('articles.home') }}" class="nav-link">HOME</a>
-                    <span class="nav-divider">|</span>
-                    <a href="{{ url_for('articles.articles_list') }}" class="nav-link">ARTICLES</a>
-                    <span class="nav-divider">|</span>
-                    <a href="{{ url_for('articles.about_us') }}" class="nav-link">ABOUT</a>
-                    <span class="nav-divider">|</span>
-                    <a href="{{ url_for('articles.contact') }}" class="nav-link">CONTACT</a>
-                    {% if current_user.is_authenticated %}
-                        <span class="nav-divider">|</span>
-                        <a href="{{ url_for('auth.profile') }}" class="nav-link">PROFILE</a>
-                        <span class="nav-divider">|</span>
-                        <a href="{{ url_for('articles.notifications') }}" class="nav-link">NOTIFICATION</a>
-                        <span class="nav-divider">|</span>
-                        <a href="{{ url_for('articles.submit_article') }}" class="nav-link">SUBMIT</a>
-                        {% if current_user.is_admin %}
-                        <span class="nav-divider">|</span>
-                        <a href="{{ url_for('admin.admin_panel') }}" class="nav-link">ADMIN</a>
-                        {% endif %}
-                        <span class="nav-divider">|</span>
-                        <a href="{{ url_for('auth.logout') }}" class="nav-link">LOGOUT</a>
-                    {% else %}
-                        <span class="nav-divider">|</span>
-                        <a href="{{ url_for('auth.login') }}" class="nav-link">LOGIN</a>
-                        <span class="nav-divider">|</span>
-                        <a href="{{ url_for('auth.register') }}" class="nav-link">REGISTER</a>
-                    {% endif %}
-                    <span class="nav-divider">|</span>
-                    <!-- Theme toggle button inside nav -->
-                    <button class="theme-toggle nav-theme-toggle" id="themeToggle" aria-label="Switch to light mode" title="Toggle theme (press T)">
-                        <svg class="theme-toggle-icon sun-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"></path>
-                        </svg>
-                        <svg class="theme-toggle-icon moon-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"/>
-                        </svg>
-                        <span class="sr-only">Press T to toggle theme</span>
-                    </button>
-                </div>
-            </div>
-        </nav>
-
-        <!-- Stats Bar -->
-        <div class="stats-bar">
-            <div class="stats-content">
-                <div class="stat-item">
-                    <span class="stat-text">{{ current_date }}</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-text" id="currentTemperature">--°C</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-text">READERS: {{ visitors_count or 0 }}</span>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Breaking News Ticker -->
-    {% if ticker_messages %}
-    <div class="ticker-container">
-        <span class="ticker-label">BREAKING NEWS</span>
-        <div class="ticker-content">
-            {% for message in ticker_messages %}
-                <span class="ticker-item">{{ message.content }}</span>
-            {% endfor %}
-        </div>
+      </div>
     </div>
-    {% endif %}
+  </div>
 
-    <!-- Main Content -->
-    <main class="content-wrapper">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="messages-container">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
+  <!-- REDESIGNED NAVIGATION BAR -->
+  <nav class="vintage-nav">
+    <div class="nav-container">
+      
+      <!-- Brand (Left Side) -->
+      <a href="{{ url_for('articles.home') }}" class="nav-brand">YOUTH TIMES</a>
+      
+      <!-- Theme Toggle (MOBILE ONLY, centered) -->
+      <div class="theme-toggle-container mobile-theme-toggle" style="display: none;">
+        <span>💡</span>
+        <div id="mobile-theme-toggle" class="theme-toggle">
+          <div class="theme-toggle-ball"></div>
+        </div>
+      </div>
+
+      <!-- Hamburger Icon for Mobile (right side) -->
+      <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      
+      <!-- Navigation Links and Controls (Right Side) -->
+      <div class="nav-right-section">
+        <!-- Navigation Links -->
+        <div class="nav-links">
+          <a href="{{ url_for('articles.home') }}" class="nav-link">HOME</a>
+          <a href="{{ url_for('articles.articles_list') }}" class="nav-link">ARTICLES</a>
+          <a href="{{ url_for('articles.about_us') }}" class="nav-link">ABOUT</a>
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('articles.submit_article') }}" class="nav-link">SUBMIT</a>
+            {% set unread=current_user.notifications|selectattr('is_read','equalto',False)|list|length %}
+            <a href="{{ url_for('articles.notifications') }}" class="nav-link">
+              NOTIFICATIONS{% if unread>0 %} <span class="dropdown-badge">{{ unread }}</span>{% endif %}
+            </a>
+            <a href="{{ url_for('auth.profile') }}" class="nav-link">PROFILE</a>
+            {% if current_user.role=='admin' %}
+              <a href="{{ url_for('admin.admin_panel') }}" class="nav-link">ADMIN</a>
             {% endif %}
-        {% endwith %}
-        
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- Footer -->
-    <footer class="vintage-footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3 class="footer-title">About Us</h3>
-                <ul class="footer-links">
-                    <li class="footer-link"><a href="{{ url_for('articles.about_us') }}">About Youth Times</a></li>
-                    <li class="footer-link"><a href="{{ url_for('articles.contact') }}">Contact Us</a></li>
-                    <li class="footer-link"><a href="{{ url_for('articles.editorial_guidelines') }}">Editorial Guidelines</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3 class="footer-title">Legal</h3>
-                <ul class="footer-links">
-                    <li class="footer-link"><a href="{{ url_for('articles.terms_of_service') }}">Terms of Service</a></li>
-                    <li class="footer-link"><a href="{{ url_for('articles.privacy_policy') }}">Privacy Policy</a></li>
-                    <li class="footer-link"><a href="{{ url_for('articles.dmca_policy') }}">DMCA Policy</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3 class="footer-title">Follow Us</h3>
-                <ul class="footer-links">
-                    <li class="footer-link"><a href="#">Twitter</a></li>
-                    <li class="footer-link"><a href="#">Facebook</a></li>
-                    <li class="footer-link"><a href="#">RSS Feed</a></li>
-                </ul>
-            </div>
+            <a href="{{ url_for('auth.logout') }}" class="nav-link">LOGOUT</a>
+          {% else %}
+            <a href="{{ url_for('auth.login') }}" class="nav-link">LOGIN</a>
+            <a href="{{ url_for('auth.register') }}" class="nav-link">REGISTER</a>
+          {% endif %}
         </div>
-        <div class="footer-bottom">
-            <p>&copy; {{ current_year }} Youth Times. All rights reserved.</p>
+        <!-- Theme Toggle -->
+        <div class="theme-toggle-container">
+          <span>💡</span>
+          <div id="theme-toggle" class="theme-toggle">
+            <div class="theme-toggle-ball"></div>
+          </div>
         </div>
-    </footer>
-
-    <!-- Enhanced Theme Toggle Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const html = document.documentElement;
-            const themeToggle = document.getElementById('themeToggle');
-            const sunIcon = themeToggle.querySelector('.sun-icon');
-            const moonIcon = themeToggle.querySelector('.moon-icon');
-            // Remove text update logic, only show/hide icons
-            // Check system preference
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const savedTheme = localStorage.getItem('theme');
-            const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-            function setTheme(theme, animate = true) {
-                if (animate) {
-                    document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
-                } else {
-                    document.body.style.transition = 'none';
-                }
-                html.setAttribute('data-theme', theme);
-                localStorage.setItem('theme', theme);
-                if (theme === 'dark') {
-                    sunIcon.style.display = 'none';
-                    moonIcon.style.display = 'block';
-                    themeToggle.setAttribute('aria-label', 'Switch to light mode');
-                } else {
-                    sunIcon.style.display = 'block';
-                    moonIcon.style.display = 'none';
-                    themeToggle.setAttribute('aria-label', 'Switch to dark mode');
-                }
-                void document.body.offsetHeight;
-                if (!animate) {
-                    setTimeout(() => {
-                        document.body.style.transition = '';
-                    }, 0);
-                }
-            }
-            setTheme(initialTheme, false);
-            function toggleTheme() {
-                const currentTheme = html.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                setTheme(newTheme, true);
-            }
-            themeToggle.addEventListener('click', toggleTheme);
-            document.addEventListener('keydown', function(e) {
-                if (e.key.toLowerCase() === 't' && !e.ctrlKey && !e.altKey && !e.metaKey) {
-                    toggleTheme();
-                }
-            });
-            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
-                if (!localStorage.getItem('theme')) {
-                    setTheme(e.matches ? 'dark' : 'light', true);
-                }
-            });
+      </div>
+      
+      <!-- Mobile Menu (hidden by default) -->
+      <div id="mobile-menu" class="mobile-menu">
+        <div class="mobile-menu-links">
+          <a href="{{ url_for('articles.home') }}" class="nav-link">HOME</a>
+          <a href="{{ url_for('articles.articles_list') }}" class="nav-link">ARTICLES</a>
+          <a href="{{ url_for('articles.about_us') }}" class="nav-link">ABOUT</a>
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('articles.submit_article') }}" class="nav-link">SUBMIT</a>
+            <a href="{{ url_for('articles.notifications') }}" class="nav-link">NOTIFICATIONS</a>
+            <a href="{{ url_for('auth.profile') }}" class="nav-link">PROFILE</a>
+            {% if current_user.role=='admin' %}
+              <a href="{{ url_for('admin.admin_panel') }}" class="nav-link">ADMIN</a>
+            {% endif %}
+            <a href="{{ url_for('auth.logout') }}" class="nav-link">LOGOUT</a>
+          {% else %}
+            <a href="{{ url_for('auth.login') }}" class="nav-link">LOGIN</a>
+            <a href="{{ url_for('auth.register') }}" class="nav-link">REGISTER</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+  <style>
+    /* Mobile menu styles and animation */
+    @media (max-width: 900px) {
+      .mobile-menu-btn {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        background: var(--menu-btn-bg, #222) !important;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        padding: 0.5rem;
+        border-radius: 6px;
+        transition: background 0.2s;
+        cursor: pointer;
+        z-index: 100001;
+      }
+      .mobile-menu-btn:focus,
+      .mobile-menu-btn:active,
+      .mobile-menu-btn.open {
+        background: var(--menu-btn-bg, #222) !important;
+        box-shadow: none !important;
+      }
+      .mobile-menu-btn .bar {
+        width: 28px;
+        height: 4px;
+        background: #f8f8f8 !important;
+        margin: 3px 0;
+        border-radius: 2px;
+        transition: all 0.3s cubic-bezier(.4,2,.6,1);
+      }
+      .mobile-menu-btn.open .bar:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+      .mobile-menu-btn.open .bar:nth-child(2) {
+        opacity: 0;
+      }
+      .mobile-menu-btn.open .bar:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+      .mobile-menu-btn:hover,
+      .mobile-menu-btn:focus {
+        background: var(--menu-btn-hover-bg, #333) !important;
+      }
+      .mobile-menu {
+        background: var(--menu-bg, #222);
+        color: #fff;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      }
+      .mobile-menu.open {
+        display: block;
+        animation: menuSlideDown 0.3s cubic-bezier(.4,2,.6,1);
+      }
+      .mobile-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        min-width: 180px;
+        z-index: 100;
+      }
+      @keyframes menuSlideDown {
+        from { opacity: 0; transform: translateY(-16px);}
+        to { opacity: 1; transform: translateY(0);}
+      }
+      .mobile-menu .nav-link {
+        color: #fff !important;
+        background: none !important;
+        border-bottom: 1px solid #444;
+        text-align: right;
+        padding: 0.75rem 1.25rem;
+        display: block;
+      }
+      .mobile-menu .nav-link:last-child {
+        border-bottom: none;
+      }
+      .nav-right-section {
+        display: none !important;
+      }
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --menu-btn-bg: #222;
+        --menu-btn-hover-bg: #333;
+        --menu-bg: #222;
+      }
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --menu-btn-bg: #f8f8f8;
+        --menu-btn-hover-bg: #e0e0e0;
+        --menu-bg: #fff;
+      }
+      .mobile-menu-btn .bar {
+        background: #222 !important;
+      }
+      .mobile-menu .nav-link {
+        color: #222 !important;
+        border-bottom: 1px solid #ccc;
+      }
+    }
+    @media (min-width: 901px) {
+      .mobile-menu-btn, #mobile-menu { display: none !important; }
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+      }
+      .info-line-section .info-line {
+        display: flex;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+        padding: 0 !important;
+        width: 100%;
+      }
+      .info-line-section .info-item-inline {
+        width: 100%;
+        text-align: left;
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+        overflow-wrap: break-word;
+        word-break: break-word;
+        display: block;
+      }
+    }
+    @media (max-width: 900px) {
+      .nav-right-section {
+        display: none !important;
+      }
+      .mobile-theme-toggle {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        margin: 0 8px;
+      }
+    }
+    @media (min-width: 901px) {
+      .mobile-theme-toggle {
+        display: none !important;
+      }
+    }
+  </style>
+  <script>
+    // Mobile menu open/close animation
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', function() {
+          menuBtn.classList.toggle('open');
+          mobileMenu.classList.toggle('open');
+          const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+          menuBtn.setAttribute('aria-expanded', !expanded);
         });
-    </script>
+        // Optional: close menu when a link is clicked
+        mobileMenu.querySelectorAll('.nav-link').forEach(link => {
+          link.addEventListener('click', () => {
+            menuBtn.classList.remove('open');
+            mobileMenu.classList.remove('open');
+            menuBtn.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+    });
+  </script>
+  
+  <!-- Newspaper divider above info line -->
+  <hr class="newspaper-divider">
+  
+  <!-- Info Line Section (positioned between navigation and main content) -->
+  <div class="info-line-section">
+    <div class="container mx-auto px-8">
+      <div class="info-line w-full max-w-4xl flex items-center justify-between mb-2 px-8">
+        <!-- Date - Left Side -->
+        <div class="info-item-inline flex items-center whitespace-nowrap">
+          <span class="text-xs opacity-60 mr-2">📅</span>
+          <span id="currentDate" class="headline-font text-base font-bold tracking-wider uppercase"></span>
+        </div>
+        
+        <!-- Time - Center -->
+        <div class="info-item-inline flex items-center whitespace-nowrap">
+          <span class="text-xs opacity-60 mr-2">🕐</span>
+          <span id="currentTime" class="headline-font text-base font-bold tracking-wider uppercase"></span>
+        </div>
+        
+        <!-- Weather - Right Side -->
+        <div class="info-item-inline flex items-center whitespace-nowrap">
+          <span id="weatherText" class="headline-font text-base font-bold tracking-wider uppercase">LOADING WEATHER...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="container mx-auto mt-8 px-4 flex-grow">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-6 space-y-3">
+          {% for category, message in messages %}
+            <div class="vintage-flash
+              {% if category=='success' %} success
+              {% elif category in ['danger','error'] %} error
+              {% elif category=='warning' %} 
+              {% else %} {% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="vintage-footer">
+    <div class="footer-content">
+      <!-- Main Footer -->
+      <div class="footer-main">
+        <div class="footer-section">
+          <h3 class="footer-title">YOUTH TIMES</h3>
+          <p class="footer-description">Empowering young voices through authentic journalism and community storytelling.</p>
+          <div class="footer-social">
+            <a href="#" class="social-icon" aria-label="Facebook">
+              <span class="social-placeholder">📘</span>
+            </a>
+            <a href="#" class="social-icon" aria-label="Twitter">
+              <span class="social-placeholder">🐦</span>
+            </a>
+            <a href="#" class="social-icon" aria-label="Instagram">
+              <span class="social-placeholder">📷</span>
+            </a>
+            <a href="#" class="social-icon" aria-label="LinkedIn">
+              <span class="social-placeholder">��</span>
+            </a>
+            <a href="#" class="social-icon" aria-label="YouTube">
+              <span class="social-placeholder">📺</span>
+            </a>
+          </div>
+        </div>
+        
+        <div class="footer-section">
+          <h4 class="footer-subtitle">NAVIGATION</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('articles.home') }}">Home</a></li>
+            <li><a href="{{ url_for('articles.articles_list') }}">Articles</a></li>
+            <li><a href="{{ url_for('articles.about_us') }}">About Us</a></li>
+            {% if current_user.is_authenticated %}
+            <li><a href="{{ url_for('auth.profile') }}">Profile</a></li>
+            <li><a href="{{ url_for('articles.submit_article') }}">Submit Article</a></li>
+            {% else %}
+            <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+            {% endif %}
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4 class="footer-subtitle">LEGAL & POLICIES</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="showDMCAPolicy()">DMCA Policy</a></li>
+            <li><a href="#" onclick="showPrivacyPolicy()">Privacy Policy</a></li>
+            <li><a href="#" onclick="showTermsOfService()">Terms of Service</a></li>
+            <li><a href="#" onclick="showEditorialGuidelines()">Editorial Guidelines</a></li>
+            <li><a href="#" onclick="showContactInfo()">Contact Us</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4 class="footer-subtitle">TRANSPARENCY</h4>
+          <div class="footer-stats">
+            <div class="stat-item">
+              <span class="stat-number">{{ total_articles or 0 }}</span>
+              <span class="stat-label">Articles Published</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">{{ total_users or 0 }}</span>
+              <span class="stat-label">Community Writers</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">95%</span>
+              <span class="stat-label">Fact-Check Rate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Bottom Footer -->
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <div class="footer-copyright">
+            <p>&copy; 2025 YOUTH TIMES. All rights reserved.</p>
+            <p class="footer-tagline">Independent Student Journalism | Powered by Truth</p>
+          </div>
+          <div class="footer-credits">
+            <p>Built with ❤️ by the Youth Times Development Team</p>
+            <p class="footer-disclaimer">Content reflects student opinions and may not represent institutional views.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Policy Modals -->
+  
+  <!-- DMCA Policy Modal -->
+  <div id="dmcaModal" class="policy-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>DMCA TAKEDOWN POLICY</h2>
+        <button onclick="closePolicyModal('dmcaModal')" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>Digital Millennium Copyright Act (DMCA) Notice</h3>
+        <p>Youth Times respects intellectual property rights and responds promptly to valid DMCA takedown notices.</p>
+        
+        <h4>How to File a DMCA Notice:</h4>
+        <ol>
+          <li>Identify the copyrighted work you believe has been infringed</li>
+          <li>Provide the specific URL(s) where the infringing content appears</li>
+          <li>Include your contact information and a statement of good faith belief</li>
+          <li>Sign the notice electronically or physically</li>
+        </ol>
+        
+        <h4>Send DMCA Notices to:</h4>
+        <p><strong>Email:</strong> dmca@youthtimes.org<br>
+        <strong>Subject Line:</strong> DMCA Takedown Notice<br>
+        <strong>Response Time:</strong> 48-72 hours</p>
+        
+        <h4>Counter-Notification Process:</h4>
+        <p>If you believe content was removed in error, you may file a counter-notification following the same contact process.</p>
+        
+        <p class="disclaimer"><strong>Note:</strong> Filing false DMCA claims may result in legal consequences. Ensure your claim is valid before submitting.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Policy Modal -->
+  <div id="privacyModal" class="policy-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>PRIVACY POLICY</h2>
+        <button onclick="closePolicyModal('privacyModal')" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>Information We Collect</h3>
+        <p>Youth Times is committed to protecting your privacy and handling your personal information responsibly.</p>
+        
+        <h4>Personal Information:</h4>
+        <ul>
+          <li>Username and display name</li>
+          <li>Email address (for account management)</li>
+          <li>Profile information (bio, location, website)</li>
+          <li>Articles and comments you submit</li>
+        </ul>
+        
+        <h4>How We Use Your Information:</h4>
+        <ul>
+          <li>To provide and maintain our journalism platform</li>
+          <li>To communicate with you about your account</li>
+          <li>To improve our services and user experience</li>
+          <li>To ensure content quality and combat misinformation</li>
+        </ul>
+        
+        <h4>Information Sharing:</h4>
+        <p>We never sell your personal information. We may share data only when:</p>
+        <ul>
+          <li>Required by law or legal process</li>
+          <li>To protect our rights or users' safety</li>
+          <li>With your explicit consent</li>
+        </ul>
+        
+        <h4>Data Security:</h4>
+        <p>We implement industry-standard security measures to protect your information.</p>
+        
+        <h4>Your Rights:</h4>
+        <p>You can request access, correction, or deletion of your personal data by contacting us.</p>
+        
+        <p class="disclaimer"><strong>Contact:</strong> privacy@youthtimes.org</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms of Service Modal -->
+  <div id="termsModal" class="policy-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>TERMS OF SERVICE</h2>
+        <button onclick="closePolicyModal('termsModal')" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>Agreement to Terms</h3>
+        <p>By using Youth Times, you agree to these terms and our community guidelines.</p>
+        
+        <h4>User Responsibilities:</h4>
+        <ul>
+          <li>Provide accurate and truthful information</li>
+          <li>Respect intellectual property rights</li>
+          <li>Follow community guidelines and journalistic ethics</li>
+          <li>Report inappropriate content</li>
+        </ul>
+        
+        <h4>Content Guidelines:</h4>
+        <ul>
+          <li>All submitted content must be original or properly attributed</li>
+          <li>No plagiarism, hate speech, or misinformation</li>
+          <li>Articles must meet basic journalistic standards</li>
+          <li>Respect privacy of individuals</li>
+        </ul>
+        
+        <h4>Account Management:</h4>
+        <ul>
+          <li>You are responsible for your account security</li>
+          <li>One account per person</li>
+          <li>We reserve the right to suspend accounts for violations</li>
+        </ul>
+        
+        <h4>Content Moderation:</h4>
+        <p>We reserve the right to review, edit, or remove content that violates our guidelines.</p>
+        
+        <h4>Limitation of Liability:</h4>
+        <p>Youth Times is provided "as is" without warranties. We are not liable for user-generated content.</p>
+        
+        <p class="disclaimer"><strong>Questions:</strong> legal@youthtimes.org</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Editorial Guidelines Modal -->
+  <div id="editorialModal" class="policy-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>EDITORIAL GUIDELINES</h2>
+        <button onclick="closePolicyModal('editorialModal')" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>Youth Times Journalism Standards</h3>
+        <p>We maintain high editorial standards to ensure credible, ethical journalism.</p>
+        
+        <h4>Fact-Checking Process:</h4>
+        <ul>
+          <li>All articles undergo automated credibility scoring</li>
+          <li>Sources must be verified and cited</li>
+          <li>Claims require evidence and attribution</li>
+          <li>Editorial review for sensitive topics</li>
+        </ul>
+        
+        <h4>Writing Standards:</h4>
+        <ul>
+          <li>Clear, accurate, and engaging prose</li>
+          <li>Objective reporting with minimal bias</li>
+          <li>Proper grammar and style</li>
+          <li>Appropriate tone for target audience</li>
+        </ul>
+        
+        <h4>Source Requirements:</h4>
+        <ul>
+          <li>Primary sources preferred over secondary</li>
+          <li>Multiple sources for controversial claims</li>
+          <li>Expert opinions from qualified individuals</li>
+          <li>Transparent about conflicts of interest</li>
+        </ul>
+        
+        <h4>Ethics Policy:</h4>
+        <ul>
+          <li>No plagiarism or fabrication</li>
+          <li>Respect for privacy and dignity</li>
+          <li>Fair representation of all viewpoints</li>
+          <li>Correction of errors promptly</li>
+        </ul>
+        
+        <h4>Editorial Independence:</h4>
+        <p>Our editorial decisions are made independently, free from commercial or political influence.</p>
+        
+        <p class="disclaimer"><strong>Editorial Team:</strong> editors@youthtimes.org</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Information Modal -->
+  <div id="contactModal" class="policy-modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>CONTACT INFORMATION</h2>
+        <button onclick="closePolicyModal('contactModal')" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>Get in Touch with Youth Times</h3>
+        <p>We welcome feedback, tips, and collaboration opportunities.</p>
+        
+        <h4>Editorial Contacts:</h4>
+        <div class="contact-section">
+          <p><strong>📰 Editor-in-Chief:</strong> editor@youthtimes.org</p>
+          <p><strong>📝 Newsroom:</strong> newsroom@youthtimes.org</p>
+          <p><strong>💡 Story Tips:</strong> tips@youthtimes.org</p>
+          <p><strong>🔍 Fact-Check Team:</strong> verify@youthtimes.org</p>
+        </div>
+        
+        <h4>Administrative Contacts:</h4>
+        <div class="contact-section">
+          <p><strong>⚖️ Legal Matters:</strong> legal@youthtimes.org</p>
+          <p><strong>🔒 Privacy Concerns:</strong> privacy@youthtimes.org</p>
+          <p><strong>🛡️ DMCA Notices:</strong> dmca@youthtimes.org</p>
+          <p><strong>🤝 Partnerships:</strong> partnerships@youthtimes.org</p>
+        </div>
+        
+        <h4>Technical Support:</h4>
+        <div class="contact-section">
+          <p><strong>🔧 Technical Issues:</strong> support@youthtimes.org</p>
+          <p><strong>🐛 Bug Reports:</strong> bugs@youthtimes.org</p>
+          <p><strong>💡 Feature Requests:</strong> feedback@youthtimes.org</p>
+        </div>
+        
+        <h4>Response Times:</h4>
+        <ul>
+          <li><strong>Editorial inquiries:</strong> 24-48 hours</li>
+          <li><strong>Technical support:</strong> 1-3 business days</li>
+          <li><strong>Legal matters:</strong> 48-72 hours</li>
+          <li><strong>Breaking news tips:</strong> Immediate during business hours</li>
+        </ul>
+        
+        <h4>Mailing Address:</h4>
+        <div class="contact-section">
+          <p><strong>Youth Times Editorial Office</strong><br>
+          Student Media Center<br>
+          [University Name]<br>
+          [City, State ZIP]</p>
+        </div>
+        
+        <p class="disclaimer"><strong>Note:</strong> For urgent breaking news or safety concerns, contact us immediately at newsroom@youthtimes.org</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Include Moment.js for date/time formatting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+  <!-- Custom JavaScript for theme switching, clock, weather, and interactions -->
+  <script>
+    // Debug console logs to help with troubleshooting
+    console.log('Youth Times JavaScript loading...');
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM Content Loaded - Initializing...');
+      
+      // Initialize date and time
+      function updateDateTime() {
+        const now = new Date();
+        const dateOptions = { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        };
+        const timeOptions = {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true
+        };
+        
+        const dateElement = document.getElementById('currentDate');
+        const timeElement = document.getElementById('currentTime');
+        
+        if (dateElement) {
+          dateElement.innerText = now.toLocaleDateString('en-US', dateOptions).toUpperCase();
+        }
+        if (timeElement) {
+          timeElement.innerText = now.toLocaleTimeString('en-US', timeOptions);
+        }
+      }
+      
+      // Update time every second
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+      console.log('Date/Time initialized');
+      
+      // Weather API integration - fetch from backend
+      async function fetchWeather() {
+        try {
+          const response = await fetch('/api/weather?city=Bhubaneswar');
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+          if (result.success) {
+            const weatherData = result.data;
+            const weatherText = document.getElementById('weatherText');
+            const currentTemperature = document.getElementById('currentTemperature');
+
+            // Convert OpenWeather icon code to emoji
+            const weatherIcon = getWeatherEmoji(weatherData.icon);
+
+            if (weatherText) {
+              weatherText.textContent = `${weatherIcon} ${weatherData.description.toUpperCase()}`;
+            }
+            if (currentTemperature) {
+              currentTemperature.innerHTML = `<span class="opacity-60 mr-2">🌡️</span>${weatherData.temperature}°C`;
+            }
+            
+            // Check for weather alerts if the function exists (on home page)
+            if (typeof checkWeatherAlerts === 'function') {
+              checkWeatherAlerts(weatherData);
+            }
+            
+            console.log('Weather data updated successfully');
+          } else {
+            console.error('Failed to fetch weather data:', result.error);
+            setFallbackWeather();
+          }
+        } catch (error) {
+          console.error('Error fetching weather data:', error);
+          setFallbackWeather();
+        }
+      }
+
+      function getWeatherEmoji(iconCode) {
+        // Convert OpenWeather icon codes to emojis
+        const iconMap = {
+          '01d': '☀️', // clear sky day
+          '01n': '🌙', // clear sky night
+          '02d': '⛅', // few clouds day
+          '02n': '☁️', // few clouds night
+          '03d': '☁️', // scattered clouds
+          '03n': '☁️', // scattered clouds
+          '04d': '☁️', // broken clouds
+          '04n': '☁️', // broken clouds
+          '09d': '🌧️', // shower rain
+          '09n': '🌧️', // shower rain
+          '10d': '🌦️', // rain day
+          '10n': '🌧️', // rain night
+          '11d': '⛈️', // thunderstorm
+          '11n': '⛈️', // thunderstorm
+          '13d': '❄️', // snow
+          '13n': '❄️', // snow
+          '50d': '🌫️', // mist
+          '50n': '🌫️'  // mist
+        };
+        return iconMap[iconCode] || '🌤️';
+      }
+
+      function setFallbackWeather() {
+        const weatherText = document.getElementById('weatherText');
+        const currentTemperature = document.getElementById('currentTemperature');
+        
+        if (weatherText) {
+          weatherText.textContent = '☁️ OVERCAST CLOUDS';
+        }
+        if (currentTemperature) {
+          currentTemperature.innerHTML = '<span class="opacity-60 mr-2">🌡️</span>25°C';
+        }
+      }
+      
+      // Global function to refresh weather (can be called from other pages)
+      window.refreshWeather = function() {
+        document.getElementById('weatherText').textContent = '🔄 UPDATING...';
+        fetchWeather();
+      };
+      
+      // Initialize weather
+      fetchWeather();
+      // Update weather every 10 minutes
+      setInterval(fetchWeather, 600000);
+      
+      // Visitor counter now handled server-side via Analytics and passed as visitors_count
+      
+      // Reader count displays {{ visitors_count }} from server
+      
+      // Theme switching functionality
+      const themeToggle = document.getElementById('theme-toggle');
+      const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+      const htmlElement = document.documentElement;
+      
+      console.log('Theme toggle elements:', {
+        desktop: themeToggle,
+        mobile: mobileThemeToggle
+      });
+      
+      // Check for saved theme preference or default to light mode
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      console.log('Current theme:', currentTheme);
+      
+      // Apply saved theme to toggle
+      if (currentTheme === 'dark') {
+        htmlElement.classList.add('dark');
+        if (themeToggle) {
+          themeToggle.classList.add('dark');
+        }
+        if (mobileThemeToggle) {
+          mobileThemeToggle.classList.add('dark');
+        }
+      }
+      
+      // Function to toggle theme
+      function toggleTheme() {
+        console.log('Theme toggle clicked');
+        htmlElement.classList.toggle('dark');
+        
+        // Update toggles
+        if (themeToggle) {
+          themeToggle.classList.toggle('dark');
+        }
+        if (mobileThemeToggle) {
+          mobileThemeToggle.classList.toggle('dark');
+        }
+        
+        // Save theme preference
+        const newTheme = htmlElement.classList.contains('dark') ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        console.log('Theme changed to:', newTheme);
+        
+        // Add a fun animation effect without creating stacking context
+        document.body.style.filter = 'contrast(1.05)';
+        setTimeout(() => {
+          document.body.style.filter = 'none';
+        }, 150);
+      }
+      
+      // Theme toggle click handlers
+      if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+      }
+      if (mobileThemeToggle) {
+        mobileThemeToggle.addEventListener('click', toggleTheme);
+      }
+      
+      // Add entrance animations to elements
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, observerOptions);
+      
+      // Always show .vintage-box elements immediately
+      document.querySelectorAll('.vintage-box').forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+
+      // Show all .vintage-card, article, .newspaper-header immediately (no animation)
+      document.querySelectorAll('.vintage-card, article, .newspaper-header').forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      });
+      
+      // Auto-hide flash messages after 5 seconds
+      setTimeout(() => {
+        const flashMessages = document.querySelectorAll('.vintage-flash');
+        flashMessages.forEach(msg => {
+          msg.style.transition = 'all 0.5s ease-out';
+          msg.style.opacity = '0';
+          msg.style.transform = 'translateX(100%)';
+          setTimeout(() => {
+            msg.remove();
+          }, 500);
+        });
+      }, 5000);
+      
+      // Test all navigation links
+      const navLinks = document.querySelectorAll('.nav-link');
+      console.log('Found navigation links:', navLinks.length);
+      navLinks.forEach((link, index) => {
+        console.log(`Nav link ${index}:`, link.href || link.textContent);
+      });
+      
+      console.log('Youth Times initialization complete!');
+      
+      // Add a small diagnostic to the page to show JavaScript is working
+      const debugInfo = document.createElement('div');
+      debugInfo.style.cssText = 'position:fixed;bottom:10px;right:10px;background:var(--primary-black);color:var(--primary-white);padding:8px;font-size:10px;z-index:1000;border:1px solid var(--primary-white);';
+      debugInfo.innerHTML = 'JS: ✓ | NAV: ✓ | THEME: ✓';
+      document.body.appendChild(debugInfo);
+      
+      // Hide debug info after 5 seconds
+      setTimeout(() => {
+        debugInfo.style.opacity = '0';
+        setTimeout(() => debugInfo.remove(), 500);
+      }, 5000);
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      // Ctrl/Cmd + D for dark mode toggle
+      if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        document.getElementById('theme-toggle').click();
+      }
+      
+      // Escape to close mobile menu
+      if (e.key === 'Escape') {
+        const mobileMenu = document.getElementById('mobile-menu');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+        if (mobileMenu && mobileMenu.classList.contains('show')) {
+          mobileMenu.classList.add('hidden');
+          hamburgerIcon.textContent = '☰';
+        }
+      }
+      
+      // Press 'W' to refresh weather
+      if (e.key.toLowerCase() === 'w' && !e.ctrlKey && !e.metaKey) {
+        const activeElement = document.activeElement;
+        if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          // Re-fetch weather
+          window.refreshWeather();
+        }
+      }
+    });      // Enhanced weather functionality with temperature variations
+      function initializeDynamicWeather() {
+        const tempElement = document.getElementById('currentTemperature');
+        if (!tempElement) return;
+        
+        let baseTemperature = 22; // Starting temperature
+        
+        function updateTemperatureVariation() {
+          // Small random temperature variations (±1-2 degrees)
+          const variation = (Math.random() - 0.5) * 4; // -2 to +2 degrees
+          const newTemp = Math.round(baseTemperature + variation);
+          
+          tempElement.innerHTML = `<span class="opacity-60 mr-2">🌡️</span>${newTemp}°C`;
+          console.log(`Temperature updated: ${newTemp}°C`);
+        }
+        
+        // Set initial temperature
+        updateTemperatureVariation();
+        
+        // Update temperature every 2-5 minutes with small variations
+        setInterval(updateTemperatureVariation, Math.random() * 180000 + 120000); // 2-5 minutes
+        console.log('Dynamic weather initialized');
+      }
+      
+      // Initialize dynamic weather
+      initializeDynamicWeather();
+      
+      // Dropdown removed - using CSS only solution
+      console.log('Using CSS-only dropdown - no JavaScript needed');
+      
+      // ULTIMATE DROPDOWN POSITIONING SOLUTION - V2
+      function positionDropdown() {
+        const dropdown = document.querySelector('.nav-dropdown');
+        const dropdownContent = document.querySelector('.dropdown-content');
+        
+        if (!dropdown || !dropdownContent) {
+          console.log('Dropdown elements not found');
+          return;
+        }
+        
+        // Force reflow to get accurate positioning
+        dropdown.offsetHeight;
+        
+        // Get button position
+        const rect = dropdown.getBoundingClientRect();
+        console.log('Button position:', rect);
+        
+        // Position dropdown below button, aligned to right edge
+        const topPos = rect.bottom + window.scrollY + 2;
+        const leftPos = rect.right - 200; // 200px is min-width
+        
+        dropdownContent.style.top = topPos + 'px';
+        dropdownContent.style.left = Math.max(10, leftPos) + 'px'; // Ensure it doesn't go off left edge
+        
+        console.log('Dropdown positioned at:', dropdownContent.style.top, dropdownContent.style.left);
+        
+        // Ensure dropdown doesn't go off-screen right edge
+        setTimeout(() => {
+          const dropdownRect = dropdownContent.getBoundingClientRect();
+          if (dropdownRect.right > window.innerWidth) {
+            dropdownContent.style.left = (window.innerWidth - 200 - 10) + 'px';
+            console.log('Adjusted for right edge');
+          }
+        }, 0);
+      }
+      
+      // Enhanced positioning setup
+      function setupDropdown() {
+        const navDropdown = document.querySelector('.nav-dropdown');
+        if (!navDropdown) return;
+        
+        // Initial position
+        positionDropdown();
+        
+        // Reposition on window resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(() => {
+            positionDropdown();
+          }, 250);
+        });
+        
+        console.log('Dropdown setup complete');
+      }
+      
+      // Initialize dropdown positioning
+      setupDropdown();
+      
+      // Policy Modal Functions
+      window.showDMCAPolicy = function() {
+        showPolicyModal('dmcaModal');
+      };
+      
+      window.showPrivacyPolicy = function() {
+        showPolicyModal('privacyModal');
+      };
+      
+      window.showTermsOfService = function() {
+        showPolicyModal('termsModal');
+      };
+      
+      window.showEditorialGuidelines = function() {
+        showPolicyModal('editorialModal');
+      };
+      
+      window.showContactInfo = function() {
+        showPolicyModal('contactModal');
+      };
+      
+      // Generic modal show/hide functions
+      window.showPolicyModal = function(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      };
+      
+      window.closePolicyModal = function(modalId) {
+        if (modalId) {
+          document.getElementById(modalId).style.display = 'none';
+        } else {
+          // Close all modals if no specific ID provided
+          const modals = document.querySelectorAll('.policy-modal');
+          modals.forEach(modal => modal.style.display = 'none');
+        }
+        document.body.style.overflow = 'auto';
+      };
+      
+      // Close modal when clicking outside
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('policy-modal')) {
+          closePolicyModal();
+        }
+      });
+      
+      // Close modal with Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          const modals = document.querySelectorAll('.policy-modal');
+          for (let modal of modals) {
+            if (modal.style.display === 'flex') {
+              closePolicyModal();
+              break;
+            }
+          }
+        }
+      });
+  </script>
 </body>
 </html>

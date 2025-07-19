@@ -1,36 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="main-content below-header">
 
-<!-- Breaking News Ticker - Exact Match to Image -->
-<div class="breaking-news-ticker">
-  <div class="breaking-news-inner">
-    <div class="breaking-news-label">
+<!-- Breaking News Ticker -->
+<div class="vintage-card mb-6 bg-black text-white dark:bg-white dark:text-black newspaper-texture">
+  <div class="flex items-center">
+    <span class="headline-font text-xl font-bold px-4 py-2 bg-red-600 text-white dark:bg-red-400 dark:text-black mr-4 breaking-flash vintage-stamp">
       BREAKING NEWS
-    </div>
-    <div class="breaking-news-messages">
-      <div class="breaking-news-scroll">
-        {% if ticker_messages %}
-          {{ ticker_messages|map(attribute='message')|join(' • ') }}
-        {% else %}
-          YOUTH VOICES MAKING HEADLINES WORLDWIDE • LATEST STORIES FROM YOUNG JOURNALISTS • STAY INFORMED WITH YOUTH TIMES • EMPOWERING THE NEXT GENERATION OF JOURNALISTS
-        {% endif %}
+    </span>
+    <div class="news-ticker-container flex-1">
+      <div class="news-ticker-content">
+        <span class="font-bold tracking-wider">
+          {% if ticker_messages %}
+            {{ ticker_messages|map(attribute='message')|join(' • ') }}
+          {% else %}
+            YOUTH VOICES MAKING HEADLINES WORLDWIDE • LATEST STORIES FROM YOUNG JOURNALISTS • STAY INFORMED WITH YOUTH TIMES
+          {% endif %}
+        </span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Emergency Weather Alert (shows only during severe weather) -->
-<div id="weather-alert" class="hidden vintage-card mb-6 bg-red-600 text-white dark:bg-red-400 dark:text-black">
-  <div class="flex items-center">
-    <span class="headline-font text-lg font-bold px-3 py-1 bg-yellow-400 text-black mr-4">
-      ⚠️ WEATHER ALERT
-    </span>
-    <div id="weather-alert-text" class="font-bold tracking-wider">
-      <!-- Weather alert content will be inserted here -->
-    </div>
-  </div>
-</div>
+
 
 <!-- Main Headline Section -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
@@ -40,15 +31,15 @@
     <div class="vintage-card">
       <span class="vintage-btn text-xs mb-4 inline-block">FEATURED STORY</span>
       <h1 class="headline-font text-4xl md:text-6xl font-bold leading-tight mb-4">
-        <a href="{{ url_for('articles.view_article', id=articles[0].id) }}" class="hover:underline">
+        <a href="{{ url_for('articles.view_article', hash_id=articles[0].hash_id) }}" class="hover:underline">
           {{ articles[0].title|upper }}
         </a>
       </h1>
       <p class="text-lg mb-4 font-bold uppercase tracking-wider">
-        By {{ articles[0].author.username if articles[0].author else 'Anonymous' }} • {{ articles[0].created_at.strftime('%B %d, %Y') if articles[0].created_at }}
+        By {{ articles[0].author.username }} • {{ articles[0].created_at.strftime('%B %d, %Y') if articles[0].created_at }}
       </p>
       <p class="text-lg leading-relaxed mb-6">{{ articles[0].content|excerpt(300) }}</p>
-      <a href="{{ url_for('articles.view_article', id=articles[0].id) }}" class="vintage-btn text-lg">
+      <a href="{{ url_for('articles.view_article', hash_id=articles[0].hash_id) }}" class="vintage-btn text-lg">
         READ FULL STORY
       </a>
     </div>
@@ -71,12 +62,12 @@
         {% for article in articles[1:4] %}
         <div class="mb-4 pb-4 {% if not loop.last %}border-b border-black dark:border-white{% endif %}">
           <h4 class="font-bold text-sm uppercase leading-tight mb-2">
-            <a href="{{ url_for('articles.view_article', id=article.id) }}" class="hover:underline">
+            <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" class="hover:underline">
               {{ article.title }}
             </a>
           </h4>
           <p class="text-xs font-bold uppercase tracking-wider opacity-70">
-            {{ article.author.username if article.author else 'Anonymous' }}
+            {{ article.author.username }}
           </p>
         </div>
         {% endfor %}
@@ -85,15 +76,55 @@
       {% endif %}
     </div>
     
+    <!-- Weather Section Divider -->
+    <hr class="newspaper-divider">
+    
+    <!-- Weather Alert (shows only during severe weather) -->
+    <div id="weather-alert" class="hidden vintage-card mb-4 bg-red-600 text-white dark:bg-red-400 dark:text-black">
+      <div class="flex items-center">
+        <span class="headline-font text-lg font-bold px-3 py-1 bg-yellow-400 text-black mr-4">
+          ⚠️ WEATHER ALERT
+        </span>
+        <div id="weather-alert-text" class="font-bold tracking-wider">
+          <!-- Weather alert content will be inserted here -->
+        </div>
+      </div>
+    </div>
+
     <!-- Weather Widget -->
     <div class="vintage-card text-center newspaper-texture">
       <h3 class="headline-font text-xl font-bold uppercase mb-4">Weather Report</h3>
-      <div class="text-4xl mb-2" id="weather-widget-icon">🌤️</div>
-      <div class="text-2xl font-bold mb-2" id="weather-widget-temp">22°C</div>
-      <div class="text-sm font-bold uppercase tracking-wider" id="weather-widget-desc">PARTLY CLOUDY</div>
-      <div class="text-xs font-bold uppercase tracking-wider opacity-70 mt-2">
-        NEW YORK CITY
+      {% if weather_data %}
+      <div class="text-4xl mb-2" id="weather-widget-icon">
+        <img src="{{ weather_data.icon_url }}" alt="{{ weather_data.description }}" class="w-12 h-12 mx-auto">
       </div>
+      <div class="text-2xl font-bold mb-2" id="weather-widget-temp">{{ weather_data.temperature }}°C</div>
+      <div class="text-sm font-bold uppercase tracking-wider" id="weather-widget-desc">{{ weather_data.description }}</div>
+      <div class="text-xs font-bold uppercase tracking-wider opacity-70 mt-2">
+        {{ weather_data.city }}
+      </div>
+      <div class="grid grid-cols-2 gap-2 mt-3 text-xs">
+        <div class="text-center">
+          <div class="font-bold">HUMIDITY</div>
+          <div>{{ weather_data.humidity }}%</div>
+        </div>
+        <div class="text-center">
+          <div class="font-bold">WIND</div>
+          <div>{{ weather_data.wind_speed }} m/s</div>
+        </div>
+      </div>
+      {% else %}
+      <!-- Simplified conditional logic for weather data -->
+      {% if weather_data is none or weather_data == '' %}
+      <div class="flex items-center justify-center space-x-4 mb-3">
+        <div class="text-4xl">☀️</div>
+        <div>
+            <div class="text-3xl font-bold" id="weather-widget-temp">--°C</div>
+            <div class="text-sm font-bold uppercase" id="weather-widget-desc">Loading...</div>
+        </div>
+      </div>
+      {% endif %}
+      {% endif %}
       <div class="text-xs mt-2 opacity-60" id="weather-widget-updated">
         Updated: <span id="weather-last-update">--:--</span>
       </div>
@@ -101,15 +132,6 @@
         REFRESH
       </button>
     </div>
-  </div>
-</div>
-
-<!-- Browse Articles Call-to-Action -->
-<div class="cta-section">
-  <div class="cta-inner">
-    <h2 class="headline-font cta-title">READ THE LATEST</h2>
-    <p class="cta-desc">Discover stories from young journalists around the world. Get informed, stay connected.</p>
-    <a href="{{ url_for('articles.articles_list') }}" class="cta-btn">VIEW ALL ARTICLES</a>
   </div>
 </div>
 
@@ -159,6 +181,7 @@
   <h3 class="headline-font text-2xl font-bold uppercase mb-4">Join the Youth Times Community</h3>
   <p class="text-lg mb-6">Be part of the new generation of journalists and storytellers</p>
   <div class="flex flex-wrap justify-center gap-4">
+    <a href="{{ url_for('articles.articles_list') }}" class="vintage-btn press-effect">VIEW ALL ARTICLES</a>
     {% if not current_user.is_authenticated %}
       <a href="{{ url_for('auth.register') }}" class="vintage-btn press-effect">REGISTER TODAY</a>
       <a href="{{ url_for('auth.login') }}" class="vintage-btn press-effect">LOGIN</a>
@@ -207,6 +230,69 @@ function updateWeatherTimestamp() {
     minute: '2-digit' 
   });
   document.getElementById('weather-last-update').innerText = timeString;
+}
+
+// Enhanced weather alert system for severe weather conditions
+function checkWeatherAlerts(weatherData) {
+  const alertDiv = document.getElementById('weather-alert');
+  const alertText = document.getElementById('weather-alert-text');
+  
+  if (!weatherData || !alertDiv || !alertText) return;
+  
+  // Define severe weather conditions based on OpenWeather main categories
+  const severeConditions = {
+    'Thunderstorm': 'SEVERE THUNDERSTORM WARNING',
+    'Snow': 'SNOW ADVISORY',
+    'Rain': (description) => {
+      if (description.toLowerCase().includes('heavy') || description.toLowerCase().includes('extreme')) {
+        return 'HEAVY RAIN WARNING';
+      }
+      return null;
+    },
+    'Drizzle': null, // Light condition, no alert needed
+    'Mist': null,
+    'Fog': 'VISIBILITY WARNING - DENSE FOG',
+    'Haze': null,
+    'Dust': 'AIR QUALITY ALERT - DUST STORM',
+    'Sand': 'SAND STORM WARNING',
+    'Ash': 'VOLCANIC ASH WARNING',
+    'Squall': 'WIND SQUALL WARNING',
+    'Tornado': 'TORNADO WARNING - TAKE SHELTER IMMEDIATELY'
+  };
+  
+  // Extract weather main category and description
+  const weatherMain = weatherData.weather?.[0]?.main || weatherData.main || '';
+  const weatherDescription = weatherData.weather?.[0]?.description || weatherData.description || '';
+  
+  let alertMessage = null;
+  
+  // Check for severe conditions
+  if (severeConditions[weatherMain]) {
+    if (typeof severeConditions[weatherMain] === 'function') {
+      alertMessage = severeConditions[weatherMain](weatherDescription);
+    } else {
+      alertMessage = severeConditions[weatherMain];
+    }
+  }
+  
+  // Check for extreme temperatures
+  const temperature = weatherData.main?.temp || weatherData.temperature;
+  if (temperature) {
+    if (temperature >= 40) {
+      alertMessage = 'EXTREME HEAT WARNING - TEMPERATURES ABOVE 40°C';
+    } else if (temperature <= 0) {
+      alertMessage = 'FREEZING TEMPERATURE ALERT';
+    }
+  }
+  
+  // Show or hide alert
+  if (alertMessage) {
+    alertText.textContent = alertMessage;
+    alertDiv.classList.remove('hidden');
+    console.log('Weather alert activated:', alertMessage);
+  } else {
+    alertDiv.classList.add('hidden');
+  }
 }
 
 // Check for severe weather and show alerts
@@ -275,6 +361,50 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+  // Weather widget functionality
+  function updateWeatherWidget() {
+    fetch('/api/weather/widget?city=Bhubaneswar')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success && data.data) {
+          const weather = data.data;
+          
+          // Update weather widget elements
+          const iconElement = document.getElementById('weather-widget-icon');
+          const tempElement = document.getElementById('weather-widget-temp');
+          const descElement = document.getElementById('weather-widget-desc');
+          const updateElement = document.getElementById('weather-last-update');
+          
+          if (iconElement) {
+            iconElement.innerHTML = `<img src="${weather.icon_url}" alt="${weather.description}" class="w-12 h-12 mx-auto">`;
+          }
+          if (tempElement) {
+            tempElement.textContent = `${weather.temperature}°C`;
+          }
+          if (descElement) {
+            descElement.textContent = weather.description.toUpperCase();
+          }
+          if (updateElement) {
+            const now = new Date();
+            updateElement.textContent = now.toLocaleTimeString('en-US', { 
+              hour: '2-digit', 
+              minute: '2-digit',
+              hour12: false 
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.log('Weather update failed (will retry):', error);
+      });
+  }
+  
+  // Update weather every 10 minutes
+  setInterval(updateWeatherWidget, 600000);
+  
+  // Initial weather update on page load
+  updateWeatherWidget();
+  
   // Add vintage hover effects (without transform)
   document.querySelectorAll('.vintage-card').forEach(card => {
     card.addEventListener('mouseenter', function() {
@@ -304,5 +434,4 @@ document.addEventListener('keydown', function(e) {
 });
 </script>
 
-</div>
 {% endblock %}

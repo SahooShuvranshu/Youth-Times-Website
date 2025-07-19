@@ -7,24 +7,20 @@ import string
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
-    role = db.Column(db.String(20), default='user')
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+    role = db.Column(db.String(10), default='user')
     is_super_admin = db.Column(db.Boolean, default=False)  # Cannot be demoted
-    name = db.Column(db.String(255), nullable=True)
+    name = db.Column(db.String(150), nullable=True)
     bio = db.Column(db.Text, nullable=True)
-    email = db.Column(db.String(255), unique=True, nullable=True)
-    profile_image = db.Column(db.String(255), nullable=True)  # For uploaded image URLs
+    email = db.Column(db.String(150), unique=True, nullable=True)
+    profile_image = db.Column(db.String(200), nullable=True)  # For uploaded image URLs
     date_of_birth = db.Column(db.Date, nullable=True)  # New: Date of birth
-    gender = db.Column(db.String(50), nullable=True)  # New: Gender field
+    gender = db.Column(db.String(20), nullable=True)  # New: Gender field
     is_confirmed = db.Column(db.Boolean, default=False)
-    location = db.Column(db.String(255), nullable=True)
-    website = db.Column(db.String(255), nullable=True)
+    location = db.Column(db.String(100), nullable=True)
+    website = db.Column(db.String(200), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def can_be_deleted(self):
-        # Prevent deletion of the default super admin
-        return not (self.username == 'admin@dev' and self.is_super_admin)
     
     @property
     def is_admin(self):
@@ -86,23 +82,23 @@ class Article(db.Model):
 
 class LogEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    article_id = db.Column(db.Integer, db.ForeignKey('article.id', ondelete='CASCADE'), nullable=True)
+    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=True)
     action = db.Column(db.String(100), nullable=False)
     timestamp = db.Column(db.DateTime, default=db.func.now())
     # Optionally link back to article
-    article = db.relationship('Article', backref=db.backref('logs', cascade='all, delete-orphan'))
+    article = db.relationship('Article', backref='logs')
 
 class Notification(db.Model):
     """User notifications for article status changes and actions"""
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    article_id = db.Column(db.Integer, db.ForeignKey('article.id', ondelete='CASCADE'), nullable=True)
+    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=True)
     message = db.Column(db.String(200), nullable=False)
     is_read = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, default=db.func.now())
     # Relationships
     user = db.relationship('User', backref='notifications')
-    article = db.relationship('Article', backref=db.backref('notifications', cascade='all, delete-orphan'))
+    article = db.relationship('Article', backref='notifications')
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -113,19 +109,19 @@ class Category(db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    article_id = db.Column(db.Integer, db.ForeignKey('article.id', ondelete='CASCADE'), nullable=False)
+    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.now())
     is_deleted = db.Column(db.Boolean, default=False)  # For tracking filtered comments
-    article = db.relationship('Article', backref=db.backref('comments', cascade='all, delete-orphan'))
+    article = db.relationship('Article', backref='comments')
     user = db.relationship('User', backref='comments')
 
 class Like(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    article_id = db.Column(db.Integer, db.ForeignKey('article.id', ondelete='CASCADE'), nullable=False)
+    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.now())
-    article = db.relationship('Article', backref=db.backref('likes', cascade='all, delete-orphan'))
+    article = db.relationship('Article', backref='likes')
     user = db.relationship('User', backref='likes')
     
     # Ensure a user can only like an article once
@@ -139,12 +135,12 @@ class Newsletter(db.Model):
 
 class Analytics(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    article_id = db.Column(db.Integer, db.ForeignKey('article.id', ondelete='CASCADE'), nullable=True)
+    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=True)
     event_type = db.Column(db.String(50), nullable=False)  # 'view', 'share', 'comment'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     ip_address = db.Column(db.String(45), nullable=True)
     timestamp = db.Column(db.DateTime, default=db.func.now())
-    article = db.relationship('Article', backref=db.backref('analytics', cascade='all, delete-orphan'))
+    article = db.relationship('Article', backref='analytics')
     user = db.relationship('User', backref='analytics')
 
 class TickerMessage(db.Model):
@@ -154,13 +150,3 @@ class TickerMessage(db.Model):
 
     def __repr__(self):
         return f'<TickerMessage \'{self.message}\'>'
-
-class VisitorStats(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    ip_address = db.Column(db.String(45), nullable=False)
-    visit_date = db.Column(db.Date, default=datetime.utcnow().date)
-    user_agent = db.Column(db.Text, nullable=True)
-    page_views = db.Column(db.Integer, default=1)
-    last_visit = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    __table_args__ = (db.UniqueConstraint('ip_address', 'visit_date', name='unique_daily_visitor'),)

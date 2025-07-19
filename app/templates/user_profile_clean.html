@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile_user.name or profile_user.username }} - User Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto mt-8 px-4">
+  <div class="newspaper-header text-center mb-8">
+    <h1 class="headline-font text-3xl md:text-4xl font-bold typewriter">USER PROFILE</h1>
+    <p class="text-sm opacity-70 mt-2 tracking-wider uppercase">PUBLIC PROFILE VIEW</p>
+    <hr class="newspaper-divider">
+  </div>
+
+  <!-- User Profile Card -->
+  <div class="vintage-card newspaper-texture text-center">
+    <!-- Profile Image -->
+    <div class="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-black dark:border-white">
+      <img src="{{ profile_user.profile_image_url }}" 
+           alt="{{ profile_user.name or profile_user.username }}" 
+           class="w-full h-full object-cover">
+    </div>
+    
+    <!-- User Information -->
+    <h2 class="headline-font text-2xl font-bold mb-2">
+      {{ profile_user.name or profile_user.username }}
+    </h2>
+    <p class="text-lg font-semibold opacity-70 mb-4">@{{ profile_user.username }}</p>
+    
+    {% if profile_user.bio %}
+    <p class="text-base leading-relaxed mb-6 max-w-lg mx-auto">{{ profile_user.bio }}</p>
+    {% endif %}
+    
+    <!-- User Details -->
+    <div class="space-y-3 mb-6">
+      {% if profile_user.location %}
+      <div class="flex items-center justify-center gap-2">
+        <span class="font-bold">📍 LOCATION:</span>
+        <span>{{ profile_user.location }}</span>
+      </div>
+      {% endif %}
+      
+      {% if profile_user.website %}
+      <div class="flex items-center justify-center gap-2">
+        <span class="font-bold">🌐 WEBSITE:</span>
+        <a href="{{ profile_user.website }}" target="_blank" class="hover:underline text-blue-600">
+          {{ profile_user.website }}
+        </a>
+      </div>
+      {% endif %}
+      
+      {% if profile_user.date_of_birth %}
+      <div class="flex items-center justify-center gap-2">
+        <span class="font-bold">🎂 BIRTHDAY:</span>
+        <span>{{ profile_user.date_of_birth.strftime('%B %d, %Y') }}</span>
+      </div>
+      {% endif %}
+      
+      {% if profile_user.gender %}
+      <div class="flex items-center justify-center gap-2">
+        <span class="font-bold">👤 GENDER:</span>
+        <span>{{ profile_user.gender.title().replace('-', ' ') }}</span>
+      </div>
+      {% endif %}
+      
+      <div class="flex items-center justify-center gap-2">
+        <span class="font-bold">📅 JOINED:</span>
+        <span>{{ profile_user.created_at.strftime('%B %Y') }}</span>
+      </div>
+    </div>
+    
+    <!-- Back Button -->
+    <div class="mt-8">
+      <a href="{{ url_for('articles.home') }}" class="vintage-btn press-effect">
+        ← BACK TO HOME
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

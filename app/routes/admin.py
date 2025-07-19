@@ -4,7 +4,7 @@ from ..models import Article, User, LogEntry, Notification, Analytics, Comment, 
 from .. import db
 from werkzeug.security import generate_password_hash
 from .auth import send_email  # import email helper
- # Removed file logging; logs will be stored in DB and shown in admin panel
+import logging
 
 bp = Blueprint('admin', __name__)
 
@@ -12,11 +12,7 @@ bp = Blueprint('admin', __name__)
 @bp.route('/admin/')
 @login_required
 def admin_panel():
-    # Store log in DB for admin panel display
-    if current_user.is_authenticated:
-        log_entry = LogEntry(action=f"Admin panel access by user '{current_user.username}' with role '{current_user.role}'")
-        db.session.add(log_entry)
-        db.session.commit()
+    logging.info(f"Admin panel access attempt by user '{current_user.username}' with role '{current_user.role}'")
     if current_user.role != 'admin':
         return redirect(url_for('articles.home'))
     # Search and paginate pending articles
@@ -159,21 +155,13 @@ def delete_article(hash_id):
     if current_user.role != 'admin':
         return redirect(url_for('articles.home'))
     article = Article.query.filter_by(hash_id=hash_id).first_or_404()
-    
-    # Store article info for logging before deletion
-    article_title = article.title
-    article_id = article.id
-    
-    # Log the deletion before deleting the article
-    entry = LogEntry(article_id=article_id, action=f"Deleted by admin '{current_user.username}'")
-    db.session.add(entry)
-    db.session.commit()
-    
-    # Now delete the article (this will cascade delete all related records)
     db.session.delete(article)
     db.session.commit()
-    
-    flash(f'Article "{article_title}" deleted successfully.', 'warning')
+    # Record log
+    entry = LogEntry(article_id=article.id, action=f"Deleted by admin '{current_user.username}'")
+    db.session.add(entry)
+    db.session.commit()
+    flash('Article deleted successfully.', 'warning')
     return redirect(url_for('admin.admin_panel'))
 
 @bp.route('/admin/edit/<string:hash_id>', methods=['GET', 'POST'])

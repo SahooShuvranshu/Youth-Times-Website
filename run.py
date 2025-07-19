@@ -1,4 +1,3 @@
-
 from app import create_app
 from app.models import User
 from app import db
@@ -6,21 +5,7 @@ from werkzeug.security import generate_password_hash
 import logging
 import os
 
-# Google OAuth setup
-from flask_dance.contrib.google import make_google_blueprint, google
-
-GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
-GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
-google_bp = make_google_blueprint(
-    client_id=GOOGLE_CLIENT_ID,
-    client_secret=GOOGLE_CLIENT_SECRET,
-    scope=["profile", "email"],
-    redirect_url="/google_login/callback"
-)
-
-
 app = create_app()
-app.register_blueprint(google_bp, url_prefix="/google_login")
 
 def setup_super_admin():
     """Setup super admin user if none exists"""
@@ -64,33 +49,36 @@ def setup_super_admin():
         else:
             print(f"✅ Super admin '{existing_super_admin.username}' already exists.")
 
-# Print all registered routes for debugging admin endpoints (development only)
-if os.getenv('FLASK_ENV', 'local') != 'production':
-    logger = logging.getLogger('werkzeug')
-    logger.setLevel(logging.DEBUG)
-    print("Registered routes:")
-    for rule in app.url_map.iter_rules():
-        print(f"{rule.rule} -> {rule.endpoint}")
-
-
-@app.route("/login/google")
-def login_google():
-    if not google.authorized:
-        return google_bp.session.authorization_url()
-    resp = google.get("/oauth2/v2/userinfo")
-    assert resp.ok, resp.text
-    user_info = resp.json()
-    # Here, handle user login/creation in your database
-    return f"Logged in as {user_info['email']}"
+# Print all registered routes for debugging admin endpoints
+logger = logging.getLogger('werkzeug')
+logger.setLevel(logging.DEBUG)
+print("Registered routes:")
+for rule in app.url_map.iter_rules():
+    print(f"{rule.rule} -> {rule.endpoint}")
 
 if __name__ == '__main__':
-    # Setup admin and start application
-    setup_super_admin()
-
+    # Check if admin exists, if not create a default one
+    with app.app_context():
+        existing_super_admin = User.query.filter_by(is_super_admin=True).first()
+        if not existing_super_admin:
+            # Create default admin for testing
+            default_admin = User(
+                username='admin',
+                password=generate_password_hash('admin123'),
+                role='admin',
+                is_super_admin=True,
+                is_confirmed=True,
+                name='Default Admin'
+            )
+            db.session.add(default_admin)
+            db.session.commit()
+            print("✅ Default admin created: username=admin, password=admin123")
+        else:
+            print(f"✅ Admin user '{existing_super_admin.username}' exists")
+    
     print("\n🚀 Starting Youth Times Project...")
-    print("📍 Access your application at: http://0.0.0.0:$PORT")
-    print("🔧 Admin Panel: http://0.0.0.0:$PORT/admin")
+    print("📍 Access your application at: http://127.0.0.1:5000")
+    print("🔧 Admin Panel: http://127.0.0.1:5000/admin")
     print("-"*60)
-
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    
+    app.run(debug=True)

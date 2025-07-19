@@ -1,18 +1,15 @@
 {% extends "base.html" %}
 
-{% block head %}
-<link href="{{ url_for('static', filename='css/submit_article.css') }}" rel="stylesheet" />
-{% endblock %}
-
 {% block content %}
-<div class="main-content below-header flex flex-col items-center justify-center">
-  <div class="vintage-card p-8 w-full max-w-4xl mb-10 text-center">
-    <!-- Header Section -->
-    <div class="newspaper-header text-center mb-8">
-      <h1 class="headline-font text-4xl font-bold typewriter">SUBMIT YOUR STORY</h1>
-      <p class="text-xl mt-4 font-bold uppercase tracking-wider">Share your news with the Youth Times community</p>
-    </div>
-    <!-- Form Card -->
+<div class="max-w-4xl mx-auto py-8">
+  <!-- Header Section -->
+  <div class="newspaper-header text-center mb-8">
+    <h1 class="headline-font text-4xl font-bold typewriter">SUBMIT YOUR STORY</h1>
+    <p class="text-xl mt-4 font-bold uppercase tracking-wider">Share your news with the Youth Times community</p>
+  </div>
+
+  <!-- Form Card -->
+  <div class="vintage-card">
     <form method="post" enctype="multipart/form-data" class="space-y-8">
       
       <!-- Title Section -->
@@ -32,8 +29,8 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Category -->
         <div class="space-y-2">
-          <label for="category_id" class="block text-lg font-bold uppercase tracking-wider">Category</label>
-          <select id="category_id" name="category_id" title="Select article category" class="vintage-input w-full">
+          <label class="block text-lg font-bold uppercase tracking-wider">Category</label>
+          <select name="category_id" class="vintage-input w-full">
             <option value="">SELECT A CATEGORY...</option>
             {% for category in categories %}
             <option value="{{ category.id }}">{{ category.name|upper }}</option>
@@ -182,9 +179,59 @@ START WRITING YOUR STORY..."
           Your article will be reviewed by our editorial team
         </p>
       </div>
+      
     </form>
   </div>
 </div>
+
+<!-- Custom Styles -->
+<style>
+.btn-editor {
+  padding: 8px 12px;
+  background-color: var(--primary-white);
+  border: 2px solid var(--primary-black);
+  color: var(--primary-black);
+  font-family: var(--typewriter-font);
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-editor:hover {
+  background-color: var(--primary-black);
+  color: var(--primary-white);
+  box-shadow: 2px 2px 0px var(--primary-black);
+}
+
+.dark .btn-editor {
+  background-color: var(--primary-black);
+  border: 2px solid var(--primary-white);
+  color: var(--primary-white);
+}
+
+.dark .btn-editor:hover {
+  background-color: var(--primary-white);
+  color: var(--primary-black);
+  box-shadow: 2px 2px 0px var(--primary-white);
+}
+
+code {
+  background-color: var(--gray-light);
+  padding: 2px 4px;
+  font-family: var(--typewriter-font);
+  font-size: 12px;
+  border: 1px solid var(--primary-black);
+}
+
+.dark code {
+  background-color: var(--gray-dark);
+  color: var(--primary-white);
+  border: 1px solid var(--primary-white);
+}
+</style>
 
 <!-- JavaScript for Editor Functions -->
 <script>

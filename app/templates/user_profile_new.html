@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile_user.name or profile_user.username }} - User Profile{% endblock %}
+
+{% block content %}
+<div class="container max-w-4xl mx-auto px-4 py-8">
+  
+  <!-- User Profile Header -->
+  <div class="vintage-box mb-8">
+    <div class="vintage-box-content">
+      <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+        
+        <!-- Profile Image -->
+        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300 flex-shrink-0">
+          <img src="{{ profile_user.profile_image_url }}" 
+               alt="{{ profile_user.name or profile_user.username }}" 
+               class="w-full h-full object-cover">
+        </div>
+        
+        <!-- User Info -->
+        <div class="flex-1">
+          <h1 class="headline-font text-3xl font-bold mb-2">
+            {{ profile_user.name or profile_user.username }}
+          </h1>
+          
+          {% if profile_user.username != (profile_user.name or profile_user.username) %}
+          <p class="text-gray-600 dark:text-gray-400 mb-2">@{{ profile_user.username }}</p>
+          {% endif %}
+          
+          {% if profile_user.bio %}
+          <p class="text-gray-700 dark:text-gray-300 mb-4">{{ profile_user.bio }}</p>
+          {% endif %}
+          
+          <!-- User Details -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            {% if profile_user.location %}
+            <div>
+              <strong>📍 Location:</strong> {{ profile_user.location }}
+            </div>
+            {% endif %}
+            
+            {% if profile_user.website %}
+            <div>
+              <strong>🌐 Website:</strong> 
+              <a href="{{ profile_user.website }}" target="_blank" class="text-blue-600 hover:underline">
+                {{ profile_user.website }}
+              </a>
+            </div>
+            {% endif %}
+            
+            {% if profile_user.date_of_birth %}
+            <div>
+              <strong>🎂 Date of Birth:</strong> {{ profile_user.date_of_birth.strftime('%B %d, %Y') }}
+            </div>
+            {% endif %}
+            
+            {% if profile_user.gender %}
+            <div>
+              <strong>👤 Gender:</strong> {{ profile_user.gender }}
+            </div>
+            {% endif %}
+            
+            <div>
+              <strong>📅 Member Since:</strong> {{ profile_user.created_at.strftime('%B %Y') }}
+            </div>
+            
+            <div>
+              <strong>🎖️ Role:</strong> 
+              <span class="inline-block px-2 py-1 text-xs rounded vintage-btn">
+                {{ profile_user.role.title() }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Statistics -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="vintage-box text-center">
+      <div class="vintage-box-content">
+        <div class="text-2xl font-bold">{{ user_stats.total_articles }}</div>
+        <div class="text-sm text-gray-600 dark:text-gray-400">Articles Published</div>
+      </div>
+    </div>
+    
+    <div class="vintage-box text-center">
+      <div class="vintage-box-content">
+        <div class="text-2xl font-bold">{{ user_stats.total_views }}</div>
+        <div class="text-sm text-gray-600 dark:text-gray-400">Total Views</div>
+      </div>
+    </div>
+    
+    <div class="vintage-box text-center">
+      <div class="vintage-box-content">
+        <div class="text-2xl font-bold">{{ user_stats.avg_credibility|round(1) }}%</div>
+        <div class="text-sm text-gray-600 dark:text-gray-400">Avg. Credibility</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Show different content based on whether this is the current user's profile or someone else's -->
+  {% if current_user.is_authenticated and current_user.id == profile_user.id %}
+    
+    <!-- MY PROFILE: Show articles and account management -->
+    <!-- Recent Articles -->
+    {% if recent_articles %}
+    <div class="vintage-box mb-8">
+      <div class="vintage-box-content">
+        <h2 class="headline-font text-2xl font-bold mb-6">My Recent Articles</h2>
+        
+        <div class="space-y-4">
+          {% for article in recent_articles %}
+          <div class="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <h3 class="font-bold text-lg mb-2">
+                  <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" 
+                     class="hover:underline">
+                    {{ article.title }}
+                  </a>
+                </h3>
+                
+                <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  <span>{{ article.created_at.strftime('%B %d, %Y') }}</span>
+                  <span>{{ article.views or 0 }} views</span>
+                  <span class="px-2 py-1 text-xs rounded vintage-btn">
+                    {{ article.status.title() }}
+                  </span>
+                  {% if article.credibility_score %}
+                  <span class="px-2 py-1 text-xs rounded vintage-btn">
+                    {{ article.credibility_score|round(1) }}% credibility
+                  </span>
+                  {% endif %}
+                </div>
+                
+                <p class="text-gray-700 dark:text-gray-300">
+                  {{ article.content[:200] }}{% if article.content|length > 200 %}...{% endif %}
+                </p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        
+        <div class="mt-6 text-center">
+          <a href="{{ url_for('articles.articles_list') }}?author={{ profile_user.username }}" 
+             class="vintage-btn">
+            View All My Articles
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    
+    <!-- Account Management -->
+    <div class="vintage-box">
+      <div class="vintage-box-content">
+        <h2 class="headline-font text-2xl font-bold mb-6">Account Management</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <a href="{{ url_for('auth.profile') }}" class="vintage-btn block text-center mb-4">
+              ✏️ Edit Profile
+            </a>
+            <a href="{{ url_for('auth.change_password') }}" class="vintage-btn block text-center">
+              🔒 Change Password
+            </a>
+          </div>
+          
+          <div>
+            <a href="{{ url_for('articles.submit_article') }}" class="vintage-btn block text-center mb-4">
+              📝 Submit New Article
+            </a>
+            <a href="{{ url_for('articles.notifications') }}" class="vintage-btn block text-center">
+              🔔 My Notifications
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  {% else %}
+    
+    <!-- OTHER USER'S PROFILE: Show only their public articles -->
+    {% if recent_articles %}
+    <div class="vintage-box">
+      <div class="vintage-box-content">
+        <h2 class="headline-font text-2xl font-bold mb-6">Recent Articles by {{ profile_user.name or profile_user.username }}</h2>
+        
+        <div class="space-y-4">
+          {% for article in recent_articles %}
+          <div class="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0">
+            <h3 class="font-bold text-lg mb-2">
+              <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" 
+                 class="hover:underline">
+                {{ article.title }}
+              </a>
+            </h3>
+            
+            <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-2">
+              <span>{{ article.created_at.strftime('%B %d, %Y') }}</span>
+              <span>{{ article.views or 0 }} views</span>
+              {% if article.credibility_score %}
+              <span class="px-2 py-1 text-xs rounded vintage-btn">
+                {{ article.credibility_score|round(1) }}% credibility
+              </span>
+              {% endif %}
+            </div>
+            
+            <p class="text-gray-700 dark:text-gray-300">
+              {{ article.content[:200] }}{% if article.content|length > 200 %}...{% endif %}
+            </p>
+          </div>
+          {% endfor %}
+        </div>
+        
+        <div class="mt-6 text-center">
+          <a href="{{ url_for('articles.articles_list') }}?author={{ profile_user.username }}" 
+             class="vintage-btn">
+            View All Articles by {{ profile_user.name or profile_user.username }}
+          </a>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="vintage-box">
+      <div class="vintage-box-content text-center">
+        <p class="text-gray-600 dark:text-gray-400">
+          {{ profile_user.name or profile_user.username }} hasn't published any articles yet.
+        </p>
+      </div>
+    </div>
+    {% endif %}
+  
+  {% endif %}
+
+</div>
+{% endblock %}
