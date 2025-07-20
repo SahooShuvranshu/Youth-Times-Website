@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="vintage-card">
+  <h1 class="headline-font text-3xl font-bold mb-4 text-center headline-underline">Contact Us</h1>
+  <h3>Get in Touch with Youth Times</h3>
+  <p>We welcome feedback, tips, and collaboration opportunities.</p>
+  <h4>Mailing Address:</h4>
+  <div class="contact-section">
+    <p><strong>Youth Times Editorial Office</strong><br>
+    Student Media Center<br>
+    [University Name]<br>
+    [City, State ZIP]</p>
+  </div>
+  <p class="disclaimer"><strong>Note:</strong> For urgent breaking news or safety concerns, contact us immediately at newsroom@youthtimes.org</p>
+  <h2 class="text-xl font-bold mb-2 text-center headline-underline">Contact Information</h2>
+  <ul class="list-disc ml-6 mb-4">
+    <li><strong>Email:</strong> contact.youthtimes@gmail.com</li>
+    <li><strong>Response Time:</strong> 24-48 hours for editorial inquiries, 1-3 business days for technical support</li>
+    <li><strong>All inquiries (editorial, technical, partnerships, press):</strong> Use the same contact email above</li>
+  </ul>
+  <h2 class="text-xl font-bold mb-2 text-center headline-underline">Technical Support & Bug Reports</h2>
+  <p class="mb-4">For technical issues or bug reports, email <strong>contact.youthtimes@gmail.com</strong> and include a detailed description and screenshots if possible.</p>
+  <h2 class="text-xl font-bold mb-2 text-center headline-underline">Partnerships & Press</h2>
+  <p class="mb-4">For partnership or press inquiries, please use the same contact email above. We welcome collaboration with other organizations, media outlets, and educational institutions.</p>
+  <h2 class="text-xl font-bold mb-2 text-center headline-underline">Feedback & Suggestions</h2>
+  <p class="mb-4">Your feedback is important to us. Please let us know how we can improve our platform, content, or services.</p>
+</div>
+{% endblock %}
+<style>
+  .headline-underline {
+    position: relative;
+  }
+  .headline-underline:after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: #222;
+    margin: 0.5rem auto 0 auto;
+    border-radius: 2px;
+  }
+  .dark .headline-underline:after {
+    background: #f8f8f8;
+  }
+</style>
+<style>
+  .contact-list {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin: 0 auto 1.5rem auto;
+    max-width: 600px;
+    text-align: left;
+    font-size: 1.1rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    box-sizing: border-box;
+  }
+  .contact-list li {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+  }
+  @media (max-width: 600px) {
+    .contact-list {
+      font-size: 1rem;
+      padding-left: 1rem;
+    }
+    .contact-list li {
+      margin-bottom: 0.75rem;
+    }
+  }
+</style>

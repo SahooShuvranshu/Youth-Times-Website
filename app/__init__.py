@@ -17,6 +17,20 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    # Force HTTPS for url_for(_external=True)
+    app.config['PREFERRED_URL_SCHEME'] = 'https'
+    # Ensure Flask recognizes HTTPS when behind a proxy (Render)
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+    # Redirect all HTTP requests to HTTPS in production
+    from flask import request, redirect
+    @app.before_request
+    def force_https():
+        if not request.is_secure and app.config.get('ENVIRONMENT') == 'production':
+            url = request.url.replace('http://', 'https://', 1)
+            return redirect(url, code=301)
+
     # Initialize Authlib OAuth
     oauth.init_app(app)
     # Register Google OAuth client only if credentials are provided

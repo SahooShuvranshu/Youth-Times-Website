@@ -8,22 +8,22 @@ import os
 app = create_app()
 
 def setup_super_admin():
-    """Setup super admin user if none exists"""
+    # Setup super admin user if none exists
     with app.app_context():
         # Check if any super admin exists
         existing_super_admin = User.query.filter_by(is_super_admin=True).first()
         
         if not existing_super_admin:
             print("\n" + "="*60)
-            print("🚀 YOUTH TIMES PROJECT - AUTOMATIC SETUP")
+            print("🚀 YOUTH TIMES - AUTOMATIC SETUP")
             print("="*60)
             print("No super admin found. Creating default admin...")
             print("-"*60)
             
             # Create default super admin user
             super_admin = User(
-                username='admin',
-                password=generate_password_hash('admin123'),
+                username='admin@dev',
+                password=generate_password_hash('admin@dev'),
                 role='admin',
                 is_super_admin=True,
                 is_confirmed=True,
@@ -34,16 +34,16 @@ def setup_super_admin():
             db.session.commit()
             
             print("-"*60)
-            print("✅ Default super admin created successfully!")
+            print("✅ Default Super admin created Successfully!")
             print(f"👤 Username: admin")
             print(f"🔐 Password: admin123")
             print("-"*60)
             print("📋 IMPORTANT NOTES:")
-            print("• This super admin cannot be demoted by anyone")
+            print("• This Super Admin cannot be demoted by anyone")
             print("• Please change the password after first login")
             print("• You can create more admins from the admin panel")
             print("-"*60)
-            print("🌐 Your application is ready to use!")
+            print("🌐 Your Application is ready to use!")
             print("="*60)
             print()
         else:

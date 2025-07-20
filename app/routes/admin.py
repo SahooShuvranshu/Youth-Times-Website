@@ -155,6 +155,9 @@ def delete_article(hash_id):
     if current_user.role != 'admin':
         return redirect(url_for('articles.home'))
     article = Article.query.filter_by(hash_id=hash_id).first_or_404()
+    # Delete related Like records first to avoid integrity error
+    from ..models import Like
+    Like.query.filter_by(article_id=article.id).delete()
     db.session.delete(article)
     db.session.commit()
     # Record log

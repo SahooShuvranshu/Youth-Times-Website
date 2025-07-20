@@ -54,6 +54,25 @@ bp = Blueprint('articles', __name__)
 
 def process_article_content(content):
     """Process article content to support both Markdown and HTML safely"""
+@bp.route('/dmca-policy')
+def dmca_policy():
+    return render_template('dmca_policy.html')
+
+@bp.route('/privacy-policy')
+def privacy_policy():
+    return render_template('privacy_policy.html')
+
+@bp.route('/terms-of-service')
+def terms_of_service():
+    return render_template('terms_of_service.html')
+
+@bp.route('/editorial-guidelines')
+def editorial_guidelines():
+    return render_template('editorial_guidelines.html')
+
+@bp.route('/contact-us')
+def contact_us():
+    return render_template('contact_us.html')
     try:
         # Configure allowed HTML tags and attributes
         allowed_tags = [

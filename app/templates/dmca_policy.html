@@ -1,97 +1,81 @@
 {% extends "base.html" %}
-
-{% block title %}DMCA Policy - Youth Times{% endblock %}
-
 {% block content %}
-<div class="main-content below-header">
-<div class="container-fluid py-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <div class="policy-page">
-        <header class="policy-header">
-          <h1 class="headline-font">DMCA Policy</h1>
-          <p class="policy-subtitle">Digital Millennium Copyright Act Compliance</p>
-        </header>
-
-        <div class="policy-content">
-          <section class="policy-section">
-            <h2>Copyright Policy</h2>
-            <p>Youth Times respects the intellectual property rights of others and expects our users to do the same. It is our policy to respond to clear notices of alleged copyright infringement that comply with the Digital Millennium Copyright Act (DMCA).</p>
-          </section>
-
-          <section class="policy-section">
-            <h2>Filing a DMCA Notice</h2>
-            <p>If you believe that content on our website infringes your copyright, please provide our designated agent with the following information:</p>
-            
-            <h3>Required Information:</h3>
-            <ul>
-              <li>A physical or electronic signature of the copyright owner or authorized representative</li>
-              <li>Identification of the copyrighted work claimed to have been infringed</li>
-              <li>Identification of the material claimed to be infringing and its location on our site</li>
-              <li>Your contact information (address, telephone number, email address)</li>
-              <li>A statement that you have a good faith belief that the use is not authorized</li>
-              <li>A statement that the information is accurate and you are authorized to act on behalf of the copyright owner</li>
-            </ul>
-          </section>
-
-          <section class="policy-section">
-            <h2>Designated Agent</h2>
-            <p>Send DMCA notices to our designated agent:</p>
-            <div class="contact-info">
-              <p><strong>DMCA Agent:</strong> Legal Department<br>
-              <strong>Company:</strong> Youth Times<br>
-              <strong>Address:</strong> 123 News Street, Media City, MC 12345<br>
-              <strong>Email:</strong> dmca@youthtimes.com<br>
-              <strong>Phone:</strong> (555) 123-4567</p>
-            </div>
-          </section>
-
-          <section class="policy-section">
-            <h2>Counter-Notification</h2>
-            <p>If you believe your content was removed in error, you may file a counter-notification with the following information:</p>
-            
-            <h3>Counter-Notice Requirements:</h3>
-            <ul>
-              <li>Your physical or electronic signature</li>
-              <li>Identification of the material removed and its original location</li>
-              <li>A statement under penalty of perjury that you have a good faith belief the material was removed in error</li>
-              <li>Your contact information</li>
-              <li>A statement consenting to jurisdiction in your district</li>
-            </ul>
-          </section>
-
-          <section class="policy-section">
-            <h2>Repeat Infringers</h2>
-            <p>Youth Times will terminate the accounts of users who are determined to be repeat infringers under appropriate circumstances.</p>
-          </section>
-
-          <section class="policy-section">
-            <h2>Safe Harbor</h2>
-            <p>This DMCA policy is designed to comply with the safe harbor provisions of the DMCA. We reserve the right to remove any content that allegedly infringes copyright without prior notice.</p>
-          </section>
-
-          <section class="policy-section">
-            <h2>False Claims</h2>
-            <p>Please note that under Section 512(f) of the DMCA, any person who knowingly materially misrepresents that material is infringing may be subject to liability for damages.</p>
-          </section>
-
-          <section class="policy-section">
-            <h2>Processing Time</h2>
-            <p>We aim to process all valid DMCA notices within 24-48 hours of receipt. Complex cases may require additional time for review.</p>
-          </section>
-
-          <section class="policy-section">
-            <h2>Educational Use</h2>
-            <p>We recognize that some uses of copyrighted material may qualify as fair use under copyright law. We consider these factors when reviewing DMCA notices.</p>
-          </section>
-
-          <div class="policy-disclaimer">
-            <p><strong>Legal Notice:</strong> This policy is for informational purposes only and does not constitute legal advice. For legal questions regarding copyright, consult with a qualified attorney.</p>
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="vintage-card flex flex-col items-center px-4 py-6 md:px-12 md:py-8" style="max-width:700px;margin:0 auto;">
+  <h1 class="headline-font text-3xl font-bold mb-4 text-center w-full headline-underline">DMCA Takedown Policy</h1>
+  <div class="mb-4 flex flex-col items-center w-full">
+    <a href="https://www.dmca.com/Protection/Status.aspx?ID=78afa3ff-4207-461e-a057-af58b5b9ef22" title="DMCA.com Protection Status" class="dmca-badge block mx-auto">
+      <img src="https://images.dmca.com/Badges/dmca_protected_30_120.png?ID=78afa3ff-4207-461e-a057-af58b5b9ef22" alt="DMCA.com Protection Status" class="mx-auto" style="max-width:100%;height:auto;" />
+    </a>
+    <script src="https://images.dmca.com/Badges/DMCABadgeHelper.min.js"></script>
   </div>
-</div>
+  <p class="mb-4 text-center">Youth Times is DMCA protected. We respect intellectual property rights and respond promptly to valid DMCA takedown notices. If you believe your copyrighted work has been used without permission, please follow the process below.</p>
+  <h2 class="text-xl font-bold mb-2 text-center w-full headline-underline">How to File a DMCA Notice</h2>
+  <div class="w-full flex justify-center">
+    <ul class="dmca-list">
+      <li>Identify the copyrighted work you believe has been infringed.</li>
+      <li>Provide the specific URL(s) where the infringing content appears.</li>
+      <li>Include your contact information and a statement of good faith belief.</li>
+      <li>Sign the notice electronically or physically.</li>
+      <li>Attach any supporting documentation or evidence.</li>
+    </ul>
+  </div>
+  <h2 class="text-xl font-bold mb-2 text-center w-full headline-underline">Send DMCA Notices to:</h2>
+  <p class="mb-4 text-center"><strong>Email:</strong> contact.youthtimes@gmail.com<br><strong>Subject Line:</strong> DMCA Takedown Notice<br><strong>Response Time:</strong> 48-72 hours</p>
+  <h2 class="text-xl font-bold mb-2 text-center w-full headline-underline">Counter-Notification Process</h2>
+  <p class="mb-4 text-center">If you believe content was removed in error, you may file a counter-notification using the same contact email above. Please include all relevant details and supporting evidence.</p>
+  <h2 class="text-xl font-bold mb-2 text-center w-full headline-underline">Additional Information</h2>
+  <ul class="list-disc pl-6 pr-2 mb-4 w-full max-w-2xl text-left">
+    <li>We review all DMCA notices carefully and act in accordance with applicable law.</li>
+    <li>We may contact you for further information or clarification.</li>
+    <li>All communications are kept confidential.</li>
+  </ul>
+  <p class="text-sm text-gray-600 text-center w-full"><strong>Note:</strong> Filing false DMCA claims may result in legal consequences. Ensure your claim is valid before submitting.</p>
 </div>
 {% endblock %}
+<style>
+  .headline-underline {
+    position: relative;
+  }
+  .headline-underline:after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: #222;
+    margin: 0.5rem auto 0 auto;
+    border-radius: 2px;
+  }
+  .dark .headline-underline:after {
+    background: #f8f8f8;
+  }
+</style>
+<style>
+  .dmca-list {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin: 0 auto 1.5rem auto;
+    max-width: 600px;
+    text-align: left;
+    font-size: 1.1rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    box-sizing: border-box;
+  }
+  .dmca-list li {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+  }
+  @media (max-width: 600px) {
+    .dmca-list {
+      font-size: 1rem;
+      padding-left: 1rem;
+    }
+    .dmca-list li {
+      margin-bottom: 0.75rem;
+    }
+  }
+</style>

@@ -1,164 +1,90 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="main-content below-header">
-
-<!-- Editorial Guidelines Header -->
-<div class="vintage-card text-center mb-8">
-  <h1 class="headline-font text-4xl font-bold uppercase mb-4">Editorial Guidelines</h1>
-  <p class="text-lg">Standards and practices for Youth Times contributors</p>
+<div class="vintage-card">
+  <h1 class="headline-font text-3xl font-bold mb-4 text-center headline-underline">Editorial Guidelines</h1>
+  <p class="mb-4">Youth Times maintains high editorial standards to ensure credible, ethical journalism. All contributors are expected to follow these guidelines for quality and integrity.</p>
+  <h2 class="text-xl font-bold mb-2 text-center headline-underline">Fact-Checking Process</h2>
+  <ul class="policy-list">
+    <li>All articles undergo automated credibility scoring and editorial review</li>
+    <li>Sources must be verified, cited, and clearly attributed</li>
+    <li>Claims require evidence and supporting documentation</li>
+    <li>Editorial review for sensitive or controversial topics</li>
+    <li>Corrections are issued promptly when errors are found</li>
+  </ul>
+  <h2 class="text-xl font-bold mb-2 text-center headline-underline">Writing Standards</h2>
+  <ul class="policy-list">
+    <li>Clear, accurate, and engaging prose</li>
+    <li>Objective reporting with minimal bias</li>
+    <li>Proper grammar, spelling, and style</li>
+    <li>Appropriate tone for target audience</li>
+    <li>Respectful language and inclusive representation</li>
+  </ul>
+  <h2 class="text-xl font-bold mb-2 text-center headline-underline">Source Requirements</h2>
+  <ul class="policy-list">
+    <li>Primary sources preferred over secondary</li>
+    <li>Multiple sources for controversial claims</li>
+    <li>Expert opinions from qualified individuals</li>
+    <li>Transparency about conflicts of interest</li>
+    <li>Disclosure of funding or sponsorships</li>
+  </ul>
+  <h2 class="text-xl font-bold mb-2 text-center headline-underline">Ethics Policy</h2>
+  <ul class="policy-list">
+    <li>No plagiarism, fabrication, or misrepresentation</li>
+    <li>Respect for privacy and dignity of all individuals</li>
+    <li>Fair representation of all viewpoints</li>
+    <li>Correction of errors promptly</li>
+    <li>Compliance with all legal and ethical standards</li>
+  </ul>
+  <h2 class="text-xl font-bold mb-2 text-center headline-underline">Editorial Independence</h2>
+  <p class="mb-4">Our editorial decisions are made independently, free from commercial or political influence. Editorial integrity is our highest priority.</p>
+  <h2 class="text-xl font-bold mb-2 text-center headline-underline">Contact</h2>
+  <p class="mb-4">For editorial questions or feedback, contact <strong>contact.youthtimes@gmail.com</strong>.</p>
+  <style>
+  .policy-list {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin: 0 auto 1.5rem auto;
+    max-width: 600px;
+    text-align: left;
+    font-size: 1.1rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    box-sizing: border-box;
+  }
+  .policy-list li {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+  }
+  @media (max-width: 600px) {
+    .policy-list {
+      font-size: 1rem;
+      padding-left: 1rem;
+    }
+    .policy-list li {
+      margin-bottom: 0.75rem;
+    }
+  }
+  </style>
 </div>
-
-<!-- Main Content -->
-<div class="vintage-card mb-8">
-  <h2 class="headline-font text-2xl font-bold uppercase mb-6">Our Mission</h2>
-  <p class="mb-4 leading-relaxed">
-    Youth Times is dedicated to providing a platform for young voices to share their perspectives, 
-    experiences, and insights with the world. We believe in the power of authentic storytelling 
-    and the importance of diverse viewpoints in shaping meaningful discourse.
-  </p>
-</div>
-
-<!-- Guidelines Sections -->
-<div class="space-y-8">
-  <!-- Content Standards -->
-  <div class="vintage-card">
-    <h3 class="headline-font text-xl font-bold uppercase mb-4">Content Standards</h3>
-    
-    <div class="space-y-4">
-      <div>
-        <h4 class="font-bold uppercase mb-2">✓ We Accept:</h4>
-        <ul class="list-disc list-inside space-y-1 ml-4">
-          <li>Original, well-researched articles</li>
-          <li>Personal essays and opinion pieces</li>
-          <li>News coverage and reporting</li>
-          <li>Creative writing and poetry</li>
-          <li>Reviews (books, movies, events)</li>
-          <li>Interviews and profiles</li>
-        </ul>
-      </div>
-      
-      <div>
-        <h4 class="font-bold uppercase mb-2">✗ We Don't Accept:</h4>
-        <ul class="list-disc list-inside space-y-1 ml-4">
-          <li>Plagiarized or non-original content</li>
-          <li>Hate speech or discriminatory content</li>
-          <li>Defamatory or libelous material</li>
-          <li>Content promoting illegal activities</li>
-          <li>Spam or promotional material</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Writing Standards -->
-  <div class="vintage-card">
-    <h3 class="headline-font text-xl font-bold uppercase mb-4">Writing Standards</h3>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <h4 class="font-bold uppercase mb-3">Length Requirements</h4>
-        <ul class="space-y-2">
-          <li><strong>News Articles:</strong> 300-800 words</li>
-          <li><strong>Opinion Pieces:</strong> 500-1200 words</li>
-          <li><strong>Features:</strong> 800-2000 words</li>
-          <li><strong>Reviews:</strong> 400-800 words</li>
-        </ul>
-      </div>
-      
-      <div>
-        <h4 class="font-bold uppercase mb-3">Style Guide</h4>
-        <ul class="space-y-2">
-          <li>Write in clear, accessible language</li>
-          <li>Use active voice when possible</li>
-          <li>Fact-check all claims and statistics</li>
-          <li>Include proper attribution for quotes</li>
-          <li>Proofread for grammar and spelling</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Submission Process -->
-  <div class="vintage-card">
-    <h3 class="headline-font text-xl font-bold uppercase mb-4">Submission Process</h3>
-    
-    <div class="space-y-4">
-      <div class="flex items-start space-x-4">
-        <span class="vintage-btn text-xs px-3 py-1">1</span>
-        <div>
-          <h4 class="font-bold mb-1">Create Account</h4>
-          <p class="text-sm">Register for a Youth Times account to submit articles.</p>
-        </div>
-      </div>
-      
-      <div class="flex items-start space-x-4">
-        <span class="vintage-btn text-xs px-3 py-1">2</span>
-        <div>
-          <h4 class="font-bold mb-1">Submit Article</h4>
-          <p class="text-sm">Use our submission form with title, content, and category.</p>
-        </div>
-      </div>
-      
-      <div class="flex items-start space-x-4">
-        <span class="vintage-btn text-xs px-3 py-1">3</span>
-        <div>
-          <h4 class="font-bold mb-1">Editorial Review</h4>
-          <p class="text-sm">Our team reviews submissions within 3-5 business days.</p>
-        </div>
-      </div>
-      
-      <div class="flex items-start space-x-4">
-        <span class="vintage-btn text-xs px-3 py-1">4</span>
-        <div>
-          <h4 class="font-bold mb-1">Publication</h4>
-          <p class="text-sm">Approved articles are published and you'll receive notification.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Editorial Ethics -->
-  <div class="vintage-card">
-    <h3 class="headline-font text-xl font-bold uppercase mb-4">Editorial Ethics</h3>
-    
-    <div class="space-y-4">
-      <div>
-        <h4 class="font-bold uppercase mb-2">Accuracy & Verification</h4>
-        <p class="text-sm">All factual claims must be verifiable. Include sources and links where appropriate.</p>
-      </div>
-      
-      <div>
-        <h4 class="font-bold uppercase mb-2">Bias & Fairness</h4>
-        <p class="text-sm">Present multiple perspectives on controversial topics. Clearly distinguish between news and opinion.</p>
-      </div>
-      
-      <div>
-        <h4 class="font-bold uppercase mb-2">Privacy & Consent</h4>
-        <p class="text-sm">Obtain consent before including personal information about individuals.</p>
-      </div>
-      
-      <div>
-        <h4 class="font-bold uppercase mb-2">Corrections</h4>
-        <p class="text-sm">We promptly correct errors and update articles when necessary.</p>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Contact Editorial Team -->
-  <div class="vintage-card text-center">
-    <h3 class="headline-font text-xl font-bold uppercase mb-4">Questions About Guidelines?</h3>
-    <p class="mb-6">Our editorial team is here to help you create great content.</p>
-    
-    <div class="flex flex-wrap justify-center gap-4">
-      <a href="{{ url_for('articles.submit_article') }}" class="vintage-btn">
-        SUBMIT AN ARTICLE
-      </a>
-      <a href="#" class="vintage-btn">
-        CONTACT EDITORIAL TEAM
-      </a>
-    </div>
-  </div>
-</div>
-</div>
-
 {% endblock %}
+<style>
+  .headline-underline {
+    position: relative;
+  }
+  .headline-underline:after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: #222;
+    margin: 0.5rem auto 0 auto;
+    border-radius: 2px;
+  }
+  .dark .headline-underline:after {
+    background: #f8f8f8;
+  }
+</style>
