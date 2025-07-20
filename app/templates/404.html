@@ -54,7 +54,7 @@
         {% for article in popular_articles %}
           <div class="border-2 border-black dark:border-white p-4 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left">
             <h4 class="font-bold text-sm mb-2">
-              <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" class="hover:underline">
+              <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" class="hover:underline article-title">
                 {{ article.title }}
               </a>
             </h4>

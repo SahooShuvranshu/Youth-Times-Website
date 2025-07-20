@@ -1123,13 +1123,6 @@
         console.log(`Nav link ${index}:`, link.href || link.textContent);
       });
       
-      console.log('Youth Times initialization complete!');
-      
-      // Add a small diagnostic to the page to show JavaScript is working
-      const debugInfo = document.createElement('div');
-      debugInfo.style.cssText = 'position:fixed;bottom:10px;right:10px;background:var(--primary-black);color:var(--primary-white);padding:8px;font-size:10px;z-index:1000;border:1px solid var(--primary-white);';
-      debugInfo.innerHTML = 'JS: ✓ | NAV: ✓ | THEME: ✓';
-      document.body.appendChild(debugInfo);
       
       // Hide debug info after 5 seconds
       setTimeout(() => {

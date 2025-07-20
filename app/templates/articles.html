@@ -71,7 +71,7 @@
       <!-- Article Title -->
       <h3 class="headline-font text-xl font-bold mb-3 leading-tight">
         <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" 
-           class="hover:underline transition-all duration-300">
+           class="hover:underline article-title">
           {{ article.title|upper }}
         </a>
       </h3>

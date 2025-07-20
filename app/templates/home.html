@@ -62,7 +62,7 @@
         {% for article in articles[1:4] %}
         <div class="mb-4 pb-4 {% if not loop.last %}border-b border-black dark:border-white{% endif %}">
           <h4 class="font-bold text-sm uppercase leading-tight mb-2">
-            <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" class="hover:underline">
+            <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" class="hover:underline article-title">
               {{ article.title }}
             </a>
           </h4>

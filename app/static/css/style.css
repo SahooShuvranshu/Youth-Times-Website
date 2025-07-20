@@ -1775,6 +1775,12 @@ main,
   overflow-x: auto;
 }
 
+.vintage-card {
+  min-width: 0 !important;
+  overflow-wrap: break-word !important;
+  overflow-x: auto !important;
+}
+
 /* --- Admin Dashboard Table & Pagination Fixes --- */
 /* Responsive table wrapper for admin cards */
 .table-responsive {
@@ -1923,4 +1929,12 @@ main,
 /* Ensure all direct children are spaced */
 .vintage-card > *:not(:last-child) {
   margin-bottom: 1.25rem;
+}
+
+.article-title {
+  word-break: anywhere !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+  display: block !important;
+  max-width: 100% !important;
 }

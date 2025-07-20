@@ -210,7 +210,13 @@
             <td class="py-3 px-4 border-2 border-black dark:border-white max-w-xs overflow-x-auto">{{ article.title }}</td>
             <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.author_name or 'Unknown' }}</td>
             <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.status|capitalize }}</td>
-            <td class="py-3 px-4 border-2 border-black dark:border-white">{{ article.credibility_score|round(1) }}%</td>
+            <td class="py-3 px-4 border-2 border-black dark:border-white">
+              {% if article.credibility_score is not none %}
+                {{ article.credibility_score|round(1) }}%
+              {% else %}
+                N/A
+              {% endif %}
+            </td>
             <td class="py-3 px-4 border-2 border-black dark:border-white">
               <div class="flex flex-wrap gap-2 justify-center">
                 <a href="{{ url_for('admin.edit_article', hash_id=article.hash_id) }}" class="vintage-btn text-xs px-2 py-1">EDIT</a>

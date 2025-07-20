@@ -13,7 +13,7 @@
     {% for art in results %}
     <div class="vintage-card">
       <h2 class="headline-font text-xl font-bold mb-3 leading-tight">
-        <a href="{{ url_for('articles.view_article', hash_id=art.hash_id) }}" class="hover:underline transition-all duration-300">
+        <a href="{{ url_for('articles.view_article', hash_id=art.hash_id) }}" class="hover:underline article-title">
           {{ art.title|upper }}
         </a>
       </h2>

@@ -143,7 +143,7 @@
               <div class="flex-1">
                 <h4 class="headline-font font-bold text-sm uppercase mb-1">
                   <a href="{{ url_for('articles.view_article', hash_id=article.hash_id) }}" 
-                     class="hover:underline">{{ article.title }}</a>
+                     class="hover:underline article-title">{{ article.title }}</a>
                 </h4>
                 <p class="text-xs opacity-70 mb-2">
                   {{ article.created_at.strftime('%B %d, %Y at %I:%M %p') }}

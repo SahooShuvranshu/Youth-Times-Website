@@ -37,7 +37,7 @@
                 </form>
               </div>
             </div>
-            <p class="mb-2"><strong>Article:</strong> <a href="{{ url_for('articles.view_article', hash_id=comment.article.hash_id) }}" class="hover:underline">{{ comment.article.title }}</a></p>
+            <p class="mb-2"><strong>Article:</strong> <a href="{{ url_for('articles.view_article', hash_id=comment.article.hash_id) }}" class="hover:underline article-title">{{ comment.article.title }}</a></p>
             <p class="leading-relaxed">{{ comment.content }}</p>
           </div>
           {% endfor %}
@@ -65,7 +65,7 @@
               </div>
               <span class="text-sm text-green-600 font-bold">✓ APPROVED</span>
             </div>
-            <p class="mb-2"><strong>Article:</strong> <a href="{{ url_for('articles.view_article', hash_id=comment.article.hash_id) }}" class="hover:underline">{{ comment.article.title }}</a></p>
+            <p class="mb-2"><strong>Article:</strong> <a href="{{ url_for('articles.view_article', hash_id=comment.article.hash_id) }}" class="hover:underline article-title">{{ comment.article.title }}</a></p>
             <p class="leading-relaxed">{{ comment.content }}</p>
           </div>
           {% endfor %}
