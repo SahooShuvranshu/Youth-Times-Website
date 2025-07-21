@@ -624,8 +624,8 @@ def about_us():
         # Internship information
         internship_info = {
             'company': 'OKCL (Odisha Knowledge Corporation Limited)',
-            'program': 'Python Development Internship',
-            'duration': '6 months',
+            'program': 'Python With AI (Internship)',
+            'duration': '1 Months',
             'description': 'Comprehensive internship program focusing on real-world Python development, web technologies, and project management.',
             'skills_learned': [
                 'Python Programming',
