@@ -28,7 +28,7 @@
         <div class="vintage-card p-6 text-center">
           <!-- Team Member Photo Placeholder -->
           <div class="w-32 h-32 mx-auto rounded-full mb-4 overflow-hidden border-4 border-gray-300">
-            <img src="https://via.placeholder.com/150x150/cccccc/666666?text={{ member.name.split()[0][0] }}{{ member.name.split()[1][0] }}" 
+            <img src="{{ member.image }}" 
                  alt="{{ member.name }}" 
                  class="w-full h-full object-cover">
           </div>
@@ -62,10 +62,9 @@
           <div class="text-center">
             <!-- College Logo/Image in Circle Frame -->
             <div class="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-gray-300 bg-white p-4">
-              <img src="https://nilachalpolytechnic.ac.in/images/logo.png" 
+              <img src="{{ college_info.image }}" 
                    alt="Nilachal Polytechnic Logo" 
-                   class="w-full h-full object-contain"
-                   onerror="this.src='https://via.placeholder.com/300x300/0066cc/ffffff?text=NILACHAL+POLYTECHNIC'">
+                   class="w-full h-full object-contain">
             </div>
           </div>
           <div class="text-center lg:text-left">

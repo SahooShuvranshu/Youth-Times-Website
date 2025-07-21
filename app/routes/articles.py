@@ -568,45 +568,45 @@ def about_us():
         team_members = [
             {
                 'name': 'Shuvranshu Sekhar Sahoo',
-                'role': 'Lead Developer & Project Manager',
+                'role': 'Lead & Backend Developer',
                 'bio': 'Computer Science student passionate about web development and news technology. Leads the technical development of Youth Times.',
                 'image': 'https://avatars.githubusercontent.com/u/70892515?v=4',
-                'skills': ['Python', 'Flask', 'JavaScript', 'Database Design']
+                'skills': ['Python', 'Flask', 'REST APIs', 'Database Design', 'Backend Architecture', 'Linux', 'Git']
             },
             {
                 'name': 'Dibyansu Sekhar Khilar',
-                'role': 'Frontend Developer & UI/UX Designer',
+                'role': 'Frontend Developer',
                 'bio': 'Creative designer focused on user experience and responsive web design. Ensures Youth Times looks great on all devices.',
                 'image': 'https://avatars.githubusercontent.com/u/197041376?v=4',
-                'skills': ['HTML/CSS', 'JavaScript', 'UI/UX Design', 'Responsive Design']
+                'skills': ['HTML5', 'CSS3', 'JavaScript', 'Bootstrap', 'Tailwind CSS', 'Responsive Design', 'Figma']
             },
             {
                 'name': 'Sai Pratik Mishra',
-                'role': 'Backend Developer & Database Administrator',
-                'bio': 'Database enthusiast and backend specialist. Manages the technical infrastructure and data architecture of Youth Times.',
+                'role': 'Tester & Quality Assurance',
+                'bio': 'Ensures the platform is robust and bug-free through rigorous testing and automation.',
                 'image': 'https://avatars.githubusercontent.com/u/218381271?v=4',
-                'skills': ['Python', 'SQLAlchemy', 'Database Design', 'API Development']
+                'skills': ['Manual Testing', 'Automated Testing', 'Selenium', 'Bug Tracking', 'Test Case Design', 'Quality Assurance']
             },
             {
                 'name': 'Snehal Kumar Moharana',
-                'role': 'Content Manager & QA Tester',
-                'bio': 'Journalism student with a passion for digital media. Ensures content quality and tests all features thoroughly.',
+                'role': 'Security & Safe Browsing Specialist',
+                'bio': 'Focuses on web security, safe browsing, and protecting user data.',
                 'image': 'https://avatars.githubusercontent.com/u/219381177?v=4',
-                'skills': ['Content Writing', 'Quality Assurance', 'Social Media', 'Editorial']
+                'skills': ['Web Security', 'OWASP', 'Safe Browsing', 'Vulnerability Assessment', 'Incident Response']
             },
             {
                 'name': 'Subhankar Mohapatra',
-                'role': 'Data Analyst & Algorithm Developer',
-                'bio': 'Data science enthusiast who developed the credibility scoring algorithm and analytics features for Youth Times.',
+                'role': 'UI/UX & Graphic Designer',
+                'bio': 'Designs user interfaces and graphics for a seamless and attractive user experience.',
                 'image': 'https://avatars.githubusercontent.com/u/205486409?v=4',
-                'skills': ['Python', 'Data Analysis', 'Machine Learning', 'Statistics']
+                'skills': ['UI Design', 'UX Research', 'Adobe XD', 'Photoshop', 'Illustrator', 'Wireframing', 'Prototyping']
             },
             {
                 'name': 'Omm Prakash Sahoo',
-                'role': 'Marketing & User Research Specialist',
-                'bio': 'Business student focused on user research and digital marketing. Helps understand user needs and promote Youth Times.',
+                'role': 'Content Manager & User Research Specialist',
+                'bio': 'Manages content strategy and conducts user research to improve engagement.',
                 'image': 'https://avatars.githubusercontent.com/u/219381460?v=4',
-                'skills': ['Market Research', 'Digital Marketing', 'User Research', 'Social Media Strategy']
+                'skills': ['Content Strategy', 'Copywriting', 'User Research', 'SEO', 'Analytics', 'Social Media Management']
             }
         ]
         
