@@ -50,8 +50,29 @@ def contains_inappropriate_content(text):
     
     return False, None
 
+bp = Blueprint('articles', __name__)
+
 def process_article_content(content):
     """Process article content to support both Markdown and HTML safely"""
+@bp.route('/dmca-policy')
+def dmca_policy():
+    return render_template('dmca_policy.html')
+
+@bp.route('/privacy-policy')
+def privacy_policy():
+    return render_template('privacy_policy.html')
+
+@bp.route('/terms-of-service')
+def terms_of_service():
+    return render_template('terms_of_service.html')
+
+@bp.route('/editorial-guidelines')
+def editorial_guidelines():
+    return render_template('editorial_guidelines.html')
+
+@bp.route('/contact-us')
+def contact_us():
+    return render_template('contact_us.html')
     try:
         # Configure allowed HTML tags and attributes
         allowed_tags = [
@@ -93,28 +114,6 @@ def process_article_content(content):
         # Fallback to simple HTML escaping if markdown processing fails
         logging.warning(f"Markdown processing failed: {e}")
         return bleach.clean(content, tags=['p', 'br', 'strong', 'em'], strip=True)
-
-bp = Blueprint('articles', __name__)
-
-@bp.route('/dmca-policy')
-def dmca_policy():
-    return render_template('dmca_policy.html')
-
-@bp.route('/privacy-policy')
-def privacy_policy():
-    return render_template('privacy_policy.html')
-
-@bp.route('/terms-of-service')
-def terms_of_service():
-    return render_template('terms_of_service.html')
-
-@bp.route('/editorial-guidelines')
-def editorial_guidelines():
-    return render_template('editorial_guidelines.html')
-
-@bp.route('/contact-us')
-def contact_us():
-    return render_template('contact_us.html')
 
 def create_excerpt(html_content, max_length=200):
     """Create a plain text excerpt from HTML content"""
@@ -189,24 +188,13 @@ def home():
 def submit_article():
     if request.method == 'POST':
         title = request.form['title']
-        raw_content = request.form.get('content') or ''
-        if not raw_content.strip():
-            flash('Article content cannot be empty.', 'warning')
-            categories = Category.query.all()
-            return render_template('submit_article.html', categories=categories)
+        raw_content = request.form['content']
         category_id = request.form.get('category_id') or None
         tags = request.form.get('tags', '').strip()
         image_url = None
         
         # Process content to support Markdown and HTML
         processed_content = process_article_content(raw_content)
-        import logging
-        logging.warning(f"RAW CONTENT: '{raw_content}'")
-        logging.warning(f"PROCESSED CONTENT: '{processed_content}'")
-        if not processed_content.strip():
-            flash('Article content cannot be empty after processing.', 'warning')
-            categories = Category.query.all()
-            return render_template('submit_article.html', categories=categories)
         
         # Handle image upload
         if 'image' in request.files:
@@ -230,7 +218,6 @@ def submit_article():
             status='pending',
             credibility_score=None,
             submitted_by=current_user.id,
-            author_id=current_user.id,  # Set author_id for proper relationship
             category_id=category_id,
             tags=tags,
             image_url=image_url
@@ -576,89 +563,93 @@ def articles_list():
 @bp.route('/about')
 def about_us():
     """About Us page showing team members, college, and internship information"""
-    # Team members data (images: circular, medium size, centralized)
-    team_members = [
-        {
-            'name': 'Shuvranshu Sekhar Sahoo',
-            'role': 'Lead & Backend Developer',
-            'bio': 'Computer Science student passionate about web development and news technology. Leads the technical development of Youth Times.',
-            'image': 'https://avatars.githubusercontent.com/u/70892515?v=4',
-            'skills': ['Python', 'Flask', 'REST APIs', 'Database Design', 'Backend Architecture', 'Linux', 'Git']
-        },
-        {
-            'name': 'Dibyansu Sekhar Khilar',
-            'role': 'Frontend Developer',
-            'bio': 'Creative designer focused on user experience and responsive web design. Ensures Youth Times looks great on all devices.',
-            'image': 'https://avatars.githubusercontent.com/u/197041376?v=4',
-            'skills': ['Python', 'HTML5', 'CSS3', 'JavaScript', 'Bootstrap', 'Tailwind CSS', 'Responsive Design', 'Figma']
-        },
-        {
-            'name': 'Sai Pratik Mishra',
-            'role': 'Tester & Quality Assurance',
-            'bio': 'Ensures the platform is robust and bug-free through rigorous testing and automation.',
-            'image': 'https://avatars.githubusercontent.com/u/218381271?v=4',
-            'skills': ['Python', 'Manual Testing', 'Automated Testing', 'Selenium', 'Bug Tracking', 'Test Case Design', 'Quality Assurance']
-        },
-        {
-            'name': 'Snehal Kumar Moharana',
-            'role': 'Security & Safe Browsing Specialist',
-            'bio': 'Focuses on web security, safe browsing, and protecting user data.',
-            'image': 'https://avatars.githubusercontent.com/u/219381177?v=4',
-            'skills': ['Python', 'Web Security', 'OWASP', 'Safe Browsing', 'Vulnerability Assessment', 'Incident Response']
-        },
-        {
-            'name': 'Subhankar Mohapatra',
-            'role': 'UI/UX & Graphic Designer',
-            'bio': 'Designs user interfaces and graphics for a seamless and attractive user experience.',
-            'image': 'https://avatars.githubusercontent.com/u/205486409?v=4',
-            'skills': ['Python', 'UI Design', 'UX Research', 'Adobe XD', 'Photoshop', 'Illustrator', 'Wireframing', 'Prototyping']
-        },
-        {
-            'name': 'Omm Prakash Sahoo',
-            'role': 'Content Manager & User Research Specialist',
-            'bio': 'Manages content strategy and conducts user research to improve engagement.',
-            'image': 'https://avatars.githubusercontent.com/u/219381460?v=4',
-            'skills': ['Python', 'Content Strategy', 'Copywriting', 'User Research', 'SEO', 'Analytics', 'Social Media Management']
+    try:
+        # Team members data
+        team_members = [
+            {
+                'name': 'Shuvranshu Sekhar Sahoo',
+                'role': 'Lead & Backend Developer',
+                'bio': 'Computer Science student passionate about web development and news technology. Leads the technical development of Youth Times.',
+                'image': 'https://avatars.githubusercontent.com/u/70892515?v=4',
+                'skills': ['Python', 'Flask', 'REST APIs', 'Database Design', 'Backend Architecture', 'Linux', 'Git']
+            },
+            {
+                'name': 'Dibyansu Sekhar Khilar',
+                'role': 'Frontend Developer',
+                'bio': 'Creative designer focused on user experience and responsive web design. Ensures Youth Times looks great on all devices.',
+                'image': 'https://avatars.githubusercontent.com/u/197041376?v=4',
+                'skills': ['Python','HTML5', 'CSS3', 'JavaScript', 'Bootstrap', 'Tailwind CSS', 'Responsive Design', 'Figma']
+            },
+            {
+                'name': 'Sai Pratik Mishra',
+                'role': 'Tester & Quality Assurance',
+                'bio': 'Ensures the platform is robust and bug-free through rigorous testing and automation.',
+                'image': 'https://avatars.githubusercontent.com/u/218381271?v=4',
+                'skills': ['Python', 'Manual Testing', 'Automated Testing', 'Selenium', 'Bug Tracking', 'Test Case Design', 'Quality Assurance']
+            },
+            {
+                'name': 'Snehal Kumar Moharana',
+                'role': 'Security & Safe Browsing Specialist',
+                'bio': 'Focuses on web security, safe browsing, and protecting user data.',
+                'image': 'https://avatars.githubusercontent.com/u/219381177?v=4',
+                'skills': ['Python', 'Web Security', 'OWASP', 'Safe Browsing', 'Vulnerability Assessment', 'Incident Response']
+            },
+            {
+                'name': 'Subhankar Mohapatra',
+                'role': 'UI/UX & Graphic Designer',
+                'bio': 'Designs user interfaces and graphics for a seamless and attractive user experience.',
+                'image': 'https://avatars.githubusercontent.com/u/205486409?v=4',
+                'skills': ['Python', 'UI Design', 'UX Research', 'Adobe XD', 'Photoshop', 'Illustrator', 'Wireframing', 'Prototyping']
+            },
+            {
+                'name': 'Omm Prakash Sahoo',
+                'role': 'Content Manager & User Research Specialist',
+                'bio': 'Manages content strategy and conducts user research to improve engagement.',
+                'image': 'https://avatars.githubusercontent.com/u/219381460?v=4',
+                'skills': ['Python', 'Content Strategy', 'Copywriting', 'User Research', 'SEO', 'Analytics', 'Social Media Management']
+            }
+        ]
+        
+        # College information
+        college_info = {
+            'name': 'Nilachal Polytechnic',
+            'location': 'Bhubaneswar, Odisha, India',
+            'description': 'A premier technical institution known for excellence in engineering and computer science education.',
+            'established': '1985',
+            'specialties': ['Computer Science', 'Electronics', 'Mechanical Engineering', 'Civil Engineering'],
+            'website': 'https://www.nilachalpolytechnic.ac.in/',
+            'image': 'https://avatars.githubusercontent.com/u/186801699?v=4'
         }
-    ]
-
-    # College information (image: circular, medium size, centralized)
-    college_info = {
-        'name': 'Nilachal Polytechnic',
-        'location': 'Bhubaneswar, Odisha, India',
-        'description': 'A premier technical institution known for excellence in engineering and computer science education.',
-        'established': '1985',
-        'specialties': ['Computer Science', 'Electronics', 'Mechanical Engineering', 'Civil Engineering'],
-        'website': 'https://www.nilachalpolytechnic.ac.in/',
-        'image': 'https://avatars.githubusercontent.com/u/186801699?v=4'
-    }
-
-    # Internship information (image: circular, medium size, centralized)
-    internship_info = {
-        'company': 'OKCL (Odisha Knowledge Corporation Limited)',
-        'program': 'Python With AI (Internship)',
-        'duration': '1 Month',
-        'description': 'Comprehensive internship program focusing on real-world Python development, web technologies, and project management.',
-        'skills_learned': [
-            'Python Programming',
-            'Flask Web Framework',
-            'Database Design & Management',
-            'Frontend Development',
-            'Project Management',
-            'Team Collaboration',
-            'Agile Development'
-        ],
-        'project_goal': 'Develop a modern, responsive news platform with advanced features like credibility scoring, weather integration, and user management.',
-        'website': 'https://okcl.odisha.gov.in',
-        'image': 'https://okcl.org//user/themes/images/okcl%20logo.png'
-    }
-
-    return render_template(
-        'about_us.html',
-        team_members=team_members,
-        college_info=college_info,
-        internship_info=internship_info
-    )
+        
+        # Internship information
+        internship_info = {
+            'company': 'OKCL (Odisha Knowledge Corporation Limited)',
+            'program': 'Python With AI (Internship)',
+            'duration': '1 Months',
+            'description': 'Comprehensive internship program focusing on real-world Python development, web technologies, and project management.',
+            'skills_learned': [
+                'Python Programming',
+                'Flask Web Framework',
+                'Database Design & Management',
+                'Frontend Development',
+                'Project Management',
+                'Team Collaboration',
+                'Agile Development'
+            ],
+            'project_goal': 'Develop a modern, responsive news platform with advanced features like credibility scoring, weather integration, and user management.',
+            'website': 'https://okcl.odisha.gov.in',
+            'image': 'https://okcl.org//user/themes/images/okcl%20logo.png'
+        }
+        
+        return render_template('about_us.html', 
+                             team_members=team_members,
+                             college_info=college_info,
+                             internship_info=internship_info)
+                             
+    except Exception as e:
+        current_app.logger.error(f"Error in about_us route: {str(e)}")
+        flash('Error loading About Us page. Please try again later.', 'error')
+        return redirect(url_for('articles.home'))
 
 @bp.route('/user/<string:username>')
 def user_profile(username):
