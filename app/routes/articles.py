@@ -293,8 +293,16 @@ def view_article(hash_id):
     if current_user.is_authenticated:
         user_liked = Like.query.filter_by(article_id=article.id, user_id=current_user.id).first() is not None
     
-    return render_template('article_detail.html', article=article, comments=comments, 
-                         likes_count=likes_count, user_liked=user_liked)
+    # Render article content as HTML (Markdown/HTML support)
+    rendered_content = process_article_content(article.content)
+    return render_template(
+        'article_detail.html',
+        article=article,
+        comments=comments,
+        likes_count=likes_count,
+        user_liked=user_liked,
+        rendered_content=rendered_content
+    )
 
 @bp.route('/article/<string:hash_id>/comment', methods=['POST'])
 @login_required
@@ -641,10 +649,24 @@ def about_us():
             'image': 'https://okcl.org//user/themes/images/okcl%20logo.png'
         }
         
-        return render_template('about_us.html', 
-                             team_members=team_members,
-                             college_info=college_info,
-                             internship_info=internship_info)
+        # CSS classes for About Us page styling
+        about_us_styles = {
+            'profile_img': 'rounded-full mx-auto object-cover shadow-md border-4 border-white w-32 h-32 md:w-40 md:h-40',
+            'card': 'bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center mb-6',
+            'container': 'max-w-5xl mx-auto px-4 py-8',
+            'section_title': 'text-2xl md:text-3xl font-bold text-center mb-6',
+            'skills_list': 'flex flex-wrap justify-center gap-2 mt-2',
+            'skill_badge': 'bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold',
+            'institution_img': 'rounded-full mx-auto object-cover shadow-md border-4 border-white w-28 h-28 md:w-36 md:h-36',
+            'responsive_grid': 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6',
+        }
+        return render_template(
+            'about_us.html',
+            team_members=team_members,
+            college_info=college_info,
+            internship_info=internship_info,
+            about_us_styles=about_us_styles
+        )
                              
     except Exception as e:
         current_app.logger.error(f"Error in about_us route: {str(e)}")
