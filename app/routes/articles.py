@@ -54,6 +54,44 @@ bp = Blueprint('articles', __name__)
 
 def process_article_content(content):
     """Process article content to support both Markdown and HTML safely"""
+    if not content:
+        return ''
+    try:
+        # Configure allowed HTML tags and attributes
+        allowed_tags = [
+            'p', 'br', 'strong', 'b', 'em', 'i', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'ul', 'ol', 'li', 'blockquote', 'a', 'img', 'code', 'pre', 'span', 'div',
+            'table', 'thead', 'tbody', 'tr', 'th', 'td'
+        ]
+        allowed_attributes = {
+            'a': ['href', 'title', 'target'],
+            'img': ['src', 'alt', 'title', 'width', 'height'],
+            'span': ['class'],
+            'div': ['class'],
+            'table': ['class'],
+            'th': ['class'],
+            'td': ['class']
+        }
+        # First, convert Markdown to HTML
+        md = markdown.Markdown(extensions=[
+            'fenced_code',
+            'tables',
+            'nl2br',
+            'codehilite'
+        ])
+        html_content = md.convert(content)
+        # Then sanitize the HTML to prevent XSS
+        clean_content = bleach.clean(
+            html_content, 
+            tags=allowed_tags, 
+            attributes=allowed_attributes,
+            strip=True
+        )
+        return clean_content
+    except Exception as e:
+        # Fallback to simple HTML escaping if markdown processing fails
+        logging.warning(f"Markdown processing failed: {e}")
+        return bleach.clean(content or '', tags=['p', 'br', 'strong', 'em'], strip=True)
 @bp.route('/dmca-policy')
 def dmca_policy():
     return render_template('dmca_policy.html')
@@ -302,7 +340,10 @@ def view_article(hash_id):
         user_liked = Like.query.filter_by(article_id=article.id, user_id=current_user.id).first() is not None
     
     # Render article content as HTML (Markdown/HTML support)
-    rendered_content = process_article_content(article.content)
+    if article.content:
+        rendered_content = process_article_content(article.content)
+    else:
+        rendered_content = ''
     return render_template(
         'article_detail.html',
         article=article,
