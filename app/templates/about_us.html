@@ -27,10 +27,10 @@
         {% for member in team_members %}
         <div class="vintage-card p-6 text-center">
           <!-- Team Member Photo Placeholder -->
-          <div class="w-32 h-32 mx-auto rounded-full mb-4 overflow-hidden border-4 border-gray-300">
+          <div class="w-24 h-24 mx-auto rounded-full mb-4 overflow-hidden border-4 border-gray-300 profile-pic-frame">
             <img src="{{ member.image }}" 
                  alt="{{ member.name }}" 
-                 class="w-full h-full object-cover">
+                 class="w-full h-full object-cover profile-pic-img">
           </div>
           
           <h3 class="headline-font text-xl font-bold mb-2">{{ member.name }}</h3>
@@ -246,6 +246,24 @@
 .dark .bg-green-100 {
   background-color: #166534;
   color: #dcfce7;
+}
+</style>
+<style>
+/* Make team member profile images smaller and perfectly circular */
+.profile-pic-frame {
+  width: 96px !important;
+  height: 96px !important;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.profile-pic-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 </style>
 {% endblock %}

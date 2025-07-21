@@ -578,35 +578,35 @@ def about_us():
                 'role': 'Frontend Developer',
                 'bio': 'Creative designer focused on user experience and responsive web design. Ensures Youth Times looks great on all devices.',
                 'image': 'https://avatars.githubusercontent.com/u/197041376?v=4',
-                'skills': ['HTML5', 'CSS3', 'JavaScript', 'Bootstrap', 'Tailwind CSS', 'Responsive Design', 'Figma']
+                'skills': ['Python','HTML5', 'CSS3', 'JavaScript', 'Bootstrap', 'Tailwind CSS', 'Responsive Design', 'Figma']
             },
             {
                 'name': 'Sai Pratik Mishra',
                 'role': 'Tester & Quality Assurance',
                 'bio': 'Ensures the platform is robust and bug-free through rigorous testing and automation.',
                 'image': 'https://avatars.githubusercontent.com/u/218381271?v=4',
-                'skills': ['Manual Testing', 'Automated Testing', 'Selenium', 'Bug Tracking', 'Test Case Design', 'Quality Assurance']
+                'skills': ['Python', 'Manual Testing', 'Automated Testing', 'Selenium', 'Bug Tracking', 'Test Case Design', 'Quality Assurance']
             },
             {
                 'name': 'Snehal Kumar Moharana',
                 'role': 'Security & Safe Browsing Specialist',
                 'bio': 'Focuses on web security, safe browsing, and protecting user data.',
                 'image': 'https://avatars.githubusercontent.com/u/219381177?v=4',
-                'skills': ['Web Security', 'OWASP', 'Safe Browsing', 'Vulnerability Assessment', 'Incident Response']
+                'skills': ['Python', 'Web Security', 'OWASP', 'Safe Browsing', 'Vulnerability Assessment', 'Incident Response']
             },
             {
                 'name': 'Subhankar Mohapatra',
                 'role': 'UI/UX & Graphic Designer',
                 'bio': 'Designs user interfaces and graphics for a seamless and attractive user experience.',
                 'image': 'https://avatars.githubusercontent.com/u/205486409?v=4',
-                'skills': ['UI Design', 'UX Research', 'Adobe XD', 'Photoshop', 'Illustrator', 'Wireframing', 'Prototyping']
+                'skills': ['Python', 'UI Design', 'UX Research', 'Adobe XD', 'Photoshop', 'Illustrator', 'Wireframing', 'Prototyping']
             },
             {
                 'name': 'Omm Prakash Sahoo',
                 'role': 'Content Manager & User Research Specialist',
                 'bio': 'Manages content strategy and conducts user research to improve engagement.',
                 'image': 'https://avatars.githubusercontent.com/u/219381460?v=4',
-                'skills': ['Content Strategy', 'Copywriting', 'User Research', 'SEO', 'Analytics', 'Social Media Management']
+                'skills': ['Python', 'Content Strategy', 'Copywriting', 'User Research', 'SEO', 'Analytics', 'Social Media Management']
             }
         ]
         
@@ -638,7 +638,7 @@ def about_us():
             ],
             'project_goal': 'Develop a modern, responsive news platform with advanced features like credibility scoring, weather integration, and user management.',
             'website': 'https://okcl.odisha.gov.in',
-            'image': 'internship/okcl_office.jpg'
+            'image': 'https://okcl.org//user/themes/images/okcl%20logo.png'
         }
         
         return render_template('about_us.html', 
