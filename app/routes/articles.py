@@ -514,7 +514,7 @@ def rss_feed():
     articles = Article.query.filter_by(status='approved').order_by(Article.id.desc()).all()
     items = ''
     for art in articles:
-        link = request.url_root.rstrip('/') + url_for('articles.view_article', id=art.id)
+        link = request.url_root.rstrip('/') + url_for('articles.view_article', hash_id=art.hash_id)
         items += f"""
         <item>
             <title>{escape(art.title)}</title>
