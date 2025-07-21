@@ -457,6 +457,8 @@
       overflow: visible !important;
     }
   </style>
+    <link rel="manifest" href="/static/manifest.webmanifest">
+    <link rel="icon" type="image/x-icon" href="/static/YothTimesFavicon.ico">
 </head>
 <body class="min-h-screen flex flex-col transition-all duration-500">
 
@@ -1304,6 +1306,11 @@
           }
         }
       });
-  </script>
+    </script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/static/sw.js');
+      }
+    </script>
 </body>
 </html>

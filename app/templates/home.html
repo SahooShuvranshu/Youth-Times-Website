@@ -36,7 +36,7 @@
         </a>
       </h1>
       <p class="text-lg mb-4 font-bold uppercase tracking-wider">
-        By {{ articles[0].author.username }} • {{ articles[0].created_at.strftime('%B %d, %Y') if articles[0].created_at }}
+        By {{ articles[0].author.username if articles[0].author else (articles[0].submitter.username if articles[0].submitter else 'Anonymous') }} • {{ articles[0].created_at.strftime('%B %d, %Y') if articles[0].created_at }}
       </p>
       <p class="text-lg leading-relaxed mb-6">{{ articles[0].content|excerpt(300) }}</p>
       <a href="{{ url_for('articles.view_article', hash_id=articles[0].hash_id) }}" class="vintage-btn text-lg">

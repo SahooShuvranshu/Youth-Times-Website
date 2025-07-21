@@ -1,12 +1,12 @@
 {
-  "name": "Youth Times Mobile",
-  "short_name": "YouthTimes",
-  "description": "Empowering young voices worldwide - Mobile Edition",
-  "start_url": "/m/",
+  "name": "Youth Times",
+  "short_name": "YT",
+  "description": "Empowering young voices worldwide - Youth Times Web App",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
+  "background_color": "#ffffff",
   "theme_color": "#1a1a1a",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "icons": [
     {
       "src": "/static/icon-192.png",
@@ -17,10 +17,16 @@
       "src": "/static/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
+    },
+    {
+      "src": "/static/YothTimesFavicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
     }
   ],
-  "scope": "/m/",
-  "categories": ["news", "social", "productivity"],
+  "scope": "/",
+  "categories": ["news", "social", "education", "media"],
   "lang": "en-US",
-  "dir": "ltr"
+  "dir": "ltr",
+  "prefer_related_applications": false
 }
