@@ -567,45 +567,45 @@ def about_us():
         # Team members data
         team_members = [
             {
-                'name': 'Rajesh Kumar',
+                'name': 'Shuvranshu Sekhar Sahoo',
                 'role': 'Lead Developer & Project Manager',
                 'bio': 'Computer Science student passionate about web development and news technology. Leads the technical development of Youth Times.',
-                'image': 'team/rajesh.jpg',
+                'image': 'https://avatars.githubusercontent.com/u/70892515?v=4',
                 'skills': ['Python', 'Flask', 'JavaScript', 'Database Design']
             },
             {
-                'name': 'Priya Sharma',
+                'name': 'Dibyansu Sekhar Khilar',
                 'role': 'Frontend Developer & UI/UX Designer',
                 'bio': 'Creative designer focused on user experience and responsive web design. Ensures Youth Times looks great on all devices.',
-                'image': 'team/priya.jpg',
+                'image': 'https://avatars.githubusercontent.com/u/197041376?v=4',
                 'skills': ['HTML/CSS', 'JavaScript', 'UI/UX Design', 'Responsive Design']
             },
             {
-                'name': 'Arjun Patel',
+                'name': 'Sai Pratik Mishra',
                 'role': 'Backend Developer & Database Administrator',
                 'bio': 'Database enthusiast and backend specialist. Manages the technical infrastructure and data architecture of Youth Times.',
-                'image': 'team/arjun.jpg',
+                'image': 'https://avatars.githubusercontent.com/u/218381271?v=4',
                 'skills': ['Python', 'SQLAlchemy', 'Database Design', 'API Development']
             },
             {
-                'name': 'Sneha Reddy',
+                'name': 'Snehal Kumar Moharana',
                 'role': 'Content Manager & QA Tester',
                 'bio': 'Journalism student with a passion for digital media. Ensures content quality and tests all features thoroughly.',
-                'image': 'team/sneha.jpg',
+                'image': 'https://avatars.githubusercontent.com/u/219381177?v=4',
                 'skills': ['Content Writing', 'Quality Assurance', 'Social Media', 'Editorial']
             },
             {
-                'name': 'Vikram Singh',
+                'name': 'Subhankar Mohapatra',
                 'role': 'Data Analyst & Algorithm Developer',
                 'bio': 'Data science enthusiast who developed the credibility scoring algorithm and analytics features for Youth Times.',
-                'image': 'team/vikram.jpg',
+                'image': 'https://avatars.githubusercontent.com/u/205486409?v=4',
                 'skills': ['Python', 'Data Analysis', 'Machine Learning', 'Statistics']
             },
             {
-                'name': 'Anita Gupta',
+                'name': 'Omm Prakash Sahoo',
                 'role': 'Marketing & User Research Specialist',
                 'bio': 'Business student focused on user research and digital marketing. Helps understand user needs and promote Youth Times.',
-                'image': 'team/anita.jpg',
+                'image': 'https://avatars.githubusercontent.com/u/219381460?v=4',
                 'skills': ['Market Research', 'Digital Marketing', 'User Research', 'Social Media Strategy']
             }
         ]
@@ -618,7 +618,7 @@ def about_us():
             'established': '1985',
             'specialties': ['Computer Science', 'Electronics', 'Mechanical Engineering', 'Civil Engineering'],
             'website': 'https://www.nilachalpolytechnic.ac.in/',
-            'image': 'college/nilachal_campus.jpg'
+            'image': 'https://avatars.githubusercontent.com/u/186801699?v=4'
         }
         
         # Internship information
