@@ -188,14 +188,22 @@ def home():
 def submit_article():
     if request.method == 'POST':
         title = request.form['title']
-        raw_content = request.form['content']
+        raw_content = request.form.get('content', '')
+        if not raw_content or not raw_content.strip():
+            flash('Article content cannot be empty.', 'warning')
+            categories = Category.query.all()
+            return render_template('submit_article.html', categories=categories)
         category_id = request.form.get('category_id') or None
         tags = request.form.get('tags', '').strip()
         image_url = None
-        
+
         # Process content to support Markdown and HTML
         processed_content = process_article_content(raw_content)
-        
+        if not processed_content or not processed_content.strip():
+            flash('Article content cannot be empty after processing.', 'warning')
+            categories = Category.query.all()
+            return render_template('submit_article.html', categories=categories)
+
         # Handle image upload
         if 'image' in request.files:
             file = request.files['image']
@@ -210,7 +218,7 @@ def submit_article():
                     image_url = upload_result['secure_url']
                 except Exception as e:
                     flash(f'Image upload failed: {str(e)}', 'warning')
-        
+
         # Store submission immediately with pending status
         article = Article(
             title=title,
@@ -224,7 +232,7 @@ def submit_article():
         )
         db.session.add(article)
         db.session.commit()
-        
+
         # Track analytics
         analytics = Analytics(
             article_id=article.id,
@@ -234,7 +242,7 @@ def submit_article():
         )
         db.session.add(analytics)
         db.session.commit()
-        
+
         flash("Article submitted successfully. Authenticity check is running in the background.")
         # Background thread to verify trust score and apply threshold
         # Capture the Flask app for use in the thread
@@ -245,27 +253,27 @@ def submit_article():
                 if not art:
                     return
                 score = calculate_credibility_score(art.title, art.content)
-                
+
                 # Save credibility score for all articles
                 art.credibility_score = score
                 db.session.commit()
-                
+
                 # Log the credibility score calculation
                 entry = LogEntry(article_id=article_id, action=f"Credibility score calculated: {score}%")
                 db.session.add(entry)
                 db.session.commit()
-                
+
                 # Notify user about credibility analysis
                 notif = Notification(user_id=art.submitted_by, article_id=article_id,
                                        message=f"Your article '{art.title}' has been analyzed. Credibility score: {score}%")
                 db.session.add(notif)
                 db.session.commit()
-                
+
                 logging.info(f"Article ID {article_id} submitted with credibility score {score}% - pending admin review.")
         threading.Thread(target=_background_verify, args=(article.id, app_ctx), daemon=True).start()
         flash("Article submitted successfully. Credibility analysis running in background. All articles await admin approval.")
         return redirect(url_for('articles.view_article', hash_id=article.hash_id))
-    
+
     # GET request - show form with categories
     categories = Category.query.all()
     return render_template('submit_article.html', categories=categories)
