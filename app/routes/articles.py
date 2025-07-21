@@ -74,6 +74,7 @@ def process_article_content(content):
         }
         # First, convert Markdown to HTML
         md = markdown.Markdown(extensions=[
+            'extra',
             'fenced_code',
             'tables',
             'nl2br',
