@@ -577,53 +577,53 @@ def articles_list():
 def about_us():
     """About Us page showing team members, college, and internship information"""
     try:
-        # Team members data
+        # Team members data (images: circular, medium size, centralized)
         team_members = [
             {
-                'name': 'Rajesh Kumar',
-                'role': 'Lead Developer & Project Manager',
+                'name': 'Shuvranshu Sekhar Sahoo',
+                'role': 'Lead & Backend Developer',
                 'bio': 'Computer Science student passionate about web development and news technology. Leads the technical development of Youth Times.',
-                'image': 'team/rajesh.jpg',
-                'skills': ['Python', 'Flask', 'JavaScript', 'Database Design']
+                'image': 'https://avatars.githubusercontent.com/u/70892515?v=4',
+                'skills': ['Python', 'Flask', 'REST APIs', 'Database Design', 'Backend Architecture', 'Linux', 'Git']
             },
             {
-                'name': 'Priya Sharma',
-                'role': 'Frontend Developer & UI/UX Designer',
+                'name': 'Dibyansu Sekhar Khilar',
+                'role': 'Frontend Developer',
                 'bio': 'Creative designer focused on user experience and responsive web design. Ensures Youth Times looks great on all devices.',
-                'image': 'team/priya.jpg',
-                'skills': ['HTML/CSS', 'JavaScript', 'UI/UX Design', 'Responsive Design']
+                'image': 'https://avatars.githubusercontent.com/u/197041376?v=4',
+                'skills': ['Python', 'HTML5', 'CSS3', 'JavaScript', 'Bootstrap', 'Tailwind CSS', 'Responsive Design', 'Figma']
             },
             {
-                'name': 'Arjun Patel',
-                'role': 'Backend Developer & Database Administrator',
-                'bio': 'Database enthusiast and backend specialist. Manages the technical infrastructure and data architecture of Youth Times.',
-                'image': 'team/arjun.jpg',
-                'skills': ['Python', 'SQLAlchemy', 'Database Design', 'API Development']
+                'name': 'Sai Pratik Mishra',
+                'role': 'Tester & Quality Assurance',
+                'bio': 'Ensures the platform is robust and bug-free through rigorous testing and automation.',
+                'image': 'https://avatars.githubusercontent.com/u/218381271?v=4',
+                'skills': ['Python', 'Manual Testing', 'Automated Testing', 'Selenium', 'Bug Tracking', 'Test Case Design', 'Quality Assurance']
             },
             {
-                'name': 'Sneha Reddy',
-                'role': 'Content Manager & QA Tester',
-                'bio': 'Journalism student with a passion for digital media. Ensures content quality and tests all features thoroughly.',
-                'image': 'team/sneha.jpg',
-                'skills': ['Content Writing', 'Quality Assurance', 'Social Media', 'Editorial']
+                'name': 'Snehal Kumar Moharana',
+                'role': 'Security & Safe Browsing Specialist',
+                'bio': 'Focuses on web security, safe browsing, and protecting user data.',
+                'image': 'https://avatars.githubusercontent.com/u/219381177?v=4',
+                'skills': ['Python', 'Web Security', 'OWASP', 'Safe Browsing', 'Vulnerability Assessment', 'Incident Response']
             },
             {
-                'name': 'Vikram Singh',
-                'role': 'Data Analyst & Algorithm Developer',
-                'bio': 'Data science enthusiast who developed the credibility scoring algorithm and analytics features for Youth Times.',
-                'image': 'team/vikram.jpg',
-                'skills': ['Python', 'Data Analysis', 'Machine Learning', 'Statistics']
+                'name': 'Subhankar Mohapatra',
+                'role': 'UI/UX & Graphic Designer',
+                'bio': 'Designs user interfaces and graphics for a seamless and attractive user experience.',
+                'image': 'https://avatars.githubusercontent.com/u/205486409?v=4',
+                'skills': ['Python', 'UI Design', 'UX Research', 'Adobe XD', 'Photoshop', 'Illustrator', 'Wireframing', 'Prototyping']
             },
             {
-                'name': 'Anita Gupta',
-                'role': 'Marketing & User Research Specialist',
-                'bio': 'Business student focused on user research and digital marketing. Helps understand user needs and promote Youth Times.',
-                'image': 'team/anita.jpg',
-                'skills': ['Market Research', 'Digital Marketing', 'User Research', 'Social Media Strategy']
+                'name': 'Omm Prakash Sahoo',
+                'role': 'Content Manager & User Research Specialist',
+                'bio': 'Manages content strategy and conducts user research to improve engagement.',
+                'image': 'https://avatars.githubusercontent.com/u/219381460?v=4',
+                'skills': ['Python', 'Content Strategy', 'Copywriting', 'User Research', 'SEO', 'Analytics', 'Social Media Management']
             }
         ]
-        
-        # College information
+
+        # College information (image: circular, medium size, centralized)
         college_info = {
             'name': 'Nilachal Polytechnic',
             'location': 'Bhubaneswar, Odisha, India',
@@ -631,14 +631,14 @@ def about_us():
             'established': '1985',
             'specialties': ['Computer Science', 'Electronics', 'Mechanical Engineering', 'Civil Engineering'],
             'website': 'https://www.nilachalpolytechnic.ac.in/',
-            'image': 'college/nilachal_campus.jpg'
+            'image': 'https://avatars.githubusercontent.com/u/186801699?v=4'
         }
-        
-        # Internship information
+
+        # Internship information (image: circular, medium size, centralized)
         internship_info = {
             'company': 'OKCL (Odisha Knowledge Corporation Limited)',
-            'program': 'Python Development Internship',
-            'duration': '6 months',
+            'program': 'Python With AI (Internship)',
+            'duration': '1 Month',
             'description': 'Comprehensive internship program focusing on real-world Python development, web technologies, and project management.',
             'skills_learned': [
                 'Python Programming',
@@ -651,14 +651,16 @@ def about_us():
             ],
             'project_goal': 'Develop a modern, responsive news platform with advanced features like credibility scoring, weather integration, and user management.',
             'website': 'https://okcl.odisha.gov.in',
-            'image': 'internship/okcl_office.jpg'
+            'image': 'https://okcl.org//user/themes/images/okcl%20logo.png'
         }
-        
-        return render_template('about_us.html', 
-                             team_members=team_members,
-                             college_info=college_info,
-                             internship_info=internship_info)
-                             
+
+        # Render the About Us page with all context
+        return render_template(
+            'about_us.html',
+            team_members=team_members,
+            college_info=college_info,
+            internship_info=internship_info
+        )
     except Exception as e:
         current_app.logger.error(f"Error in about_us route: {str(e)}")
         flash('Error loading About Us page. Please try again later.', 'error')
