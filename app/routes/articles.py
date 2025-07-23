@@ -464,14 +464,14 @@ def subscribe_newsletter():
     # Check if already subscribed
     existing = Newsletter.query.filter_by(email=email).first()
     if existing:
-        if existing.is_active:
+        if getattr(existing, 'is_active', True):
             flash('You are already subscribed to our newsletter.', 'info')
         else:
             existing.is_active = True
             db.session.commit()
             flash('Welcome back! Your newsletter subscription has been reactivated.', 'success')
     else:
-        newsletter = Newsletter(email=email)
+        newsletter = Newsletter(email=email, is_active=True)
         db.session.add(newsletter)
         db.session.commit()
         flash('Successfully subscribed to our newsletter!', 'success')
