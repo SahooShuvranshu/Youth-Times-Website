@@ -12,7 +12,7 @@ class Config:
 
     if ENVIRONMENT == "production":
         # For Render/Supabase
-        SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "")
+        SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "postgresql://postgres.pvbmagvkqslxqsjhniga:YouthTimes2025@aws-1-ap-south-1.pooler.supabase.com:6543/postgres")
         if SQLALCHEMY_DATABASE_URI.startswith("postgres://"):
             SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace("postgres://", "postgresql://")
     else:
@@ -32,7 +32,3 @@ class Config:
     
     # OpenWeather API
     OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY')
-
-# postgresql://<db_user>:<db_password>@<db_host>:5432/<db_name>
-# ueadox89Ex8hBOLz
-# $env:SUPABASE_DB_URL = "postgresql://postgres:eadox89Ex8hBOLz@db.bjepgsacyvvdeoeqxufs.supabase.co:5432/postgres"
