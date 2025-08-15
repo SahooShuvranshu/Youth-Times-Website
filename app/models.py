@@ -8,7 +8,7 @@ import string
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(150), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(10), default='user')
     is_super_admin = db.Column(db.Boolean, default=False)  # Cannot be demoted
     name = db.Column(db.String(150), nullable=True)
